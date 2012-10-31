@@ -4,7 +4,6 @@
 $title = 'Mon inventaire';
 $this->headTitle($title);
 
-
 ?>
 <div class="row">
 	<div class="span6">
@@ -95,7 +94,7 @@ $this->headTitle($title);
 			<td>
 			<?php echo $this->paginationControl($inventaires,
                                     'Sliding',
-                                    'inventaire/inventaire/my_pagination_control', array('action'=>'index'));?>
+                                    'inventaire/inventaire/my_pagination_control', array('route'=>'inventaire','action'=>'index'));?>
             </td>
             <td colspan="3">
             <?php if (count($yearsOptions)>2) :?>

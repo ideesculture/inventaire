@@ -60,12 +60,6 @@ $this->headTitle($title);
 		echo $this->formElement($form->get('numinv'))."\n";
 		echo $this->formElement($form->get('designation'))."\n";
 		echo $this->formElement($form->get('auteur'))."\n";
-		/*
-		echo $this->formRow($form->get('date_acquisition_min')); 
-		echo $this->formRow($form->get('date_acquisition_max')); 
-		echo $this->formRow($form->get('date_inscription_min')); 
-		echo $this->formRow($form->get('date_inscription_max'));
-		*/ 
 		echo $this->formSubmit($form->get('submit'))."\n";
 		echo $this->form()->closeTag()."\n";
 		?>
@@ -141,8 +135,8 @@ $this->headTitle($title);
 			<td>
 			<?php echo $this->paginationControl($inventaires,
                                     'Sliding',
-                                    'inventaire/inventaire/my_pagination_control', array('action'=>'index'));?>
-            </td>
+                                    'inventaire/inventaire/my_pagination_control', array('route'=>'search','action'=>'index'));?>
+			</td>
             <td colspan="3">
 			</td>	
         </td></tr>
