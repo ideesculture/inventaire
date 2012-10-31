@@ -1,6 +1,7 @@
-# application Inventaire
+application Inventaire
+======================
  
-<img src="http://inventaire.ideesculture.fr/images/inventaire_128x128.png" align="left">
+![image](http://inventaire.ideesculture.fr/images/inventaire_128x128.png)
 
 L'inventaire des biens affectés aux collections d'un musée de France est un document unique, infalsifiable, titré, daté et paraphé par le professionnel responsable des collections, répertoriant tous les biens par ordre d'entrée dans les collections.
 
