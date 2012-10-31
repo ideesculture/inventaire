@@ -291,7 +291,7 @@ class SearchController extends AbstractActionController
 						"source_info" => ""
 				)
 		);
-		print $c->response_object->body;*/
+		print $c->response_object->body;
 		die();
 
 		return new ViewModel(array(
