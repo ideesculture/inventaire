@@ -1,33 +1,39 @@
-ZendSkeletonApplication
-=======================
+# application Inventaire
+ 
+<img src="http://inventaire.ideesculture.fr/images/inventaire_128x128.png" align="left">
 
-Introduction
-------------
-This is a simple, skeleton application using the ZF2 MVC layer and module
-systems. This application is meant to be used as a starting place for those
-looking to get their feet wet with ZF2.
+L'inventaire des biens affectés aux collections d'un musée de France est un document unique, infalsifiable, titré, daté et paraphé par le professionnel responsable des collections, répertoriant tous les biens par ordre d'entrée dans les collections.
 
+Cette application a été créée pour vous permettre de gérer votre inventaire et selon votre besoin d'importer ensuite vos données dans CollectiveAccess.
 
-Installation
-------------
+L'impression de votre inventaire est une obligation légale qui répond à des impératifs formels. Cette application vous permet d'y répondre avec style.
 
-Using Composer (recommended)
+## Pré-requis
 ----------------------------
-The recommended way to get a working copy of this project is to clone the repository
-and use composer to install dependencies:
+### Extensions PHP
 
-    cd my/project/dir
-    git clone git://github.com/zendframework/ZendSkeletonApplication.git
-    cd ZendSkeletonApplication
-    php composer.phar install
+* php-intl
+* php-curl
+* extension PECL http
 
-Using Git submodules
---------------------
-Alternatively, you can install using native git submodules:
+## Installation
+----------------------------
+### Mettre à jour les bibliothèques requises à l'aide de composer
+Ce projet utilise des bibliothèques libres (ZendFramework 2, ZfcUser, DOMpdf…). Pour des raisons de maintenance, ces bibliothèques ne sont pas incluses dans le code source du programme, il faut les télécharger lors de l'installation en ligne de commande :
 
-    git clone git://github.com/zendframework/ZendSkeletonApplication.git --recursive
+    cd inventaire
+    php composer.phar update
 
-Virtual Host
-------------
-Afterwards, set up a virtual host to point to the public/ directory of the
-project and you should be ready to go!
+### Paramétrer la configuration de l'application
+#### En ligne de commandes
+
+    cd inventaire
+    cd config/autoload
+    cp local.php.exemple local.php
+    nano local.php
+
+#### Avec un éditeur :
+
+* recopier le fichier **config/autoload/local.php.exemple** dans **config/autoload/local.php**
+
+* ouvrir le fichier **config/autoload/local.php**
