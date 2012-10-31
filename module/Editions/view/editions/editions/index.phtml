@@ -1,0 +1,36 @@
+<?php
+// module/Editions/view/editions/editions/index.phtml:
+
+$title = 'Editions';
+$this->headTitle($title);
+?>
+<!-- <h1><?php echo $this->escapeHtml($title); ?></h1> -->
+
+<p>
+<div class="row">
+		<div class="hero-unit">
+			<h1>Imprimer</h1>
+			<p>L'impression de votre inventaire est une obligation légale qui répond à des impératifs formels. Cette application
+			vous permet d'y répondre avec style.<br/>
+			Paramétrez finement la couverture utilisée et la mise en page de votre inventaire à l'aide des outils ci-dessous.</p>
+		</div>
+</div>
+<div class="row">
+	<div class="span2">
+		<h1>Couverture</h1>
+		<p><img src="<?php print $backgroundPdfCapture ?>" /></p>
+		<p>
+			<a  class="btn btn-success btn-small" href="<?php echo $this->url('editions',
+				array('action' => 'cover'));?>">modifier la couverture</a> 
+		</p>
+	</div>
+	<div class="span8">
+		<h1>Pages de l'inventaire</h1>
+		<p>Afficher, générer ou regénérer</p>
+			<a  class="btn btn-info btn-small" href="<?php echo $this->url('editions',
+				array('action' => 'view'));?>">afficher</a> 
+			<a  class="btn btn-success btn-small" href="<?php echo $this->url('editions',
+				array('action' => 'generate'));?>">générer</a> 
+		
+	</div>
+</div>

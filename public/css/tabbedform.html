@@ -1,0 +1,117 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!--
+   @author: J Aaron Farr
+   released under a creative commons license (by attribution)
+  -->
+<html>
+  <head>
+    <title>Javascript Tabbed Forms</title>
+    <style>
+
+div.tabs {
+  font-size: 80%;
+  font-weight: bold;
+}
+
+a.tab {
+  background-color: #f0f0f0;
+  border: 1px solid #000000;
+  border-bottom-width: 0px;
+  padding: 2px 1em 2px 1em;
+  text-decoration: none;
+}
+
+a.tab, a.tab:visited {
+  color: #808080;
+}
+
+a.tab:hover {
+  background-color: #d0d0d0;
+  color: #606060;
+}
+
+
+/*
+ * note that by default all tab content areas
+ * have display set to 'none'
+ */
+div.tabContent {
+  padding: 4px;
+  border: 2px solid #000000;
+  background-color: #CCCCCC;
+  display: none;
+}
+    </style>
+    
+    <script>
+      
+      // this is a bit of a hack here
+      // just list the tab content divs here
+      var tabs = ["tab1","tab2"];
+
+      function showTab( tab ){
+
+        // first make sure all the tabs are hidden
+        for(i=0; i < tabs.length; i++){
+          var obj = document.getElementById(tabs[i]);
+          obj.style.display = "none";
+        }
+          
+        // show the tab we're interested in
+        var obj = document.getElementById(tab);
+        obj.style.display = "block";
+
+      
+      }
+
+    </script>
+  </head>
+
+  <body>
+
+    <h1>Javascript Tabbed Forms</h1>
+
+
+    <hr/>
+
+    <div class="tabs">
+      <a class="tab" onclick="showTab('tab1')">Tab One</a>
+      <a class="tab" onclick="showTab('tab2')">Tab Two</a>
+    </div>
+
+    <form name="myForm" action="#">
+
+            <!-- note that for the first tab we need to
+                 manually set the display to visible -->
+      <div id="tab1" class="tabContent" style="display:block">
+        <table>
+          <tr>
+              <td>Field One: </td>
+              <td><input type="text" name="fieldOne"/></td>
+          </tr>
+          <tr>
+              <td>Field Two: </td>
+              <td><input type="text" name="fieldTwo"/></td>
+          </tr>
+        </table>
+      </div>
+
+      <div id="tab2" class="tabContent">
+        <table>
+          <tr>
+              <td>Field Three: </td>
+              <td><input type="text" name="fieldThree"/></td>
+          </tr>
+          <tr>
+              <td>Field Four: </td>
+              <td><input type="text" name="fieldFour"/></td>
+          </tr>
+        </table>
+      </div>
+      <input type="submit">
+
+    </form>
+    
+    <hr>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+<?php
+// module/Inventaire/view/inventaire/inventaire/listing-export-pdf-confirm.phtml:
+
+$title = 'Générer le PDF';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
+<p>Merci de sélectionner l'année de l'inventaire à générer :</p>
+<?php
+$url = $this->url('inventaire', array(
+    'action' => 'listingExportPdf'
+)); ?>
+
+<form action="<?php echo $url; ?>" method="post">
+<select name="year">
+<?php  foreach($yearsOptions as $option) : ?>
+		<option value="<?php print $option["value"];?>" <?php print ($option["selected"]) ? "SELECTED" : "" ;?>>
+		<?php print $option["label"];?>
+		</option>
+<?php endforeach; ?> 
+</select> 
+<div>
+    <input type="submit" name="Submit" value="Générer" />
+    <input type="button" name="Cancel" value="Annuler" />
+</div>
+</form>

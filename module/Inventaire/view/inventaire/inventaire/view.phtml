@@ -1,0 +1,117 @@
+<?php
+define("__LOCALE__","fr_FR");
+$this->plugin("currencyformat")->setCurrencyCode("EUR")->setLocale(__LOCALE__);
+
+// module/Inventaire/view/inventaire/inventaire/view.phtml:
+
+$title = 'Afficher un objet';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
+<?php if($photo->file) :?>
+<span style="float:right;"><img style="width:300px;" src="/files/assets/<?php print $this->escapeHtml($photo->file); //1 ?>"></span>
+<?php endif ?>
+<div id="form-edit-block1" style="display:block">
+<h3>Rubriques relatives au statut juridique des biens et aux conditions de leur acquisition</h3>
+<b>Numéro d'inventaire : </b><?php
+//var_dump($inventaire);die(); 
+print $this->escapeHtml($inventaire->numinv); //1 ?>
+<br/>
+<b>Mode d'acquisition : </b>
+<?php 
+print $this->escapeHtml($inventaire->mode_acquisition); //2?>
+<br/>
+<b>Donateur : </b>
+<?php
+print $this->escapeHtml($inventaire->donateur); //3?>
+<br/>
+<b>Date d'acquisition : </b>
+<?php
+//print $this->escapeHtml($inventaire->date_acquisition); 
+print $this->dateFormat(new DateTime($inventaire->date_acquisition), IntlDateFormatter::LONG, IntlDateFormatter::NONE, __LOCALE__); //4 ?>
+<br/>
+<b>Avis : </b>
+<?php
+print $this->escapeHtml($inventaire->avis); //5?>
+<br/>
+<b>Prix : </b>
+<?php
+print $this->currencyFormat($inventaire->prix); //6 ?>
+<br/>
+<b>Date d'inscription : </b>
+<?php
+print $this->dateFormat(new DateTime($inventaire->date_inscription), IntlDateFormatter::LONG, IntlDateFormatter::NONE, __LOCALE__); //7 ?> 
+<br/>
+<?php
+?>
+<hr />
+</div>
+<div id="form-edit-block2">
+<h3>Rubriques portant description des biens</h3>
+<b>Désignation : </b>
+<?php 
+print $this->escapeHtml($inventaire->designation); //8?>
+<br/>
+<b>Inscription : </b>
+<?php
+print $this->escapeHtml($inventaire->inscription); //9?>
+<br/>
+<b>Matériaux : </b>
+<?php
+print $this->escapeHtml($inventaire->materiaux); //10?>
+<br/>
+<b>Techniques : </b>
+<?php
+print $this->escapeHtml($inventaire->techniques); //11?>
+<br/>
+<b>Mesures : </b>
+<?php
+print $this->escapeHtml($inventaire->mesures); //12?>
+<br/>
+<b>Etat : </b>
+<?php
+print $this->escapeHtml($inventaire->etat); //13?>
+<br/>
+<?php
+?>
+<hr />
+</div>
+<div id="form-edit-block3">
+<h3>Rubriques complémentaires</h3>
+<b>Auteur : </b>
+<?php 
+print $this->escapeHtml($inventaire->auteur); //14?>
+<br/>
+<b>Epoque : </b>
+<?php
+print $this->escapeHtml($inventaire->epoque); //15?>
+<br/>
+<b>Usage : </b>
+<?php
+print $this->escapeHtml($inventaire->usage); //16?>
+<br/>
+<b>Provenance : </b>
+<?php
+print $this->escapeHtml($inventaire->provenance); //17?>
+<br/>
+<b>Observations : </b>
+<?php
+print $this->escapeHtml($inventaire->observations); //18?>
+<br/>
+<?php
+?>
+<hr />
+</div>
+<p class="btn-group">
+    <a class="btn btn-info" href="<?php echo $this->url('inventaire', array());?>">Revenir à la liste des objets</a>
+    <?php if (!$inventaire->validated) { ?> 
+		<a  class="btn btn-success" href="<?php echo $this->url('inventaire',
+		array('action'=>'edit', 'id' => $inventaire->id));?>">Modifier</a>
+		<a  class="btn btn-success" href="<?php echo $this->url('inventaire',
+		array('action'=>'delete', 'id' => $inventaire->id));?>">Supprimer</a>
+		<a  class="btn btn-warning" href="<?php echo $this->url('inventaire',
+		array('action'=>'validate', 'id' => $inventaire->id));?>">Valider</a>
+	<?php } ?>
+</p>
+

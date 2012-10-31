@@ -1,0 +1,80 @@
+<?php
+// module/Editions/view/editions/editions/test-pdf.phtml:
+
+?>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<head></head>
+<body>
+<script type="text/php">
+    if ( isset($pdf) ) {
+        $font = Font_Metrics::get_font("helvetica");
+		$mm2coords = 2.835;
+        $pdf->page_text(190 * $mm2coords, 282 * $mm2coords, "{PAGE_NUM}/{PAGE_COUNT}", $font, 8, array(0,0,0));
+
+		$x = 15;
+		$y = 20;
+		$size = 8;
+		$font = Font_Metrics::get_font("helvetica");
+		$color = array(0,0,0);
+		$line_height = $pdf->get_font_height($font, $size) + 3;
+
+		$longtext = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur porta, odio vitae semper vulputate, risus lorem auctor nisl, vel bibendum augue augue a tortor. Nullam turpis lorem, tempor eu dignissim quis, auctor et nisi. Nulla eget ligula turpis. Donec sed eros sit amet velit ornare feugiat. Fusce rutrum pharetra diam, at vulputate ligula tristique quis. Praesent bibendum vehicula justo, non aliquam justo ullamcorper et. Phasellus non ante quis magna viverra suscipit nec in tellus. Praesent vel lorem ut neque suscipit interdum sit amet ac erat. Cras egestas, ipsum id cursus pretium, felis lectus malesuada sem, at feugiat mi erat nec ipsum. Aliquam a massa dapibus neque consectetur fringilla. Sed condimentum mattis hendrerit.';
+		$lines = array(
+			'Inventaire '
+		);
+
+		$linetext = '';
+		while (strlen($longtext) > 0) {
+			while ($pdf->get_text_width($linetext, $font, $size) < (520-($x*2)) && strlen($longtext) > 0) {
+				if ($pdf->get_text_width($linetext . substr($longtext, 0, strpos($longtext, ' ')+1), $font, $size) > (520-($x*2))) { break; }
+				$linetext .= substr($longtext, 0, strpos($longtext, ' ')+1);
+				$longtext = substr($longtext, strpos($longtext, ' ')+1);
+			}
+			$lines[] = $linetext;
+			$linetext = '';
+		}
+
+		while ($line = array_shift($lines)) {
+			$line_y = 815 - $y - ( $line_height * count($lines));
+			$pdf->text($x, $line_y, $line, $font, $size, $color);
+		}
+	}
+</script>
+</script>
+<?php 
+$title = 'Editions';
+$this->headTitle($title);
+?>
+<!-- <h1><?php echo $this->escapeHtml($title); ?></h1> -->
+
+<p>
+<div class="row">
+		<div class="hero-unit">
+			<h1>Imprimer</h1>
+			<p>L'impression de votre inventaire est une obligation légale qui répond à des impératifs formels. Cette application
+			vous permet d'y répondre avec style.<br/>
+			Paramétrez finement la couverture utilisée et la mise en page de votre inventaire à l'aide des outils ci-dessous.</p>
+		</div>
+</div>
+<div class="row">
+	<div class="span2">
+		<h1>Couverture</h1>
+		<p><img src="<?php print $backgroundPdfCapture ?>" /></p>
+		<p>
+			<a  class="btn btn-success btn-small" href="<?php echo $this->url('editions',
+				array('action' => 'cover'));?>">modifier la couverture</a> 
+		</p>
+	</div>
+	<div class="span8">
+		<h1>Pages de l'inventaire</h1>
+		<p>Afficher, générer ou regénérer</p>
+			<a  class="btn btn-info btn-small" href="<?php echo $this->url('editions',
+				array('action' => 'view'));?>">afficher</a> 
+			<a  class="btn btn-success btn-small" href="<?php echo $this->url('editions',
+				array('action' => 'generate'));?>">générer</a> 
+		
+	</div>
+</div>
+</body>
+</html>
