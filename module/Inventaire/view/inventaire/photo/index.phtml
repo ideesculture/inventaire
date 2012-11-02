@@ -20,7 +20,7 @@ $this->headTitle($title);
 		} else {
 			?>
 			Vous n'êtes pas identifié 
-			<a class="btn btn-small btn-group btn-info" href="/">connexion</a>
+			<a class="btn btn-small btn-info" href="/">connexion</a>
 		<?php } ?>
 		</span>
 	</div>
@@ -35,7 +35,7 @@ $this->headTitle($title);
 	      <div style="height:200px;text-align:center;">
 	      <div style="max-height:200px;margin:auto;">
       		<a href="/inventaire/view/<?php print $photo->inventaire_id;?>" title="<?php echo $this->escapeHtml($photo->designation);?>">
-	      	<img style="max-width:320px;max-height:100%;" src="<?php print "/files/assets/".$this->escapeHtml($photo->file);?>" alt="image">
+	      	<img style="max-width:320px;max-height:100%;" class="img-rounded" src="<?php print "/files/assets/".$this->escapeHtml($photo->file);?>" alt="image">
 	      	</a>
 	      </div></div>
 	      <div style="height:60px;">

@@ -1,0 +1,112 @@
+<?php
+// module/Inventaire/view/inventaire/inventaire/add.phtml:
+
+$title = 'Ajouter un objet';
+$this->headScript()->appendScript("
+		      
+      // liste des onglets
+      var onglets = [\"form-edit-block1\",\"form-edit-block2\",\"form-edit-block3\"];
+
+      function afficheOnglet( onglet ){
+        // s'assurer d'abord que les onglets sont tous masqués
+        for(i=0; i < onglets.length; i++){
+          var obj = document.getElementById(onglets[i]);
+		  obj.className = \"form-edit-block\";
+          obj.style.display = \"none\";
+        }
+        // afficher ensuite l'onglet qui nous intéresse
+        var obj = document.getElementById(onglet);
+        obj.style.display = \"block\";
+     	}
+      
+		function afficheTousLesOnglets(){
+        // s'assurer d'abord que les onglets sont tous masqués
+        	for(i=0; i < onglets.length; i++){
+         	  var obj = document.getElementById(onglets[i]);
+        	  obj.style.display = \"block\";
+			  obj.className = \"form-edit-block-tous\"; 
+	        }
+     	}
+		
+		",
+    $type = 'text/javascript');
+$this->headTitle($title);
+?>
+
+
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('inventaire', array('action' => 'add')));
+$form->prepare();
+
+echo $this->form()->openTag($form);
+echo $this->formHidden($form->get('id'));
+?>
+
+<div class="accordion" id="accordion">
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+        Rubriques relatives au statut juridique des biens et aux conditions de leur acquisition
+      </a>
+    </div>
+    <div id="collapseOne" class="accordion-body collapse in">
+      <div class="accordion-inner">
+        <?php 
+		//echo $this->formLabel($form->get('numinv')); //1
+		//echo $this->formInput($form->get('numinv')); //1
+		//echo $this->formElementErrors($form->get('numinv')); //1
+		//echo $this->ztbFormElement($form->get('numinv'));
+		echo $this->formRow($form->get('mode_acquisition')); //2
+		echo $this->formRow($form->get('donateur')); //3
+		echo $this->formRow($form->get('date_acquisition')); //4
+		echo $this->formRow($form->get('avis')); //5
+		echo $this->formRow($form->get('prix')); //6
+		echo $this->formRow($form->get('date_inscription')); //7
+		?>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+        Rubriques portant description des biens
+      </a>
+    </div>
+    <div id="collapseTwo" class="accordion-body collapse">
+      <div class="accordion-inner">
+        <?php 
+		echo $this->formRow($form->get('designation')); //8
+		echo $this->formRow($form->get('inscription')); //9
+		echo $this->formRow($form->get('materiaux')); //10
+		echo $this->formRow($form->get('techniques')); //11
+		echo $this->formRow($form->get('mesures')); //12
+		echo $this->formRow($form->get('etat')); //13
+		?>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-group">
+    <div class="accordion-heading">
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+        Rubriques complémentaires
+      </a>
+    </div>
+    <div id="collapseThree" class="accordion-body collapse">
+      <div class="accordion-inner">
+		<?php 
+		echo $this->formRow($form->get('auteur')); //14
+		echo $this->formRow($form->get('epoque')); //15
+		echo $this->formRow($form->get('usage')); //16
+		echo $this->formRow($form->get('provenance')); //17
+		echo $this->formRow($form->get('observations')); //18
+		?>
+      </div>
+    </div>
+  </div>
+</div> 
+<?php 
+echo $this->formSubmit($form->get('submit'));
+echo $this->form()->closeTag();

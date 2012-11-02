@@ -96,13 +96,13 @@ class InventaireTable extends AbstractTableGateway
 		$select = $sql->select();
 		$select->from($this->table)
 		->join('photo', 'inventaire.id = photo.inventaire_id', array('credits','file'),'left');
-		
+		$where = "";
 		if(is_array($inventaireSearchArray) && count($inventaireSearchArray)>0) {
 			foreach($inventaireSearchArray as $key => $value) {
 				if ($key == "submit") break;
-				if ($key == "year") {
+				/*if ($key == "year") {
 					$where .= "YEAR(date_inscription) = ".$value;
-				}
+				}*/
 				if ($where) $where .= " AND ";
 				if(strpos($key,"date_") === 0) {
 					// Traitement filtre par dates limites mini et/ou maxi : le type date est récupéré par le début du nom de champ date_
@@ -132,7 +132,7 @@ class InventaireTable extends AbstractTableGateway
 			
 		}
 		// TODO : construire ici le filtre WHERE de la requête
-		$select->where($where);
+		if ($where != "") {$select->where($where);}
 		
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();die();

@@ -9,7 +9,7 @@ $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
 
-<?php if($photo->file) :?>
+<?php if(isset($photo->file)) :?>
 <span style="float:right;"><img style="width:300px;" src="/files/assets/<?php print $this->escapeHtml($photo->file); //1 ?>"></span>
 <?php endif ?>
 <div id="form-edit-block1" style="display:block">
@@ -36,8 +36,7 @@ print $this->dateFormat(new DateTime($inventaire->date_acquisition), IntlDateFor
 print $this->escapeHtml($inventaire->avis); //5?>
 <br/>
 <b>Prix : </b>
-<?php
-print $this->currencyFormat($inventaire->prix); //6 ?>
+<?php if(((int) $inventaire->prix)>0) print $this->currencyFormat((int) $inventaire->prix); //6 ?>
 <br/>
 <b>Date d'inscription : </b>
 <?php

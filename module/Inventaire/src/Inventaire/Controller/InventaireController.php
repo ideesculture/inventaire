@@ -9,7 +9,6 @@ use Zend\View\Model\ViewModel;
 // définition du modèle et des formulaires et des validateurs pour les formulaires
 use Inventaire\Model\Inventaire;
 use Inventaire\Form\InventaireForm; 
-use Inventaire\Form\InventaireSearchForm;
 
 // définition de la classe pour la génération PDF
 use DOMPDFModule\View\Model\PdfModel;
@@ -71,8 +70,7 @@ class InventaireController extends AbstractActionController
 		$paginator = new \Zend\Paginator\Paginator($iteratorAdapter);
 		$paginator->setCurrentPageNumber($page);
 		$paginator->setItemCountPerPage(10);
-		
-		return new ViewModel(array(
+		$view = new ViewModel(array(
 				'auth' => array(
 						'logged' => $this::isLogged(),
 						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
@@ -84,6 +82,8 @@ class InventaireController extends AbstractActionController
 				'fieldsname' => $this->getInventaireTable()->getFieldsHumanName(),
 				'page'=>$page
 		));
+		
+		return $view;
 	}
 
 	public function listingAction()
@@ -174,10 +174,10 @@ class InventaireController extends AbstractActionController
 		return $pdf;
 	}
 	
-	public function addAction()
+	public function addActionBak()
     {
         $form = new InventaireForm();
-        $form->get('submit')->setValue('Add');
+        $form->get('submit')->setValue('Ajouter');
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -196,6 +196,28 @@ class InventaireController extends AbstractActionController
         return array('form' => $form);
     }
 	
+	public function addAction()
+    {
+        $form = new InventaireForm();
+        //$form->get('submit')->setValue('Ajouter');
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+        	$inventaire = new Inventaire();
+            $form->setInputFilter($inventaire->getInputFilter());
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                $inventaire->exchangeArray($form->getData());
+                $this->getInventaireTable()->saveInventaire($inventaire);
+
+                // Redirect to list of inventaires
+                return $this->redirect()->toRoute('inventaire');
+            }
+        }
+        return array('form' => $form, );
+    }
+	
     public function editAction()
     {
         $id = (int) $this->params()->fromRoute('id', 0);
@@ -205,10 +227,13 @@ class InventaireController extends AbstractActionController
             ));
         }
         $inventaire = $this->getInventaireTable()->getInventaire($id);
-
+        
+        // Reusing add.phmtl template
+        $return = new ViewModel();
+        
         $form  = new InventaireForm();
         $form->bind($inventaire);
-        $form->get('submit')->setAttribute('value', 'Modifier');
+        $form->get('submitBtn')->setAttribute('value', 'Modifier');
 
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -222,10 +247,11 @@ class InventaireController extends AbstractActionController
                 return $this->redirect()->toRoute('inventaire');
             }
         }
-        return array(
-            'id' => $id,
-            'form' => $form,
-        );
+        $return->setVariable('form', $form);
+        $return->setVariable('id', $id);
+        $return->setTemplate("inventaire/inventaire/add.phtml");
+        
+        return $return;
     }
     
     public function viewAction()

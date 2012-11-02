@@ -47,7 +47,8 @@ class SearchController extends AbstractActionController
 				// Insertion de l'année dans le tableau des critères de recherche
 			}
 		}
-		$inventaireSearchArray = array_merge($inventaireSearchArray, array("year" => $year));
+		$inventaireSearchArray = array();
+		//$inventaireSearchArray = array_merge($inventaireSearchArray, array("year" => $year));
 		
     	// TRAITEMENT DES RESULTATS
     	//$inventaireSearchArray = array("fulltext" => "texte plein", "date_inscription" => array("min" => "2010-01-01", "max" => "2012-12-31"), "date_acquisition" => array("min" => "1998-01-01"), description => "poil à gratter");

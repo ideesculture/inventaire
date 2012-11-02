@@ -7,7 +7,8 @@ return array(
     	'Application',
         'Inventaire',
         'Editions',
-    	'DOMPDFModule'    		
+    	'DOMPDFModule',
+    	'DluTwBootstrap'
     ),
     'module_listener_options' => array(
         'config_glob_paths'    => array(
