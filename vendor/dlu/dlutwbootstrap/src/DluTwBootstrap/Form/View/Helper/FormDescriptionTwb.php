@@ -44,9 +44,19 @@ class FormDescriptionTwb extends AbstractFormViewHelper
         $html           = '';
         //Description
         if($element->getOption('description')) {
-            $html   = '<p class="help-block">' . $escapeHelper($element->getOption('description')) . '</p>';
+        	$html   = $element->getOption('description');
+        	if(!$this->hasHtml($html)) {
+				$html = "<p class='help-box'>".$html."</p>";        		
+        	}
         }
         return $html;
+    }
+
+    private function hasHtml($str){
+    	//we compare the length of the string with html tags and without html tags
+    	if(strlen($str) != strlen(strip_tags($str)))
+    		return true;
+    	return false;
     }
 
     /**

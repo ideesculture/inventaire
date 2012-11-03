@@ -1,0 +1,188 @@
+<?php
+// module/Editions/view/editions/editions/test-pdf.phtml:
+define("__LOCALE__","fr_FR");
+$this->plugin("currencyformat")->setCurrencyCode("EUR")->setLocale(__LOCALE__);
+
+if (!isset($titre)) $titre = 'Mon depot';
+
+?>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<head>
+<style type="text/css">
+@page {margin-top: 1cm;margin-left: 1cm;margin-bottom:3cm;margin-right: 1cm;}
+body {font:12pt JosefinSans, helvetica;}
+h1, h2, h3, h4 {font-family:PaytoneOne, helvetica;}
+p {margin:0 0 3 0;}
+.photo {display:block;float:left;}
+.label {padding:2pt;background:#f5f5f5;font-size:8pt;font-weight:normal;}
+.hero-unit{display:block;padding:3pt;margin:2pt;margin-bottom:10pt;border-bottom:1pt solid gray;}
+.hero-unit h1, .hero-unit h2, .hero-unit h3, .hero-unit h4 {margin:0px;line-height:0.8;letter-spacing:-1pt;}
+.hero-unit h1 {margin-bottom:6pt;font-size:25pt;}
+.hero-unit h2 {margin-bottom:5pt;font-size:20pt;}
+.hero-unit h3 {margin-bottom:4pt;font-size:17pt;}
+.hero-unit h4 {margin-bottom:3pt;font-size:14pt;}
+.hero-unit p{font-size:10pt;line-height:10pt;}
+#page-de-titre {font-size:7pt;}
+#page-de-titre .placeholder {background:#f5f5f5;margin-top:2pt;margin-bottom:2pt;padding:5pt;height:1.5cm;}
+#page-de-titre DIV {width:4.2cm;}
+#page-de-titre H3 {color:#f5f5f5;font-size:9pt;line-height:5pt;margin:0pt;padding:0pt;}
+#page-de-titre H4.surtitre {color:#d5d5d5;font-size:18pt;line-height:7pt;letter-spacing:3pt;margin:0pt;padding:0pt;}
+#page-de-titre #titre {position:absolute;top:6cm;left:5cm;width:9cm;font-size:9pt;}
+#page-de-titre #titre H1 {color:#68B604;}
+#page-de-titre #dates-registre {position:absolute;top:12cm;left:5cm;width:9cm;font-size:9pt;}
+#page-de-titre #dates-registre H3,
+#page-de-titre #dates-registre H4 {display:none;}
+#page-de-titre #nom-adresse-musee {position:absolute;bottom:0cm;left:0cm;}
+#page-de-titre #nom-adresse-personnemorale {position:absolute;bottom:0cm;left:4.75cm;}
+#page-de-titre #lieu-conservation {position:absolute;bottom:0cm;left:9.45cm;}
+#page-de-titre #paraphe-responsable-scientifique {position:absolute;bottom:0cm;left:14.2cm;}
+.center {text-align:center;}
+.fin-impression {background:gray;text-align:right;color:white;font-size:7pt;}
+.page-break {page-break-before: always;}
+</style>
+</head>
+<body>
+
+<script type="text/php">
+    if ( isset($pdf) ) {
+        $font = Font_Metrics::get_font("JosefinSans");
+		$mm2coords = 2.835;
+        $pdf->page_text(194 * $mm2coords, 282 * $mm2coords, "{PAGE_NUM}/{PAGE_COUNT}", $font, 8, array(0,0,0));
+
+		$x = 28;
+		$y = 20;
+		$size = 8;
+		$font = Font_Metrics::get_font("JosefinSans");
+		$color = array(0,0,0);
+		$line_height = $pdf->get_font_height($font, $size) + 3;
+
+		$longtext = utf8_encode("L'application Depot est actuellement en cours de développement et vise à offrir un programme complémentaire à CollectiveAccess pour gérer l'depot des collections. Les recommandations du Service des Musées de France sont en cours d'implémentation dans ce programme. Pour toute information, merci de nous contacter par email à contact@ideesculture.com.");
+		$lines = array(
+			'Application Depot - <?php print $titre; ?>' 
+		);
+
+		$linetext = '';
+		while (strlen($longtext) > 0) {
+			while ($pdf->get_text_width($linetext, $font, $size) < (520-($x*2)) && strlen($longtext) > 0) {
+				if ($pdf->get_text_width($linetext . substr($longtext, 0, strpos($longtext, ' ')+1), $font, $size) > (520-($x*2))) { break; }
+				$linetext .= substr($longtext, 0, strpos($longtext, ' ')+1);
+				$longtext = substr($longtext, strpos($longtext, ' ')+1);
+			}
+			$lines[] = $linetext;
+			$linetext = '';
+		}
+
+		while ($line = array_shift($lines)) {
+			$line_y = 815 - $y - ( $line_height * count($lines));
+			// Note : $pdf->page_text envoie le texte sur toutes les pages, $pdf->text envoie le texte sur la page en cours
+			$pdf->page_text($x, $line_y, $line, $font, $size, $color);
+		}
+	}
+</script>
+<?php 
+$this->headTitle($titre);
+?>
+
+<div id="page-de-titre">
+	<div id="titre">
+		<?php 
+		include(__DIR__."/../../../../../public/files/editions/insertions-pdf-depot/titre.html");
+		?>
+	</div>
+	<div id="dates-registre">
+		<?php 
+		include(__DIR__."/../../../../../public/files/editions/insertions-pdf-commun/dates-registre.html");
+		?>
+	</div>
+	<div id="nom-adresse-musee">
+		<?php 
+		include(__DIR__."/../../../../../public/files/editions/insertions-pdf-commun/nom-adresse-musee.html");
+		?>
+	</div>
+	<div id="nom-adresse-personnemorale">
+		<?php 
+		include(__DIR__."/../../../../../public/files/editions/insertions-pdf-commun/nom-adresse-personnemorale.html");
+		?>
+	</div>
+	<div id="lieu-conservation">
+		<?php 
+		include(__DIR__."/../../../../../public/files/editions/insertions-pdf-depot/lieu-conservation.html");
+		?>
+	</div>
+	<div id="paraphe-responsable-scientifique">
+		<?php 
+		include(__DIR__."/../../../../../public/files/editions/insertions-pdf-depot/paraphe-responsable-scientifique.html");
+		?>
+	</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- page blanche en dos de page de titre -->
+
+<div class="page-break"></div>
+
+<div id="pages-liminaires">
+	<div id="contenu">
+		<?php 
+		include(__DIR__."/../../../../../public/files/editions/insertions-pdf-depot/pages-liminaires.html");
+		?>
+	</div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- page blanche après les pages liminaires -->
+
+<div class="page-break"></div>
+
+<?php
+$labels = array("numinv" => "Numéro d'depot");
+foreach ($depots as $depot) { ?>
+	<div class="hero-unit">
+		<?php if ($depot->file) : ?>
+    <div style="clear:both; position:relative;">
+        <div style="position:absolute; left:0pt; width:130pt;">
+        	<p><span class="label">Numéro d'depot</span></p>
+        	<h4><?php print $this->escapeHtml($depot->numinv); //1 ?></h4>
+            <p><img src="<?php print $imagepath; ?>/files/assets/<?php print $this->escapeHtml($depot->file); //1 ?>" style="width:120pt;"></p>
+			<p><span class="label">Date d'acquisition</span></p>
+			<p><?php print $this->dateFormat(new DateTime($depot->date_acquisition), IntlDateFormatter::LONG, IntlDateFormatter::NONE, __LOCALE__); //4 ?></p>
+			</div>
+		<?php endif;?>
+    	<div style="margin-left:134pt;">
+			<p><span class="label">Désignation</span></p>
+			<h3><?php print $this->escapeHtml($depot->designation); //8?></h3>
+    		<p><span class="label">Mode d'acquisition</span>  <?php print $this->escapeHtml($depot->mode_acquisition); //2?></p>
+			<p><span class="label">Donateur</span> <?php print $this->escapeHtml($depot->donateur); //3?></p>
+			<p><span class="label">Prix</span> <?php print $this->currencyFormat($depot->prix); //6 ?></p>
+			<p><span class="label">Avis</span> <?php print $this->escapeHtml($depot->avis); //5?></p>
+			<p><span class="label">Inscription</span> <?php print $this->escapeHtml($depot->inscription); //9?></p>
+			<p><span class="label">Date d'inscription</span> <?php print $this->dateFormat(new DateTime($depot->date_inscription), IntlDateFormatter::LONG, IntlDateFormatter::NONE, __LOCALE__); //7 ?></p> 
+			<p><span class="label">Matériaux</span>  <?php print $this->escapeHtml($depot->materiaux); //10?></p>
+			<p><span class="label">Techniques</span> <?php print $this->escapeHtml($depot->techniques); //11?></p>
+			<p><span class="label">Mesures</span> <?php print $this->escapeHtml($depot->mesures); //12?></p>
+			<p><span class="label">Etat</span> <?php print $this->escapeHtml($depot->etat); //13?></p>
+			<p><span class="label">Auteur</span>  <?php print $this->escapeHtml($depot->auteur); //14 ?></p>
+			<p><span class="label">Epoque</span>  <?php print $this->escapeHtml($depot->epoque); //15 ?></p>
+			<p><span class="label">Usage</span>  <?php print $this->escapeHtml($depot->usage); //16 ?></p>
+			<p><span class="label">Provenance</span> <?php print $this->escapeHtml($depot->provenance); //17 ?></p>
+			<p><span class="label">Observations</span> <?php print $this->escapeHtml($depot->observations); //18 ?></p>
+   	 </div>
+	</div>
+	</div>
+<?php 
+}
+?>
+<p class="fin-impression">
+	fin de l'impression
+</p>
+
+<div class="page-break"></div>
+
+<!-- page blanche après la fin de l'impression -->
+
+<div id="pages-libres-fin-registre">
+<?php include(__DIR__."/../../../../../public/files/editions/insertions-pdf-commun/pages-blanches-fin-registre.html"); ?>
+</div>

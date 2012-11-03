@@ -2,9 +2,9 @@
 define("__LOCALE__","fr_FR");
 $this->plugin("currencyformat")->setCurrencyCode("EUR")->setLocale(__LOCALE__);
 
-// module/Inventaire/view/inventaire/inventaire/view.phtml:
+// module/Depot/view/depot/depot/view.phtml:
 
-$title = 'Afficher un objet';
+$title = 'Afficher un dépôt';
 $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
@@ -32,15 +32,15 @@ $this->headTitle($title);
 <div class="row">
 	<div class="span12">
 		<p class="btn-group">
-		    <a class="btn btn-info" href="<?php echo $this->url('depot', array());?>">Revenir à la liste des objets</a>
+		    <a class="btn btn-info" href="<?php echo $this->url('depot', array());?>"><i class"icon-list-alt icon-white"></i> Revenir à la liste des objets</a>
 		    <?php if (!$depot->validated) { ?> 
 				<a  class="btn btn-success" href="<?php echo $this->url('depot',
 				array('action'=>'edit', 'id' => $depot->id));?>"><i class="icon-pencil icon-white"></i> Modifier</a>
 				<a  class="btn btn-success" href="<?php echo $this->url('depot',
 				array('action'=>'delete', 'id' => $depot->id));?>"><i class="icon-remove icon-white"></i> Supprimer</a>
 				<a  class="btn btn-warning" href="<?php echo $this->url('depot',
-				array('action'=>'validate', 'id' => $depot->id));?>"><i class="icon-check icon-white"> Valider</a>
+				array('action'=>'validate', 'id' => $depot->id));?>"><i class="icon-check icon-white"></i> Valider</a>
 			<?php } ?>
-		</p>
+		 </p>
 	</div>
 </div>

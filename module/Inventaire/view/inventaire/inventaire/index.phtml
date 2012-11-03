@@ -90,13 +90,14 @@ $this->headTitle($title);
 		    </td>
 		</tr>
 		<?php endforeach; ?>
-		<tr>
-			<td>
-			<?php echo $this->paginationControl($inventaires,
+		</table>
+<div class="row">
+	<div class="span6">
+		<?php echo $this->paginationControl($inventaires,
                                     'Sliding',
                                     'inventaire/inventaire/my_pagination_control', array('route'=>'inventaire','action'=>'index'));?>
-            </td>
-            <td colspan="3">
+    </div>
+    <div class="span6">
             <?php if (count($yearsOptions)>2) :?>
             	<span class="pull-right">
 				 <div class="btn-group"><a class="btn btn-info btn-small" href="<?php print $this->url('inventaire');?>">Toutes les années</a>
@@ -108,9 +109,6 @@ $this->headTitle($title);
 				</div>
 				</span>
             <?php endif ?>
-			</td>	
-        </td></tr>
-		</table>
 	</div>
 </div>
 <?php 
@@ -119,7 +117,7 @@ if($auth["logged"]) {
 <div class="row">
 	<div class="span6">
 		<div class="btn-group">
-		<a class="btn btn-success btn-large" href="<?php echo $this->url('inventaire', array('action'=>'add'));?>">Ajouter un objet</a>
+		<a class="btn btn-success btn-large" href="<?php echo $this->url('inventaire', array('action'=>'add'));?>"><i class="icon-plus icon-white"></i> Ajouter un objet</a>
 		<a class="btn btn-success btn-large" href="<?php echo $this->url('inventaire', array('action'=>'listingExportPdf'));?>">Générer le PDF</a>
 		<a class="btn btn-info btn-large" href="<?php echo $this->url('photo', array('action'=>'index'));?>">Afficher les photos</a>
 		</div>

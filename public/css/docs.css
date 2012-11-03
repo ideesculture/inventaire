@@ -74,6 +74,7 @@ div.container a.brand {
 	clear: both;
 	visibility:hidden;
 }
+body {background:#E7E5DD;}
 /*
 body {
   background: #a9a9a9; /* Old browsers */
@@ -85,16 +86,69 @@ body {
 /*  background: linear-gradient(45deg,  #eeeeee 0%,#fefff3 100%); /* W3C */
 /*  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#fefff3',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 /*} */
-.hero-unit {
+/*.hero-unit {
 	background: url("../images/forme-vecto-blanc.png") no-repeat bottom right #eeeeee ;
+}*/
+.hero-unit {
+	/* Anciens navigateurs */
+	background: #814002;
+	-o-background-size: 100% 100%;
+	-moz-background-size: 100% 100%;
+	-webkit-background-size: 100% 100%;
+	background-size: 100% 100%;
+	/* Navigateurs récents */
+	background: -webkit-gradient(
+		linear,
+		left bottom, right top,
+		from(#6f2702),
+		to(#814002)
+	);
+	background: -webkit-linear-gradient(
+		left bottom,
+		#6f2702,
+		#814002
+	);
+	background: -moz-linear-gradient(
+		left bottom,
+		#6f2702,
+		#814002
+	);
+	background: -o-linear-gradient(
+		left bottom,
+		#6f2702,
+		#814002
+	);
+	background: linear-gradient(
+		left bottom,
+		#6f2702,
+		#814002
+	);
+	color:white;
+	border-radius:0px 0px 8px 8px;
+	padding:45px 60px 30px 60px;
+}
+.hero-unit .blue {
+	color:#49AFCD;	
+}
+.hero-unit IMG {
+	margin-right:15px;
+	margin-left:-15px;
+	margin-bottom:-15px;
+	margin-top:0px;
 }
 /*body {background:url("../images/paper.jpg") repeat top left;}*/
-HTML, body, container {min-height:100%;}
-footer {position:relative;bottom:0px;color:gray;margin-bottom:-10px;padding:10px 10px 30px 10px;background:url("../images/cuir.png") repeat-x top left;border-radius: 10px 10px 0 0 ;}
+HTML, body, .container {min-height:100%;}
+footer {position:relative;bottom:0px;color:gray;margin-bottom:-10px;padding:10px 10px 30px 10px;background:url("../images/cuir.png") repeat-x top left;border-radius: 10px 10px 0 0;box-shadow: 0px 0px 7px #000;}
 footer A {color:lightgray;}
 
 .form-actions {
 	background:none;
+}
+
+table {
+	background:white;
+	border-radius:8px;
+	box-shadow: 0px 0px 10px #aaa;
 }
 
 /* Ajustement Responsive design
@@ -112,7 +166,7 @@ footer A {color:lightgray;}
 		
 	.hero-unit P {padding:10px;font-size:0.7em;line-height:1.2em;}
 	
-	body {font-size:0.8em;line-height: 1.1em;}
+	body {font-size:0.8em;line-height: 1.2em;}
 	.btn-group, A.btn {font-size:0.85em;line-height: 1.1em;}
 	fieldset legend {font-size:1.4em;line-height:1.2em;}
 	form p.help-block {display:none;}

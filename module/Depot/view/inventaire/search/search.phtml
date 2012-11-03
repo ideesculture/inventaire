@@ -63,31 +63,30 @@ $this->headTitle($title);
 			</td>
 			<td>
 				<span class="pull-right">
-					<div class="btn-group">
 					<?php
+			
 					if($auth["logged"]) {
 						// Si l'enregistrement n'est pas validé, on peut le modifier ou le valider
 						if (!$inventaire->validated) { ?> 
 							<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'edit', 'id' => $inventaire->id));?>" title="Modifier"><i class="icon-pencil icon-white"></i></a>
+							array('action'=>'edit', 'id' => $inventaire->id));?>">Modifier</a>
 				        	<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
-				            array('action'=>'delete', 'id' => $inventaire->id));?>" title="Supprimer"><i class="icon-remove icon-white"></i></a>
+				            array('action'=>'delete', 'id' => $inventaire->id));?>">Supprimer</a>
 							<a  class="btn btn-warning btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'validate', 'id' => $inventaire->id));?>" title="Valider"><i class="icon-check icon-white"></i></a>
+							array('action'=>'validate', 'id' => $inventaire->id));?>">Valider</a>
 						<?php
 						// Si l'enregistrement est validé, aucune modification possible
 						} else { 
 						?>
-							<a  class="btn disabled btn-small" title="Modifier"><i class="icon-pencil icon-white"></i></a>
-							<a  class="btn disabled btn-small" title="Supprimer"><i class="icon-remove icon-white"></i></a>
-							<a  class="btn disabled btn-small" title="Valider"><i class="icon-check icon-white"></i></a>
+							<a  class="btn disabled btn-small">Modifier</a>
+							<a  class="btn disabled btn-small">Supprimer</a>
+							<a  class="btn disabled btn-small">Valider</a>
 						<?php 
 						}
 					}
 					?>
-					</div>
 				</span>
-			</td>
+		    </td>
 		</tr>
 		<?php endforeach; ?>
 		<tr>

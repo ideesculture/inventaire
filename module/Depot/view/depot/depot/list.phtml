@@ -1,0 +1,17 @@
+<?php
+// module/Depot/view/depot/depot/index.phtml:
+
+$title = 'Mon depot';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+<?php if (count($depots)):
+	foreach (depots as $depot): ?>
+ 		 <li><?php var_dump($depot); ?></li>
+	<?php endforeach; ?>
+	</ul>
+<?php endif; ?>
+
+<?php echo $this->paginationControl($this->paginator,
+                                    'Sliding',
+                                    'my_pagination_control', array('route' => 'depot')); ?>

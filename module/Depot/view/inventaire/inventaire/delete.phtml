@@ -1,0 +1,26 @@
+<?php
+// module/Inventaire/view/inventaire/inventaire/delete.phtml:
+
+$title = 'Supprimer un objet';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
+<p>Etes vous sur de vouloir supprimer
+    <b><?php echo $this->escapeHtml($inventaire->designation); ?></b>, correspondant au numéro d'inventaire
+    <b><?php echo $this->escapeHtml($inventaire->numinv); ?></b> ?
+</p>
+<p>Cette modification est définitive.</p>
+<?php
+$url = $this->url('inventaire', array(
+    'action' => 'delete',
+    'id'     => $this->id,
+));
+?>
+<form action="<?php echo $url; ?>" method="post">
+<div>
+    <input type="hidden" name="id" value="<?php echo (int) $inventaire->id; ?>" />
+    <input type="submit" name="del" value="Yes" />
+    <input type="submit" name="del" value="No" />
+</div>
+</form>

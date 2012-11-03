@@ -8,7 +8,8 @@ return array(
         'Inventaire',
         'Editions',
     	'DOMPDFModule',
-    	'DluTwBootstrap'
+    	'DluTwBootstrap',
+    	'Depot'
     ),
     'module_listener_options' => array(
         'config_glob_paths'    => array(

@@ -1,21 +1,21 @@
 <?php
-// module/Inventaire/src/Inventaire/Controller/InventaireController.php:
-namespace Inventaire\Controller;
+// module/Depots/src/Depots/Controller/DepotController.php:
+namespace Depot\Controller;
 
 // définition contrôleur, vue
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
 // définition du modèle et des formulaires et des validateurs pour les formulaires
-use Inventaire\Model\Inventaire;
-use Inventaire\Form\InventaireForm; 
+use Depot\Model\Depot;
+use Depot\Form\DepotForm; 
 
 // définition de la classe pour la génération PDF
 use DOMPDFModule\View\Model\PdfModel;
 
-class InventaireController extends AbstractActionController
+class DepotController extends AbstractActionController
 {
-	protected $inventaireTable;
+	protected $depotTable;
 	protected $photoTable;
 	
 	private function listingPHPExcel()
@@ -32,7 +32,7 @@ class InventaireController extends AbstractActionController
     	$sheet = $workbook->getActiveSheet();
 		
     	// Getting column headers from model, adding an additional column for validation
-    	$headers = $this->getInventaireTable()->getFieldsHumanName();
+    	$headers = $this->getDepotTable()->getFieldsHumanName();
     	$header_valid = array("validation" => "Validation");
     	$headers = array_merge($headers,$header_valid);
     	
@@ -44,11 +44,11 @@ class InventaireController extends AbstractActionController
     		$colonne++;
     	}
     	
-    	$inventaires = $this->getInventaireTable()->fetchAll($year);
+    	$depots = $this->getDepotTable()->fetchAll($year);
     	$ligne=2;
-    	foreach($inventaires as $inventaire) {
+    	foreach($depots as $depot) {
     		$colonne = "A";
-    		foreach($inventaire as $key => $field) {
+    		foreach($depot as $key => $field) {
     			$sheet->setCellValue($colonne.$ligne,$field);
     			$colonne++;
     		}
@@ -66,7 +66,7 @@ class InventaireController extends AbstractActionController
 		$page = (int) $this->params()->fromRoute('page', 1);
 		$year = (int) $this->params()->fromRoute('annee', "");
 
-		$iteratorAdapter = new \Zend\Paginator\Adapter\Iterator($this->getInventaireTable()->fetchAllFullInfosPaginator($year));
+		$iteratorAdapter = new \Zend\Paginator\Adapter\Iterator($this->getDepotTable()->fetchAllFullInfosPaginator($year));
 		$paginator = new \Zend\Paginator\Paginator($iteratorAdapter);
 		$paginator->setCurrentPageNumber($page);
 		$paginator->setItemCountPerPage(10);
@@ -75,13 +75,13 @@ class InventaireController extends AbstractActionController
 						'logged' => $this::isLogged(),
 						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
 						),
-				//'inventaires' => $this->getInventaireTable()->fetchAllFullInfos(), //$paginator,
-				'inventaires' => $paginator, //$paginator,
-				'yearsOptions' => $this->getInventaireTable()->getInventaireYearsAsOptions(),
-				'fields' => $this->getInventaireTable()->getFieldsName(),
-				'fieldsname' => $this->getInventaireTable()->getFieldsHumanName(),
+				'depots' => $paginator, //$paginator,
+				'yearsOptions' => $this->getDepotTable()->getDepotYearsAsOptions(),
+				'fields' => $this->getDepotTable()->getFieldsName(),
+				'fieldsname' => $this->getDepotTable()->getFieldsHumanName(),
 				'page'=>$page
 		));
+		
 		return $view;
 	}
 
@@ -92,19 +92,19 @@ class InventaireController extends AbstractActionController
 						'logged' => $this::isLogged(),
 						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
 						),
-				'inventaires' => $this->getInventaireTable()->fetchAll(),
+				'depots' => $this->getDepotTable()->fetchAll(),
 				'page' => $this->params()->fromRoute('page'),
 		));
 	}
 	
 	public function listAction()
 	{
-		$adapter = new \Zend\Paginator\Adapter\ArrayAdapter($this->getInventaireTable()->getArrayCopy());
+		$adapter = new \Zend\Paginator\Adapter\ArrayAdapter($this->getDepotTable()->getArrayCopy());
 		$paginator = new \Zend\Paginator\Paginator($adapter);
 		$paginator->setCurrentPageNumber($this->params()->fromRoute('page'));
 		
 		return new ViewModel(array(
-				'inventaires' => $paginator,
+				'depots' => $paginator,
 		));
 	}
 		
@@ -135,8 +135,8 @@ class InventaireController extends AbstractActionController
 	public function listingExportPdfAction()
 	{
 		$return = new ViewModel();
-		$return->setVariable('yearsOptions', $this->getInventaireTable()->getInventaireYearsAsOptions());
-		$return->setTemplate("inventaire/inventaire/listing-export-pdf-form.phtml");
+		$return->setVariable('yearsOptions', $this->getDepotTable()->getDepotsYearsAsOptions());
+		$return->setTemplate("depot/depot/listing-export-pdf-form.phtml");
 		
 		$request = $this->getRequest();
 		if ($request->isPost()) {
@@ -144,17 +144,17 @@ class InventaireController extends AbstractActionController
 			
 			if ($year != "-") {
 				$pdf = new PdfModel();
-				$pdf->setOption('filename', 'inventaire-contenu'); // Triggers PDF download, automatically appends ".pdf"
+				$pdf->setOption('filename', 'depot-contenu'); // Triggers PDF download, automatically appends ".pdf"
 				$pdf->setOption('paperSize', 'a4'); // Defaults to "8x11"
 				$pdf->setOption('paperOrientation', 'portrait'); // Defaults to "portrait"
-				$pdf->setVariable('inventaires', $this->getInventaireTable()->fetchAllFullInfos($year));
+				$pdf->setVariable('depots', $this->getDepotTable()->fetchAllFullInfos($year));
 				$pdf->setVariable('year', $year);
-				$pdf->setVariable('fields', $this->getInventaireTable()->getFieldsName());
-				$pdf->setVariable('fieldsname', $this->getInventaireTable()->getFieldsHumanName());
+				$pdf->setVariable('fields', $this->getDepotTable()->getFieldsName());
+				$pdf->setVariable('fieldsname', $this->getDepotTable()->getFieldsHumanName());
 				$pdf->setVariable('imagepath', __DIR__."/../../../../../public/");
 				return $pdf;
 			} else {
-            	return $this->redirect()->toRoute('inventaire', array( 'action' => 'listingExportPdf'));
+            	return $this->redirect()->toRoute('depot', array( 'action' => 'listingExportPdf'));
 			}
 			
 		}		
@@ -163,33 +163,33 @@ class InventaireController extends AbstractActionController
 	
 	public function listingExportPdf2Action()
 	{
-		//var_dump($inventaires);die();
+		//var_dump($depots);die();
 		$pdf = new ViewModel();
 		$pdf->setTerminal(true);
-		$pdf->setVariable('inventaires', $this->getInventaireTable()->fetchAllFullInfos());
-		$pdf->setVariable('fields', $this->getInventaireTable()->getFieldsName());
-		$pdf->setVariable('fieldsname', $this->getInventaireTable()->getFieldsHumanName());
+		$pdf->setVariable('depots', $this->getDepotTable()->fetchAllFullInfos());
+		$pdf->setVariable('fields', $this->getDepotTable()->getFieldsName());
+		$pdf->setVariable('fieldsname', $this->getDepotTable()->getFieldsHumanName());
 		$pdf->setVariable('imagepath', "");
 		return $pdf;
 	}
 	
 	public function addActionBak()
     {
-        $form = new InventaireForm();
+        $form = new DepotForm();
         $form->get('submit')->setValue('Ajouter');
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $inventaire = new Inventaire();
-            $form->setInputFilter($inventaire->getInputFilter());
+            $depot = new Depots();
+            $form->setInputFilter($depot->getInputFilter());
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $inventaire->exchangeArray($form->getData());
-                $this->getInventaireTable()->saveInventaire($inventaire);
+                $depot->exchangeArray($form->getData());
+                $this->getDepotTable()->saveDepots($depot);
 
-                // Redirect to list of inventaires
-                return $this->redirect()->toRoute('inventaire');
+                // Redirect to list of depots
+                return $this->redirect()->toRoute('depot');
             }
         }
         return array('form' => $form);
@@ -197,21 +197,21 @@ class InventaireController extends AbstractActionController
 	
 	public function addAction()
     {
-        $form = new InventaireForm();
+        $form = new DepotForm();
         //$form->get('submit')->setValue('Ajouter');
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-        	$inventaire = new Inventaire();
-            $form->setInputFilter($inventaire->getInputFilter());
+        	$depot = new Depot();
+            $form->setInputFilter($depot->getInputFilter());
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $inventaire->exchangeArray($form->getData());
-                $this->getInventaireTable()->saveInventaire($inventaire);
+                $depot->exchangeArray($form->getData());
+                $this->getDepotTable()->saveDepot($depot);
 
-                // Redirect to list of inventaires
-                return $this->redirect()->toRoute('inventaire');
+                // Redirect to list of depots
+                return $this->redirect()->toRoute('depot');
             }
         }
         return array('form' => $form, );
@@ -221,34 +221,34 @@ class InventaireController extends AbstractActionController
     {
         $id = (int) $this->params()->fromRoute('id', 0);
         if (!$id) {
-            return $this->redirect()->toRoute('inventaire', array(
+            return $this->redirect()->toRoute('depot', array(
                 'action' => 'add'
             ));
         }
-        $inventaire = $this->getInventaireTable()->getInventaire($id);
+        $depot = $this->getDepotTable()->getDepots($id);
         
         // Reusing add.phmtl template
         $return = new ViewModel();
         
-        $form  = new InventaireForm();
-        $form->bind($inventaire);
+        $form  = new DepotForm();
+        $form->bind($depot);
         $form->get('submitBtn')->setAttribute('value', 'Modifier');
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $form->setInputFilter($inventaire->getInputFilter());
+            $form->setInputFilter($depot->getInputFilter());
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $this->getInventaireTable()->saveInventaire($form->getData());
+                $this->getDepotTable()->saveDepots($form->getData());
 
-                // Redirect to list of inventaires
-                return $this->redirect()->toRoute('inventaire');
+                // Redirect to list of depots
+                return $this->redirect()->toRoute('depot');
             }
         }
         $return->setVariable('form', $form);
         $return->setVariable('id', $id);
-        $return->setTemplate("inventaire/inventaire/add.phtml");
+        $return->setTemplate("depot/depot/add.phtml");
         
         return $return;
     }
@@ -257,11 +257,14 @@ class InventaireController extends AbstractActionController
     {
     	$id = (int) $this->params()->fromRoute('id', 0);
     	if (!$id) {
-    		return $this->redirect()->toRoute('inventaire', array());
+    		return $this->redirect()->toRoute('depot', array());
     	}
     	return new ViewModel(array(
-    			'inventaire' => $this->getInventaireTable()->getInventaire($id),
-    			'photo'  => $this->getPhotoTable()->getPhotoByInventaireId($id),
+    			'depot' => $this->getDepotTable()->getDepot($id),
+    			'fields' => $this->getDepotTable()->getFieldsName(),
+    			'fieldsname' => $this->getDepotTable()->getFieldsHumanName(),
+    			 
+    			//	'photo'  => $this->getPhotoTable()->getPhotoByDepotId($id),
     	));
     }
     
@@ -269,7 +272,7 @@ class InventaireController extends AbstractActionController
     {
         $id = (int) $this->params()->fromRoute('id', 0);
         if (!$id) {
-            return $this->redirect()->toRoute('inventaire');
+            return $this->redirect()->toRoute('depot');
         }
 
         $request = $this->getRequest();
@@ -278,16 +281,16 @@ class InventaireController extends AbstractActionController
 
             if ($del == 'Yes') {
                 $id = (int) $request->getPost('id');
-                $this->getInventaireTable()->deleteInventaire($id);
+                $this->getDepotTable()->deleteDepots($id);
             }
 
-            // Redirect to list of inventaires
-            return $this->redirect()->toRoute('inventaire');
+            // Redirect to list of depots
+            return $this->redirect()->toRoute('depot');
         }
 
         return array(
             'id'    => $id,
-            'inventaire' => $this->getInventaireTable()->getInventaire($id)
+            'depot' => $this->getDepotTable()->getDepots($id)
         );
     }
          
@@ -295,7 +298,7 @@ class InventaireController extends AbstractActionController
     {
         $id = (int) $this->params()->fromRoute('id', 0);
         if (!$id) {
-            return $this->redirect()->toRoute('inventaire');
+            return $this->redirect()->toRoute('depot');
         }
 
         $request = $this->getRequest();
@@ -304,33 +307,33 @@ class InventaireController extends AbstractActionController
 
             if ($validate == 'Yes') {
                 $id = (int) $request->getPost('id');
-                $this->getInventaireTable()->validateInventaire($id);
+                $this->getDepotTable()->validateDepots($id);
             }
 
-            // Redirect to list of inventaires
-            return $this->redirect()->toRoute('inventaire');
+            // Redirect to list of depots
+            return $this->redirect()->toRoute('depot');
         }
 
         return array(
             'id'    => $id,
-            'inventaire' => $this->getInventaireTable()->getInventaire($id)
+            'depot' => $this->getDepotTable()->getDepots($id)
         );
     }
 
-    public function getInventaireTable()
+    public function getDepotTable()
 	{
-		if (!$this->inventaireTable) {
+		if (!$this->depotTable) {
 			$sm = $this->getServiceLocator();
-			$this->inventaireTable = $sm->get('Inventaire\Model\InventaireTable');
+			$this->depotTable = $sm->get('Depot\Model\DepotTable');
 		}
-		return $this->inventaireTable;
+		return $this->depotTable;
 	}	
 
 	public function getPhotoTable()
 	{
 		if (!$this->photoTable) {
 			$sm = $this->getServiceLocator();
-			$this->photoTable = $sm->get('Inventaire\Model\PhotoTable');
+			$this->photoTable = $sm->get('Depot\Model\PhotoTable');
 		}
 		return $this->photoTable;
 	}

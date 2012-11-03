@@ -36,7 +36,7 @@
 
     </head>
     <body data-spy="scroll" data-target=".bs-docs-sidebar">
-        <div class="navbar navbar-static-top">
+        <div class="navbar navbar-inverse navbar-static-top">
             <div class="navbar-inner">
                 <div class="container">
                  	<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -51,6 +51,7 @@
                         <ul class="nav">
                             <li <?php print ($this->url() == "/" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Accueil'); ?></a></li>
                             <li <?php print ($this->url() == "/inventaire" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('inventaire') ?>"><?php echo $this->translate('Inventaire des collections'); ?></a></li>
+                            <li <?php print ($this->url() == "/depot" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('depot') ?>"><?php echo $this->translate('Dépôts'); ?></a></li>
                             <li <?php print ($this->url() == "/search" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('search') ?>"><?php echo $this->translate('Recherche'); ?></a></li>
                             <li <?php print ($this->url() == "/photo" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('photo') ?>"><?php echo $this->translate('Photos'); ?></a></li>
                             <li <?php print ($this->url() == "/editions" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('editions') ?>"><?php echo $this->translate('Editions'); ?></a></li>

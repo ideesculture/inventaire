@@ -1,0 +1,72 @@
+<?php
+// module/Inventaire/view/inventaire/photo/index.phtml:
+
+$title = "Photos de l'inventaire";
+$this->headTitle($title);
+?>
+
+<div class="row">
+	<div class="span6">
+		<h1><?php echo $this->escapeHtml($title); ?></h1>
+	</div>
+	<div class="span6">
+		<span class="pull-right">
+		<?php if ($auth["logged"]) { ?>
+			<a href="/user">
+				<?php echo $this->gravatar($this->zfcUserIdentity()->getEmail(),array("img_size"=>24,"align"=>"middle")) ?>
+				<?php print $auth["login"] ?>	
+			</a>
+			<?php 
+		} else {
+			?>
+			Vous n'êtes pas identifié 
+			<a class="btn btn-small btn-info" href="/">connexion</a>
+		<?php } ?>
+		</span>
+	</div>
+</div>
+
+<ul class="thumbnails">
+	<?php foreach ($photos as $photo) : ?>
+	  <li>
+	    <div class="thumbnail">
+	      <p><?php print $this->escapeHtml($photo->numinv);?></p>
+	      
+	      <div style="height:200px;text-align:center;">
+	      <div style="max-height:200px;margin:auto;">
+      		<a href="/inventaire/view/<?php print $photo->inventaire_id;?>" title="<?php echo $this->escapeHtml($photo->designation);?>">
+	      	<img style="max-width:320px;max-height:100%;" class="img-rounded" src="<?php print "/files/assets/".$this->escapeHtml($photo->file);?>" alt="image">
+	      	</a>
+	      </div></div>
+	      <div style="height:60px;">
+		      <?php if ($photo->credits) : ?>
+			  <p><small>
+				<?php echo $this->escapeHtml($photo->credits);?>
+			  </small></p>
+			  <?php endif;?>
+		  </div>
+	    </div>
+	  </li>
+	<?php endforeach; ?>
+</ul>
+
+<div class="row">
+	<div class="span12">
+		<?php echo $this->paginationControl($photos,
+        	'Sliding',
+            'inventaire/inventaire/my_pagination_control', array('action'=>'index')); ?>
+	</div>
+</div>
+
+<?php if($auth["logged"]) { ?>
+	<div class="row">
+		<div class="span6">
+			<a class="btn btn-success btn-large" href="<?php echo $this->url('inventaire', array('action'=>'index'));?>">Afficher l'inventaire</a>
+		</div>
+		<div class="span6">
+			<span class="pull-right">
+				<a class="btn btn-success btn-small" href="<?php echo $this->url('photo', array('action'=>'listingExportCSV'));?>">Export tableur CSV</a>
+			</span>
+		</div>
+	</div>
+<?php } ?>

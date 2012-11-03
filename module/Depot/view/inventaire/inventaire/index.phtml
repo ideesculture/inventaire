@@ -1,9 +1,8 @@
 <?php
-// module/Inventaire/view/inventaire/inventaire/search.phtml:
+// module/Inventaire/view/inventaire/inventaire/index.phtml:
 
-$title = 'Recherche';
+$title = 'Les collections';
 $this->headTitle($title);
-
 
 ?>
 <div class="row">
@@ -28,6 +27,7 @@ $this->headTitle($title);
 		</span>
 	</div>
 </div>
+
 <div class="row">
 	<div class="span12">
 		<table class="table">
@@ -87,23 +87,29 @@ $this->headTitle($title);
 					?>
 					</div>
 				</span>
-			</td>
+		    </td>
 		</tr>
 		<?php endforeach; ?>
 		<tr>
 			<td>
 			<?php echo $this->paginationControl($inventaires,
                                     'Sliding',
-                                    'inventaire/inventaire/my_pagination_control', array('action'=>'index'));?>
+                                    'inventaire/inventaire/my_pagination_control', array('route'=>'inventaire','action'=>'index'));?>
             </td>
-			<?php if (count($yearsOptions)>2) :?>
             <td colspan="3">
+            <?php if (count($yearsOptions)>2) :?>
             	<span class="pull-right">
-				 <a class="btn btn-info btn-small" href="<?php print $this->url('inventaire');?>">Retour à l'inventaire</a>
+				 <div class="btn-group"><a class="btn btn-info btn-small" href="<?php print $this->url('inventaire');?>">Toutes les années</a>
+				<?php foreach($yearsOptions as $option) : ?>
+					<?php if((isset($option["disabled"]) && (!$option["disabled"]))) : ?> 
+						<a class="btn btn-info btn-small" href="<?php print $this->url('inventaire', array('action'=>'index', 'annee'=> $option["label"]));?>"><?php print $option["label"] ?></a> 
+					<?php endif ?>
+				<?php endforeach ?>
+				</div>
 				</span>
-			</td>	
             <?php endif ?>
-		</td></tr>
+			</td>	
+        </td></tr>
 		</table>
 	</div>
 </div>
@@ -112,14 +118,18 @@ if($auth["logged"]) {
 ?>
 <div class="row">
 	<div class="span6">
+		<div class="btn-group">
 		<a class="btn btn-success btn-large" href="<?php echo $this->url('inventaire', array('action'=>'add'));?>">Ajouter un objet</a>
 		<a class="btn btn-success btn-large" href="<?php echo $this->url('inventaire', array('action'=>'listingExportPdf'));?>">Générer le PDF</a>
 		<a class="btn btn-info btn-large" href="<?php echo $this->url('photo', array('action'=>'index'));?>">Afficher les photos</a>
+		</div>
 	</div>
 	<div class="span6">
 		<span class="pull-right">
+			<div class="btn-group">
 			<a class="btn btn-success btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listingExportCSV'));?>">Export tableur CSV</a>
 			<a class="btn btn-info btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listing'));?>">Afficher toutes les colonnes</a>
+			</div>
 		</span>
 	</div>
 </div>
