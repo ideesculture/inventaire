@@ -135,7 +135,7 @@ class DepotController extends AbstractActionController
 	public function listingExportPdfAction()
 	{
 		$return = new ViewModel();
-		$return->setVariable('yearsOptions', $this->getDepotTable()->getDepotsYearsAsOptions());
+		$return->setVariable('yearsOptions', $this->getDepotTable()->getDepotYearsAsOptions());
 		$return->setTemplate("depot/depot/listing-export-pdf-form.phtml");
 		
 		$request = $this->getRequest();
@@ -225,7 +225,7 @@ class DepotController extends AbstractActionController
                 'action' => 'add'
             ));
         }
-        $depot = $this->getDepotTable()->getDepots($id);
+        $depot = $this->getDepotTable()->getDepot($id);
         
         // Reusing add.phmtl template
         $return = new ViewModel();
@@ -290,7 +290,7 @@ class DepotController extends AbstractActionController
 
         return array(
             'id'    => $id,
-            'depot' => $this->getDepotTable()->getDepots($id)
+            'depot' => $this->getDepotTable()->getDepot($id)
         );
     }
          
@@ -316,7 +316,7 @@ class DepotController extends AbstractActionController
 
         return array(
             'id'    => $id,
-            'depot' => $this->getDepotTable()->getDepots($id)
+            'depot' => $this->getDepotTable()->getDepot($id)
         );
     }
 

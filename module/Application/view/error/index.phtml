@@ -1,5 +1,10 @@
-<h1><?php echo $this->translate('An error occurred') ?></h1>
-<h2><?php echo $this->translate($this->message) ?></h2>
+<div class="hero-unit">
+	<img src="../../images/erreur.png" align=left>
+	<h1>Erreur</h1>
+	<p><?php echo $this->translate($this->message) ?></p>
+	<p><a class="btn btn-success btn-large" href="<?php print $this->url("application"); ?>" target="_blank"><?php echo $this->translate("Retourner à la page d'accueil") ?> &raquo;</a></p>
+</div>
+
 
 <?php if (isset($this->display_exceptions) && $this->display_exceptions): ?>
 
