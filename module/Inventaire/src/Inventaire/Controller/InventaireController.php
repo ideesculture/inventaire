@@ -88,6 +88,10 @@ class InventaireController extends AbstractActionController
 		return $view;
 	}
 
+	public function testAction() {
+		return new ViewModel(array());
+	}
+	
 	public function listingAction()
 	{
 		return new ViewModel(array(
@@ -337,7 +341,7 @@ class InventaireController extends AbstractActionController
 		}
 		return $this->photoTable;
 	}
-	public function testAction()
+	public function insertAction()
 	{
 		$config = $this->getServiceLocator()->get('Config');
 		//var_dump($config["ca"]["ca_service_url"]);die();
