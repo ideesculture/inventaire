@@ -186,7 +186,7 @@ class DepotController extends AbstractActionController
 
             if ($form->isValid()) {
                 $depot->exchangeArray($form->getData());
-                $this->getDepotTable()->saveDepots($depot);
+                $this->getDepotTable()->saveDepot($depot);
 
                 // Redirect to list of depots
                 return $this->redirect()->toRoute('depot');
@@ -240,7 +240,7 @@ class DepotController extends AbstractActionController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $this->getDepotTable()->saveDepots($form->getData());
+                $this->getDepotTable()->saveDepot($form->getData());
 
                 // Redirect to list of depots
                 return $this->redirect()->toRoute('depot');
