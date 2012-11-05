@@ -45,7 +45,7 @@ return array(
     
     'view_manager' => array(
         'template_path_stack' => array(
-            'inventaire' => __DIR__ . '/../view',
+            'depot' => __DIR__ . '/../view',
         ),
     ),
 );
