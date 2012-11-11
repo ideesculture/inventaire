@@ -1,4 +1,5 @@
-<h1>Connexion</h1>
+<div class="bord-ronds-fond-blanc login">
+<h2>Connexion</h2>
 
 <?php
 $form = $this->loginForm;
@@ -6,27 +7,26 @@ $form->prepare();
 $form->setAttribute('action', $this->url('zfcuser/login'));
 $form->setAttribute('method', 'post');
 ?>
-
 <?php echo $this->form()->openTag($form) ?>
 
     <dl class="zend_form">
         <?php echo $this->formElementErrors($form->get('identity')) ?>
 
-        <dt><?php echo $this->formLabel($form->get('identity')) ?></dt>
+        <dt>Login</dt>
         <dd><?php echo $this->formInput($form->get('identity')) ?></dd>
 
-        <dt><?php echo $this->formLabel($form->get('credential')) ?></dt>
+        <dt>Mot de passe</dt>
         <dd><?php echo $this->formInput($form->get('credential')) ?></dd>
 
         <?php if ($this->redirect): ?>
             <input type="hidden" name="redirect" value="<?php echo $this->redirect ?>" />
         <?php endif ?>
 
-        <dd><?php echo $this->formButton($form->get('submit')) ?></dd>
+        <dd><input type="submit" name="submit" value="Se connecter &raquo;" class="btn btn-info btn-large"></dd>
     </dl>
 
 <?php echo $this->form()->closeTag() ?>
-
+</div>
 <?php if ($this->enableRegistration) : ?>
 Pas encore enregistré ? <a href="<?php echo $this->url('zfcuser/register') . ($this->redirect ? '?redirect='.$this->redirect : '') ?>">Sign up!</a>
 <?php endif; ?>

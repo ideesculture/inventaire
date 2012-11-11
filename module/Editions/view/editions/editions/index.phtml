@@ -6,30 +6,32 @@ $this->headTitle($title);
 ?>
 <!-- <h1><?php echo $this->escapeHtml($title); ?></h1> -->
 
-<div class="row">
-		<div class="hero-unit">
-			<h1>Imprimer votre <span class="zf-green">Inventaire</span></h1>
-			<p>L'impression de votre <span class="zf-green">Inventaire</span> est une obligation légale qui répond à des impératifs formels. Cette application
-			vous permet d'y répondre avec style.<br/>
-			Paramétrez finement la couverture utilisée et la mise en page de votre inventaire à l'aide des outils ci-dessous.</p>
-		</div>
+<div class="hero-unit">
+	<h1>Imprimer votre <span class="zf-green">Inventaire</span></h1>
+	<p>L'impression de votre <span class="zf-green">Inventaire</span> est une obligation légale qui répond à des impératifs formels. Cette application
+	vous permet d'y répondre avec style.<br/>
+	Paramétrez finement la couverture utilisée et la mise en page de votre inventaire à l'aide des outils ci-dessous.</p>
 </div>
+
 <div class="row">
 	<div class="span3">
+		<div class="bord-ronds-fond-blanc"> 
 		<h1>Couverture</h1>
 		<p><img src="<?php print $backgroundPdfCapture ?>" /></p>
 		<p>
 			<a  class="btn btn-success btn-small" href="<?php echo $this->url('editions',
 				array('action' => 'cover'));?>">modifier la couverture</a> 
 		</p>
+		</div>
 	</div>
 	<div class="span9">
+		<div class="bord-ronds-fond-blanc"> 
 		<h1>Pages de l'inventaire</h1>
 		<p>Afficher, générer ou regénérer</p>
 			<a  class="btn btn-info btn-small" href="<?php echo $this->url('editions',
 				array('action' => 'view'));?>">afficher</a> 
 			<a  class="btn btn-success btn-small" href="<?php echo $this->url('editions',
 				array('action' => 'generate'));?>">générer</a> 
-		
+		</div>
 	</div>
 </div>

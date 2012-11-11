@@ -134,10 +134,12 @@ body {
 	margin-right:15px;
 	margin-left:-15px;
 	margin-bottom:-15px;
-	margin-top:0px;
+	margin-top:-15px;
 }
 /*body {background:url("../images/paper.jpg") repeat top left;}*/
-HTML, body, .container {min-height:100%;}
+HTML, body, .container, .content  {height: 100%}
+#wrap {min-height: 100%}
+
 footer {position:relative;bottom:0px;color:gray;margin-bottom:-10px;padding:10px 10px 30px 10px;background:url("../images/cuir.png") repeat-x top left;border-radius: 10px 10px 0 0;box-shadow: 0px 0px 7px #000;}
 footer A {color:lightgray;}
 
@@ -145,11 +147,21 @@ footer A {color:lightgray;}
 	background:none;
 }
 
-table {
+div.thumbnail,
+.bord-ronds-fond-blanc {
 	background:white;
 	border-radius:8px;
 	box-shadow: 0px 0px 10px #aaa;
+	padding: 1em;
 }
+.bord-ronds-fond-blanc.login {
+	background:white url("../images/lock.png") no-repeat bottom right;
+}
+div.thumbnail {
+	background:white ;
+}
+
+
 
 /* Ajustement Responsive design
 */
@@ -171,3 +183,8 @@ table {
 	fieldset legend {font-size:1.4em;line-height:1.2em;}
 	form p.help-block {display:none;}
 }
+
+@media (min-width:980px){
+	.hero-unit {
+		margin-bottom:40px;
+	}

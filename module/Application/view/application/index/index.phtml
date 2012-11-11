@@ -5,11 +5,10 @@
 	<p><a class="btn btn-success btn-large" href="/inventaire" target="_blank"><?php echo $this->translate("Accéder à l'inventaire") ?> &raquo;</a></p>
 </div>
 <div class="row">
-
     <div class="span4">
 		<?php if ($auth["logged"]) { ?>
 			<p><?php echo $this->gravatar($this->zfcUserIdentity()->getEmail(),array("img_size"=>128)) ?></p>
-			<h3><?php print $auth["login"] ?></h3>
+			<p><?php print $auth["login"] ?></p>
 			<p>
 			<span class="btn-group">
 				<a class="btn btn-success" href="/user">préférences</a>
@@ -19,19 +18,15 @@
 			<?php 
 		} else {
 			?>
-			<p>
 				<?php echo $this->zfcUserLoginWidget();?>
-			</p>
 		<?php } ?>
 	</div>
-	
 	<div class="span4">
     <h2><?php echo $this->translate('Normes techniques des Musées de France') ?></h2>
         <p><?php echo sprintf($this->translate("L'inventaire des biens affectés aux collections d'un musée de France est un document unique, infalsifiable, titré, daté et paraphé par le professionnel responsable des collections, répertoriant tous les biens par ordre d'entrée dans les collections.")); ?></p>
         <p><?php echo sprintf($this->translate("Cette application a été créée pour vous permettre de gérer votre inventaire et selon votre besoin d'importer ensuite vos données dans CollectiveAccess.")); ?></p>
         <p><a class="btn btn-info" href="http://www.culture.gouv.fr/documentation/joconde/fr/partenaires/AIDEMUSEES/inventaire-informatise.htm" target="_blank"><?php echo $this->translate('Consulter les normes') ?> &raquo;</a></p>
     </div>
-
    <div class="span4">
        <h2><?php echo $this->translate('Notre assistance') ?></h2>
        <p><?php echo sprintf($this->translate("Si vous avez besoin d'assistance dans l'utilisation de ce logiciel, vous pouvez consulter le forum en ligne qui lui est dédié, son accès est libre et gratuit. Nous pouvons également fournir une assistance directe (hotline), aussi bien pour l'utilisation de ce logiciel, que pour CollectiveAccess ou pour passer vos informations de l'un à l'autre.")); ?></p>

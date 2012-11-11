@@ -21,5 +21,10 @@ class InventaireCAConnector
 		if ($bool) return true;
 		return false;
 	}
+	
+	public function add($array)
+	{
+		
+	}
 
 }

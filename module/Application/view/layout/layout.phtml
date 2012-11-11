@@ -60,27 +60,12 @@
                 </div>
             </div>
         </div>
-        
-        <?php if ($this->jumbotron) : ?>
-        <!-- Subhead
-		================================================== -->
-		<header class="jumbotron subhead" id="overview">
-		  <div class="container">
-		    <?php echo $this->jumbotron; ?>
-		  </div>
-		</header>        
-        <?php endif; ?>
-    
-        <div class="container">
+            
+        <div class="container-fluid">
         	<?php echo $this->content; ?>
-        	<p>&nbsp;</p>
             <footer>
-                <p><a href="http://www.ideesculture.com">idéesculture</a>, 2012.  
-
-		</p>
-		
-		
-		</footer>
+                <p><a href="http://www.ideesculture.com">idéesculture</a>, 2012.</p>
+			</footer>
         </div> <!-- /container -->
         <?php echo $this->inlineScript(); 
         ?>
@@ -105,6 +90,5 @@
 	    <script src="http://twitter.github.com/bootstrap/assets/js/application.js"></script>
 	    <script src="http://www.eyecon.ro/bootstrap-datepicker/js/google-code-prettify/prettify.js"></script>
     <script src="http://www.eyecon.ro/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
-
     </body>
 </html>

@@ -331,4 +331,132 @@ class InventaireTable extends AbstractTableGateway
 				'id' => $id,
 		));
 	}
+	
+	private function caAuth(\RestClient $client, array $caWsConfig)
+	{
+		// Récupération de la config
+		// Authentification
+		$res = $client->post($caWsConfig["ca_service_url"]."/iteminfo/ItemInfo/rest",
+				array("method"=>"auth", "username" => $caWsConfig["username"], "password" => $caWsConfig["password"])
+		);
+		// Traitement de la réponse
+		$simplexml_response = new \SimpleXMLElement($client->response_object->body);
+		// Retourne FALSE si la connexion n'est pas OK
+		if ($simplexml_response->auth->status != "success") return false;
+		return true;
+	}
+	private function remplace_placeholder_par_valeur(&$item,$key,$valeur){
+		if(stripos($item,"^valeur")){
+			$item=str_ireplace("^valeur", $valeur, $item);
+		}
+	}
+	public function caWsInsert($id, array $caWsConfig)
+	{
+
+ 		$inventaire = $this->getInventaire($id);
+		
+		$url = $caWsConfig["ca_service_url"];
+		$mappings = $caWsConfig["mapping"]["inventaire"];
+		
+		$c = new \RestClient();
+		if (! $this->caAuth($c, $caWsConfig) ) throw new \Exception("Impossible de se connecter aux webservices de CollectiveAccess, veuillez vérifier votre configuration");
+		
+		// AUTHENTIFICATION
+		$res = $c->post($url."/iteminfo/ItemInfo/rest",
+				array("method"=>"auth", "username" => $caWsConfig["username"], "password" => $caWsConfig["password"])
+		);
+		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
+		// Si la connexion est OK
+		if ($simplexml_response->auth->status != "success")
+			throw new \Exception("Connexion impossible, veuillez vérifier l'adresse d'accès aux webservices de CollectiveAccess.");
+		
+		// INSERTION OBJET
+		// le cas échéant, renseignement de ca_objects.idno
+		if (isset($mappings["ca_objects.idno"])) $idno=$mappings["ca_objects.idno"]; else $idno="";
+		$res = $c->post($url."/cataloguing/Cataloguing/rest",
+				array(
+						"method" => "add","type" => "ca_objects",
+						"fieldInfo" => array('idno' => $idno,'status' => 0,'access' => 1,'type_id' => 21)
+				));
+
+		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
+		// Traitement des erreurs
+		if ($simplexml_response->add->status != "success")
+			throw new \Exception("<b>Impossible d'ajouter l'objet dans la base CA</b> : ".$simplexml_response->addLabel->response->message);
+				
+		// récupération de la clé primaire de l'objet inséré
+		$object_id = $simplexml_response->add->response * 1;
+		
+		// AJOUT DU TITRE ca_objects.preferred_labels
+		$res = $c->post(
+				$url."/cataloguing/Cataloguing/rest",
+				array(
+						"method" => "addLabel", "type" => "ca_objects",
+						"item_id" => $object_id,
+						"label_data_array" => array("name" => $inventaire->$mappings["ca_objects.preferred_labels"]["valeur"].date("H:i")),
+						"localeID" => 2, // La locale est dépendante de la configuration, normalement pas nécessaire au MNHN
+						"is_preferred" => 1
+				));
+		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
+		// Traitement des erreurs
+		if ($simplexml_response->addLabel->status != "success")
+			throw new \Exception("<b>Erreur lors de l'ajout du titre de l'objet dans la base CA</b> : ".$simplexml_response->addLabel->response->message);
+		
+		// TRAITEMENT DES AUTRES CHAMPS
+		foreach($mappings as $field => $mapping) {
+			// Le titre et l'idno sont ignorés car déjà traités
+			if (in_array($field,array("ca_objects.idno", "ca_objects.preferred_labels"))) break 1;
+			
+			// Traitement des valeurs spécifiques (ajout suffixe, préfixe...)
+			$valeur = $inventaire -> $mapping["valeur"];
+			
+			// Si pas de valeur à traiter, on passe
+			if (!$valeur) break 1;
+			
+			$fields = explode(".",$field);
+			$table = $fields[0];
+			$fieldname = $fields[1];
+			
+			// Traitement des champs OK, à retirer une fois que tous les champs sont OK
+			if (in_array($fieldname, array("prix","comments","observations","acquisitionDate","date_inventaire","acquisitionMethod"))) {
+				if ($fieldname == "prix") $valeur = $inventaire->$mapping["valeur"]." EUR"; 		
+				$res = $c->post(
+						$url."/cataloguing/Cataloguing/rest",
+						array(
+								"method" => "addAttribute",
+								"type" => "ca_objects",
+								"item_id" => $object_id,
+								"attribute_code_or_id" =>  $fieldname,
+								"attribute_data_array" => array(
+										$fieldname  => $valeur
+								),
+						)
+				);
+				$simplexml_response = new \SimpleXMLElement($c->response_object->body);
+				// Traitement des erreurs
+				if ($simplexml_response->addAttribute->status != "success")
+					throw new \Exception("<b>Erreur lors de l'ajout de l'attribut ".$fieldname." dans la base CA</b> : ".$simplexml_response->addAttribute->response->message);
+			} elseif (isset($mapping["container"])) {
+				// Si le champ contient un conteneur, on remplace l'emplacement ^valeur par la valeur avant d'insérer dans la base
+				$container=str_ireplace("^valeur", $valeur, $mapping["container"]);
+				$res = $c->post(
+						$url."/cataloguing/Cataloguing/rest",
+						array(
+								"method" => "addAttribute",
+								"type" => "ca_objects",
+								"item_id" => $object_id,
+								"attribute_code_or_id" =>  $fieldname,
+								"attribute_data_array" =>  $container
+						)
+				);
+				$simplexml_response = new \SimpleXMLElement($c->response_object->body);
+				if ($simplexml_response->addAttribute->status != "success") {
+					throw new \Exception("<b>Erreur lors de l'ajout de l'attribut ".$fieldname." dans la base CA</b> : ".$simplexml_response->addAttribute->response->message);
+				}
+					
+								
+			}
+		}
+		return true;		
+	}
 }

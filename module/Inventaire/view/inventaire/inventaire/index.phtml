@@ -30,7 +30,7 @@ $this->headTitle($title);
 
 <div class="row">
 	<div class="span12">
-		<table class="table">
+		<table class="table bord-ronds-fond-blanc">
 		<tr>
 		    <th><?php print $fieldsname["numinv"]; ?></th>
 		    <th><?php print $fieldsname["designation"]; ?></th>
@@ -63,11 +63,11 @@ $this->headTitle($title);
 			</td>
 			<td>
 				<span class="pull-right">
-					<div class="btn-group">
 					<?php
-					if($auth["logged"]) {
-						// Si l'enregistrement n'est pas validé, on peut le modifier ou le valider
-						if (!$inventaire->validated) { ?> 
+					if($auth["logged"]) { ?>
+						
+						<div class="btn-group">
+						<?php if (!$inventaire->validated) { // Si l'enregistrement n'est pas validé, on peut le modifier ou le valider ?> 
 							<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
 							array('action'=>'edit', 'id' => $inventaire->id));?>" title="Modifier"><i class="icon-pencil icon-white"></i></a>
 				        	<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
@@ -83,9 +83,14 @@ $this->headTitle($title);
 							<a  class="btn disabled btn-small" title="Valider"><i class="icon-check icon-white"></i></a>
 						<?php 
 						}
+						?>
+						</div>
+						<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
+							array('action'=>'insert', 'id' => $inventaire->id));?>" title="Importer dans CA"><i class="icon-share icon-white"></i></a>
+						
+					<?php 
 					}
 					?>
-					</div>
 				</span>
 		    </td>
 		</tr>

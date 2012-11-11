@@ -155,7 +155,7 @@ suivie de son nom, sujet, titre ou décor.",
         );
         $this->add(//Textarea
         		array(
-        				'name'          => 'inscriptions',
+        				'name'          => 'inscription',
         				'type'          => 'Zend\Form\Element\Textarea',
         				'attributes'    => array(
         						'placeholder'       => "marques et inscriptions portées sur le bien",
