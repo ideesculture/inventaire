@@ -35,11 +35,11 @@ $this->headTitle($title);
 		<p class="btn-group">
 		    <a class="btn btn-info" href="<?php echo $this->url('inventaire', array());?>">Revenir à la liste des objets</a>
 		    <?php if (!$inventaire->validated) { ?> 
-				<a  class="btn btn-success" href="<?php echo $this->url('depot',
+				<a  class="btn btn-success" href="<?php echo $this->url('inventaire',
 				array('action'=>'edit', 'id' => $inventaire->id));?>"><i class="icon-pencil icon-white"></i> Modifier</a>
-				<a  class="btn btn-success" href="<?php echo $this->url('depot',
+				<a  class="btn btn-success" href="<?php echo $this->url('inventaire',
 				array('action'=>'delete', 'id' => $inventaire->id));?>"><i class="icon-remove icon-white"></i> Supprimer</a>
-				<a  class="btn btn-warning" href="<?php echo $this->url('depot',
+				<a  class="btn btn-warning" href="<?php echo $this->url('inventaire',
 				array('action'=>'validate', 'id' => $inventaire->id));?>"><i class="icon-check icon-white"></i> Valider</a>
 			<?php } ?>
 		</p>
