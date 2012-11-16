@@ -15,7 +15,7 @@ $url = $this->url('inventaire', array(
 <form action="<?php echo $url; ?>" method="post">
 <select name="year">
 <?php  foreach($yearsOptions as $option) : ?>
-		<option value="<?php print $option["value"];?>" <?php print ($option["selected"]) ? "SELECTED" : "" ;?>>
+		<option value="<?php print $option["value"];?>" <?php print (isset($option["selected"]) && ($option["selected"])) ? "SELECTED" : "" ;?>>
 		<?php print $option["label"];?>
 		</option>
 <?php endforeach; ?> 
