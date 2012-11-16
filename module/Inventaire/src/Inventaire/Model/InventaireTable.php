@@ -391,7 +391,7 @@ class InventaireTable extends AbstractTableGateway
 		$res = $c->post(
 				$url."/cataloguing/Cataloguing/rest",
 				array(
-						"method" => "addLabel", "type" => "zugudu", //"ca_objects",
+						"method" => "addLabel", "type" => "ca_objects",
 						"item_id" => $object_id,
 						"label_data_array" => array("name" => $inventaire->$mappings["ca_objects.preferred_labels"]["valeur"].date("H:i")),
 						"localeID" => 2, // La locale est dépendante de la configuration, normalement pas nécessaire au MNHN
