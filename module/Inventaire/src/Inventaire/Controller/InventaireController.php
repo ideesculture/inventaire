@@ -99,7 +99,8 @@ class InventaireController extends AbstractActionController
 						'logged' => $this::isLogged(),
 						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
 						),
-				'inventaires' => $this->getInventaireTable()->fetchAll(),
+				// TODO : corriger, reprendre depuis la route ou un post
+				'inventaires' => $this->getInventaireTable()->fetchAll("2012"),
 				'page' => $this->params()->fromRoute('page'),
 		));
 	}

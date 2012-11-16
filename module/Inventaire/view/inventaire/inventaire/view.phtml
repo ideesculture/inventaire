@@ -33,7 +33,7 @@ $this->headTitle($title);
 <div class="row">
 	<div class="span12">
 		<p class="btn-group">
-		    <a class="btn btn-info" href="<?php echo $this->url('depot', array());?>">Revenir à la liste des objets</a>
+		    <a class="btn btn-info" href="<?php echo $this->url('inventaire', array());?>">Revenir à la liste des objets</a>
 		    <?php if (!$depot->validated) { ?> 
 				<a  class="btn btn-success" href="<?php echo $this->url('depot',
 				array('action'=>'edit', 'id' => $depot->id));?>"><i class="icon-pencil icon-white"></i> Modifier</a>
