@@ -397,7 +397,7 @@ class InventaireTable extends AbstractTableGateway
 						"localeID" => 2, // La locale est dépendante de la configuration, normalement pas nécessaire au MNHN
 						"is_preferred" => 1
 				));
-		print $c->response_object->body;die();
+		//print $c->response_object->body;die();
 		
 		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
 		// Traitement des erreurs
