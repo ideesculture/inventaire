@@ -350,13 +350,13 @@ class InventaireTable extends AbstractTableGateway
 			$item=str_ireplace("^valeur", $valeur, $item);
 		}
 	}
-	public function caWsInsert($id, array $caWsConfig)
+	public function caWsExport($id, array $caWsConfig)
 	{
 
  		$inventaire = $this->getInventaire($id);
 		
 		$url = $caWsConfig["ca_service_url"];
-		$mappings = $caWsConfig["mapping"]["inventaire"];
+		$mappings = $caWsConfig["inventaire"];
 		
 		$c = new \RestClient();
 		if (! $this->caAuth($c, $caWsConfig) ) throw new \Exception("Impossible de se connecter aux webservices de CollectiveAccess, veuillez vérifier votre configuration");
@@ -391,12 +391,14 @@ class InventaireTable extends AbstractTableGateway
 		$res = $c->post(
 				$url."/cataloguing/Cataloguing/rest",
 				array(
-						"method" => "addLabel", "type" => "ca_objects",
+						"method" => "addLabel", "type" => "zugudu", //"ca_objects",
 						"item_id" => $object_id,
 						"label_data_array" => array("name" => $inventaire->$mappings["ca_objects.preferred_labels"]["valeur"].date("H:i")),
 						"localeID" => 2, // La locale est dépendante de la configuration, normalement pas nécessaire au MNHN
 						"is_preferred" => 1
 				));
+		print $c->response_object->body;die();
+		
 		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
 		// Traitement des erreurs
 		if ($simplexml_response->addLabel->status != "success")
@@ -426,7 +428,7 @@ class InventaireTable extends AbstractTableGateway
 								"method" => "addAttribute",
 								"type" => "ca_objects",
 								"item_id" => $object_id,
-								"attribute_code_or_id" =>  $fieldname,
+								"attribute_code_or_id" => $fieldname,
 								"attribute_data_array" => array(
 										$fieldname  => $valeur
 								),

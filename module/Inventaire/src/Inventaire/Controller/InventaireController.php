@@ -343,7 +343,8 @@ class InventaireController extends AbstractActionController
 		}
 		return $this->photoTable;
 	}
-	public function insertAction()
+
+	public function exportAction()
 	{
         $id = (int) $this->params()->fromRoute('id', 0);
         if (!$id) {
@@ -365,7 +366,8 @@ class InventaireController extends AbstractActionController
 		if ($insert == 'Yes') {
         	$id = (int) $request->getPost('id');
         	$config = $this->getServiceLocator()->get('Config');
-        	$this->getInventaireTable()->caWsInsert($id,$config["ca"]);
+        	$config_export = array_merge($config["ca"],$config["ca_export_mapping"]);
+        	$this->getInventaireTable()->caWsExport($id,$config_export);
         	return array(
         			'id'    => $id,
         			'inventaire'=>$this->getInventaireTable()->getInventaire($id),
@@ -377,6 +379,38 @@ class InventaireController extends AbstractActionController
         $this->redirect()->toRoute('inventaire', array(
                 'action' => 'index'
             ));
+	}
+
+	public function importAction()
+	{
+	
+		// Traitement de la requête
+		$request = $this->getRequest();
+		if (!$request->isPost()) {
+			return array(
+					'availableSets'=>$this->getInventaireTable()->getAvailableSets()
+			);
+		}
+		$import = $request->getPost('import', 'No');
+	
+		if ($import == 'Yes') {
+			$set = (int) $request->getPost('set');
+			$config = $this->getServiceLocator()->get('Config');
+			$config_import=array_merge($config["ca"],$config["ca_import_mapping"]);
+			//$config_export = array_merge($config["ca"],$config["ca_export_mapping"]);
+				
+			$this->getInventaireTable()->caWsImport($set,$config["ca_import"]);
+			return array(
+					'id'    => $id,
+					'inventaire'=>$this->getInventaireTable()->getInventaire($id),
+					'inserted' => true
+			);
+		}
+	
+		// Redirect to list of inventaires
+		$this->redirect()->toRoute('inventaire', array(
+				'action' => 'index'
+		));
 	}
 }
 ?>

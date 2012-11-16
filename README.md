@@ -19,6 +19,13 @@ L'impression de votre inventaire est une obligation légale qui répond à des i
 
 ## Installation
 ----------------------------
+
+### PECL http
+Si vous avez besoin de l'extension PECL http :
+
+	apt-get install libcurl3-openssl-dev
+	pecl install pecl_http
+
 ### Mettre à jour les bibliothèques requises à l'aide de composer
 Ce projet utilise des bibliothèques libres (ZendFramework 2, ZfcUser, DOMpdf…). Pour des raisons de maintenance, ces bibliothèques ne sont pas incluses dans le code source du programme, il faut les télécharger lors de l'installation en ligne de commande :
 
