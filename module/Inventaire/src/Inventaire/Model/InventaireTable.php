@@ -343,7 +343,7 @@ class InventaireTable extends AbstractTableGateway
 		$simplexml_response = new \SimpleXMLElement($client->response_object->body);
 		// Retourne FALSE si la connexion n'est pas OK
 		if ($simplexml_response->auth->status != "success") return false;
-		return true;
+		return $client;
 	}
 	private function remplace_placeholder_par_valeur(&$item,$key,$valeur){
 		if(stripos($item,"^valeur")){
@@ -359,17 +359,10 @@ class InventaireTable extends AbstractTableGateway
 		$mappings = $caWsConfig["inventaire"];
 		
 		$c = new \RestClient();
-		if (! $this->caAuth($c, $caWsConfig) ) throw new \Exception("Impossible de se connecter aux webservices de CollectiveAccess, veuillez vérifier votre configuration");
 		
 		// AUTHENTIFICATION
-		$res = $c->post($url."/iteminfo/ItemInfo/rest",
-				array("method"=>"auth", "username" => $caWsConfig["username"], "password" => $caWsConfig["password"])
-		);
-		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
-		// Si la connexion est OK
-		if ($simplexml_response->auth->status != "success")
-			throw new \Exception("Connexion impossible, veuillez vérifier l'adresse d'accès aux webservices de CollectiveAccess.");
-		
+		if (! $this->caAuth($c, $caWsConfig) ) throw new \Exception("Impossible de se connecter aux webservices de CollectiveAccess, veuillez vérifier votre configuration");
+				
 		// INSERTION OBJET
 		// le cas échéant, renseignement de ca_objects.idno
 		if (isset($mappings["ca_objects.idno"])) $idno=$mappings["ca_objects.idno"]; else $idno="";
@@ -382,7 +375,7 @@ class InventaireTable extends AbstractTableGateway
 		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
 		// Traitement des erreurs
 		if ($simplexml_response->add->status != "success")
-			throw new \Exception("<b>Impossible d'ajouter l'objet dans la base CA</b> : ".$simplexml_response->addLabel->response->message);
+			throw new \Exception("<b>Impossible d'ajouter l'objet dans la base CA</b> : ".$simplexml_response->add->response->message);
 				
 		// récupération de la clé primaire de l'objet inséré
 		$object_id = $simplexml_response->add->response * 1;
@@ -461,4 +454,89 @@ class InventaireTable extends AbstractTableGateway
 		}
 		return true;		
 	}
+	
+	public function caWsAvailableSets(array $caWsConfig)
+	{
+		
+		$c = new \RestClient();
+		
+		// Authentification
+		if (! $this->caAuth($c, $caWsConfig) ) throw new \Exception("Impossible de se connecter aux webservices de CollectiveAccess, veuillez vérifier votre configuration");
+			
+		$res = $c->post( $caWsConfig["ca_service_url"]."/iteminfo/ItemInfo/rest",
+				array(
+						"method" => "getSets"
+				));
+		
+		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
+		
+		// Traitement des erreurs
+		if ($simplexml_response->getSets->status != "success")
+			throw new \Exception("<b>Impossible de récupérer la liste des ensembles (set) de la base CA</b> : ".$simplexml_response->getSets->response->message);
+		
+		// Création d'un tableau des sets disponibles
+		$return = array();
+		foreach($simplexml_response->getSets->children() as $set) {
+			// Le statut fait partie des réponses, pas la peine de l'intégrer au tableau
+			if(!isset($set->key_2->set_id)) break; 
+			// Remplissage du tableau
+			$return[] = array("set_id" => $set->key_2->set_id, "set_code" => $set->key_2->set_code, "name" => $set->key_2->name);
+		}
+		return $return;
+	}
+	
+	public function caWsGetSetItems($set_id, array $caWsConfig)
+	{
+		$c = new \RestClient();
+		
+		$importableFields =  array("dimensions","inscription_c","othernumber","acquisitionMethod","ca_entities.preferred_labels","acquisitionDate");
+		
+		// Authentification
+		if (! $this->caAuth($c, $caWsConfig) ) throw new \Exception("Impossible de se connecter aux webservices de CollectiveAccess, veuillez vérifier votre configuration");
+		
+		$res = $c->post( $caWsConfig["ca_service_url"]."/iteminfo/ItemInfo/rest",
+				array(
+						"method" => "getSetItems",
+						"set_id" => $set_id,
+						"options" => NULL
+				));
+		//print $c->response_object->body;die();
+		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
+		
+		// Traitement des erreurs
+		if ($simplexml_response->getSetItems->status != "success")
+			throw new \Exception("<b>Impossible de récupérer les enregistrements contenus dans l'ensemble $set_id</b> : ".$simplexml_response->getSetItems->response->message);
+		$objects=array();
+		foreach($simplexml_response->getSetItems->children() as $child) {
+			if (isset($child->key_2->object_id)) {
+				$object_id = (int) $child->key_2->object_id;
+				$objects[] = $object_id;
+			}
+			
+			//if (! $this->caWsImport($c, "ca_objects", $object_id, $caWsConfig)) {
+			//	throw new \Exception("<b>Impossible d'importer l'objet $object_id</b> : ".$simplexml_response->getSetItems->response->message);
+			//}
+		}
+		//var_dump($objects);
+		$this->caWsImport( "ca_objects", "1", $c, $caWsConfig);
+		die();		
+	}
+
+	public function caWsImport($type, $item_id, \RestClient $c, $caWsConfig)
+	{
+		$res = $c->post( $caWsConfig["ca_service_url"]."/iteminfo/ItemInfo/rest",
+				array(
+						"method" => "getItem",
+						"type" => $type,
+						"item_id" => $item_id
+  				));
+		print $c->response_object->body;die();
+		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
+	
+		// Traitement des erreurs
+		if ($simplexml_response->getItem->status != "success")
+			throw new \Exception("<b>Impossible de récupérer les informations de l'enregistrement $item_id ($type)</b> : ".$simplexml_response->getItem->response->message);
+		var_dump($simplexml_response->getItem);
+	}
+	
 }

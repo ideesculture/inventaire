@@ -387,25 +387,21 @@ class InventaireController extends AbstractActionController
 	
 		// Traitement de la requête
 		$request = $this->getRequest();
+		$config = $this->getServiceLocator()->get('Config');
+		$config_import=array_merge($config["ca"],$config["ca_import_mapping"]);
 		if (!$request->isPost()) {
+			print "ici";die();
 			return array(
-					'availableSets'=>$this->getInventaireTable()->getAvailableSets()
+					'availableSets'=>$this->getInventaireTable()->caWsAvailableSets($config_import)
 			);
 		}
-		$import = $request->getPost('import', 'No');
+		$set_id = (int) $request->getPost('set');
 	
-		if ($import == 'Yes') {
-			$set = (int) $request->getPost('set');
-			$config = $this->getServiceLocator()->get('Config');
-			$config_import=array_merge($config["ca"],$config["ca_import_mapping"]);
-			//$config_export = array_merge($config["ca"],$config["ca_export_mapping"]);
-				
-			$this->getInventaireTable()->caWsImport($set,$config["ca_import"]);
-			return array(
-					'id'    => $id,
-					'inventaire'=>$this->getInventaireTable()->getInventaire($id),
-					'inserted' => true
-			);
+		if ($set_id) {
+			
+			$this->getInventaireTable()->caWsImport($set_id,$config_import);
+			die();
+			return true;
 		}
 	
 		// Redirect to list of inventaires
