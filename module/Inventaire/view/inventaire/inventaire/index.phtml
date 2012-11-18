@@ -30,7 +30,7 @@ $this->headTitle($title);
 
 <div class="row">
 	<div class="span12">
-		<table class="table bord-ronds-fond-blanc">
+		<table class="table  table-striped  bord-ronds-fond-blanc">
 		<tr>
 		    <th><?php print $fieldsname["numinv"]; ?></th>
 		    <th><?php print $fieldsname["designation"]; ?></th>
@@ -63,39 +63,31 @@ $this->headTitle($title);
 			</td>
 			<td>
 				<span class="pull-right">
-					<?php
-					if($auth["logged"]) { ?>
-						
-						<div class="btn-group">
-						<?php if (!$inventaire->validated) { // Si l'enregistrement n'est pas validé, on peut le modifier ou le valider ?> 
+					<div class="btn-group">
+					<?php if($auth["logged"]) : ?>
+						<?php if (!$inventaire->validated) : // Si l'enregistrement n'est pas validé, on peut le modifier ou le valider ?> 
 							<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
 							array('action'=>'edit', 'id' => $inventaire->id));?>" title="Modifier"><i class="icon-pencil icon-white"></i></a>
 				        	<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
 				            array('action'=>'delete', 'id' => $inventaire->id));?>" title="Supprimer"><i class="icon-remove icon-white"></i></a>
 							<a  class="btn btn-warning btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'validate', 'id' => $inventaire->id));?>" title="Valider"><i class="icon-check icon-white"></i></a>
-						<?php
-						// Si l'enregistrement est validé, aucune modification possible
-						} else { 
-						?>
+							array('action'=>'validate', 'id' => $inventaire->id));?>" title="Valider"><i class="icon-ok icon-white"></i></a>
+						<?php else :?> 
 							<a  class="btn disabled btn-small" title="Modifier"><i class="icon-pencil icon-white"></i></a>
 							<a  class="btn disabled btn-small" title="Supprimer"><i class="icon-remove icon-white"></i></a>
-							<a  class="btn disabled btn-small" title="Valider"><i class="icon-check icon-white"></i></a>
-						<?php 
-						}
-						?>
-						</div>
+							<a  class="btn disabled btn-small" title="Valider"><i class="icon-ok icon-white"></i></a>
+						<?php endif; ?>
 						<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'export', 'id' => $inventaire->id));?>" title="Importer dans CA"><i class="icon-share icon-white"></i></a>
-						
-					<?php 
-					}
-					?>
-				</span>
-		    </td>
+							array('action'=>'export', 'id' => $inventaire->id));?>" title="Exporter vers CA"><i class="icon-share icon-white"></i></a>
+					<?php endif; ?>
+				</div>
+			</span>
+	    </td>
 		</tr>
 		<?php endforeach; ?>
 		</table>
+	</div>
+</div>
 <div class="row">
 	<div class="span6">
 		<?php echo $this->paginationControl($inventaires,
@@ -122,20 +114,22 @@ if($auth["logged"]) {
 <div class="row">
 	<div class="span6">
 		<div class="btn-group">
-		<a class="btn btn-success btn-large" href="<?php echo $this->url('inventaire', array('action'=>'add'));?>"><i class="icon-plus icon-white"></i> Ajouter un objet</a>
-		<a class="btn btn-success btn-large" href="<?php echo $this->url('inventaire', array('action'=>'listingExportPdf'));?>">Générer le PDF</a>
-		<a class="btn btn-info btn-large" href="<?php echo $this->url('photo', array('action'=>'index'));?>">Afficher les photos</a>
+		<a class="btn btn-success" href="<?php echo $this->url('inventaire', array('action'=>'add'));?>"><i class="icon-plus icon-white icon-large"></i> Ajouter un objet</a>
+		<a class="btn btn-success" href="<?php echo $this->url('inventaire', array('action'=>'add'));?>"><i class="icon-circle-arrow-down icon-white icon-large"></i> Importer depuis CA</a>
+		<a class="btn btn-success" href="<?php echo $this->url('inventaire', array('action'=>'listingExportPdf'));?>"><i class="icon-book icon-white icon-large"></i> Générer le PDF</a>
+		<a class="btn btn-info" href="<?php echo $this->url('photo', array('action'=>'index'));?>"><i class="icon-camera icon-white icon-large"></i> Afficher les photos</a>
 		</div>
 	</div>
 	<div class="span6">
 		<span class="pull-right">
 			<div class="btn-group">
-			<a class="btn btn-success btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listingExportCSV'));?>">Export tableur CSV</a>
-			<a class="btn btn-info btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listing'));?>">Afficher toutes les colonnes</a>
+			<a class="btn btn-success btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listingExportCSV'));?>"><i class="icon-th icon-white"></i> Export tableur CSV</a>
+			<a class="btn btn-info btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listing'));?>"><i class="icon-th-list icon-white"></i> Afficher toutes les colonnes</a>
 			</div>
 		</span>
 	</div>
 </div>
+<p>&nbsp;</p>
 <?php 
 }
 ?>

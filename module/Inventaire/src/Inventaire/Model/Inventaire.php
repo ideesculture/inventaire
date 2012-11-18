@@ -112,7 +112,7 @@ class Inventaire implements InputFilterAwareInterface
 	
 			$inputFilter->add($factory->createInput(array(
 					'name'     => 'id',
-					'required' => true,
+					'required' => false,
 					'filters'  => array(
 							array('name' => 'Int'),
 					),

@@ -8,6 +8,7 @@ use Zend\Db\Sql\Where;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Paginator\Adapter\DbSelect;
+use Inventaire\Form\InventaireForm;
 
 class InventaireTable extends AbstractTableGateway
 {
@@ -236,7 +237,7 @@ class InventaireTable extends AbstractTableGateway
 		$id = (int) $inventaire->id;
 
 		if ($id == 0) {
-			if (!$this->checkInventaireByNuminv($inventaire->numinv)) { 
+			if (!$this->checkInventaireByNuminv($inventaire->numinv)) {
 				$this->insert($data);
 			} else {
 				throw new \Exception("Un autre enregistrement est déjà présent dans la base avec le même numéro d'inventaire.");
@@ -485,13 +486,13 @@ class InventaireTable extends AbstractTableGateway
 		return $return;
 	}
 	
-	public function caWsGetSetItems($set_id, array $caWsConfig)
+	public function caWsImportSet($set_id, array $caWsConfig)
 	{
 		$c = new \RestClient();
 		
 		$importableFields =  array("dimensions","inscription_c","othernumber","acquisitionMethod","ca_entities.preferred_labels","acquisitionDate");
 		
-		// Authentification
+		// AUTH
 		if (! $this->caAuth($c, $caWsConfig) ) throw new \Exception("Impossible de se connecter aux webservices de CollectiveAccess, veuillez vérifier votre configuration");
 		
 		$res = $c->post( $caWsConfig["ca_service_url"]."/iteminfo/ItemInfo/rest",
@@ -500,43 +501,98 @@ class InventaireTable extends AbstractTableGateway
 						"set_id" => $set_id,
 						"options" => NULL
 				));
-		//print $c->response_object->body;die();
 		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
-		
 		// Traitement des erreurs
 		if ($simplexml_response->getSetItems->status != "success")
 			throw new \Exception("<b>Impossible de récupérer les enregistrements contenus dans l'ensemble $set_id</b> : ".$simplexml_response->getSetItems->response->message);
-		$objects=array();
+		
+		// RECUPERATION DES ID DES OBJETS DU SET
+		$result=array();
 		foreach($simplexml_response->getSetItems->children() as $child) {
 			if (isset($child->key_2->object_id)) {
 				$object_id = (int) $child->key_2->object_id;
-				$objects[] = $object_id;
+				//print "import de ".$object_id."<br/>\n";
+				// IMPORT DE L'OBJET
+				$result[$object_id] = $this->caWsImportItem( "ca_objects", $object_id, $c, $caWsConfig);
 			}
-			
-			//if (! $this->caWsImport($c, "ca_objects", $object_id, $caWsConfig)) {
-			//	throw new \Exception("<b>Impossible d'importer l'objet $object_id</b> : ".$simplexml_response->getSetItems->response->message);
-			//}
 		}
-		//var_dump($objects);
-		$this->caWsImport( "ca_objects", "1", $c, $caWsConfig);
-		die();		
+		return $result;
 	}
 
-	public function caWsImport($type, $item_id, \RestClient $c, $caWsConfig)
+	public function caWsImportItem($type, $item_id, \RestClient $c, $caWsConfig)
 	{
+		$return = array();
+		
+		$inventaire_fields = array();
+		$inventaire_fields["id"]=0;
+		
+		// TITRE
 		$res = $c->post( $caWsConfig["ca_service_url"]."/iteminfo/ItemInfo/rest",
 				array(
-						"method" => "getItem",
+						"method" => "getLabelForDisplay",
 						"type" => $type,
-						"item_id" => $item_id
+						"item_id" => $item_id,
+						"options" => array("locale" => "fr_FR")
+						//"attribute_code_or_id" => "dimensions"
   				));
-		print $c->response_object->body;die();
 		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
-	
 		// Traitement des erreurs
-		if ($simplexml_response->getItem->status != "success")
-			throw new \Exception("<b>Impossible de récupérer les informations de l'enregistrement $item_id ($type)</b> : ".$simplexml_response->getItem->response->message);
-		var_dump($simplexml_response->getItem);
+		if ($simplexml_response->getLabelForDisplay->status != "success")
+			$return["error"] = "<b>Impossible de récupérer le titre de l'objet $item_id ($type)</b> : ".$simplexml_response->getLabelForDisplay->response->message;
+		// DEFINITION DU TITRE
+		$inventaire_fields["designation"] = (string) $simplexml_response->getLabelForDisplay->response;
+		
+		// ATTRIBUTS
+		foreach ($caWsConfig["attributesimported"] as $attribute => $target) {
+			$data = explode(".",$attribute);
+
+			if (($data[0] == "ca_objects") && ($data[1] != "preferred_labels")) {
+				$res = $c->post( $caWsConfig["ca_service_url"]."/iteminfo/ItemInfo/rest",
+						array(
+								"method" => "getAttributesForDisplay",
+								"type" => $type,
+								"item_id" => $item_id,
+								"attribute_code_or_id" => $data[1],
+								"options" => array("locale" => "fr_FR")
+						));
+				$simplexml_response = new \SimpleXMLElement($c->response_object->body);
+
+				// Traitement des erreurs
+				if ($simplexml_response->getAttributesForDisplay->status != "success")
+					$return["error"] = "<b>Impossible de récupérer l'attribut ".$data[1]." pour l'objet $item_id ($type)</b> : ".$simplexml_response->getAttributesForDisplay->response->message;
+				
+				$response = $simplexml_response->getAttributesForDisplay->response;
+				if (stripos($data[1],"date") !== FALSE) {
+					// TRAITEMENT SPECIFIQUE DATES
+					if ($response) {
+						$date = \DateTime::createFromFormat('F j Y', $response);
+						if ($date) $response = $date->format('Y-m-d');
+					}
+				} 
+				// DEFINITION DE L'ATTRIBUT
+				// transtypage SimpleXMLElement vers string en encapsulant la variable entre guillemets http://www.php.net/manual/fr/language.types.type-juggling.php#language.types.typecasting
+				$inventaire_fields[$target["field"]] = "$response";
+			}	
+		}
+		if (!$inventaire_fields["numinv"]) {
+			$return["error"] = "<b>Objet $object_id sans numéro d'inventaire</b>";
+			return $return;
+			}
+		
+		$return["numinv"] =  $inventaire_fields["numinv"];
+		
+		if (!$inventaire_fields["designation"]) {
+			$return["error"] = "<b>Objet $object_id sans titre</b>";
+			return $return;
+		}
+			
+		if (!$this->checkInventaireByNuminv($inventaire_fields["numinv"])) {
+			$this->insert($inventaire_fields);
+		} else {
+			$return["error"] = "<b>Un objet correspondant au numéro d'inventaire ".$inventaire_fields["numinv"]." est déjà présent dans l'inventaire.</b>";
+			return $return;
+		}
+		return $return;
 	}
 	
 }

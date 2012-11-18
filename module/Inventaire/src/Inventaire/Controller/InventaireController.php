@@ -2,6 +2,8 @@
 // module/Inventaire/src/Inventaire/Controller/InventaireController.php:
 namespace Inventaire\Controller;
 
+use Zend\View\View;
+
 // définition contrôleur, vue
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
@@ -390,7 +392,7 @@ class InventaireController extends AbstractActionController
 		$config = $this->getServiceLocator()->get('Config');
 		$config_import=array_merge($config["ca"],$config["ca_import_mapping"]);
 		if (!$request->isPost()) {
-			print "ici";die();
+			//print "ici";die();
 			return array(
 					'availableSets'=>$this->getInventaireTable()->caWsAvailableSets($config_import)
 			);
@@ -398,10 +400,14 @@ class InventaireController extends AbstractActionController
 		$set_id = (int) $request->getPost('set');
 	
 		if ($set_id) {
+			// Import des éléments contenus dans l'ensemble (set)
+			$results = $this->getInventaireTable()->caWsImportSet($set_id,$config_import);
 			
-			$this->getInventaireTable()->caWsImport($set_id,$config_import);
-			die();
-			return true;
+			// Retour des résultats dans la vue
+			$return = new ViewModel();
+			$return->setVariable('results', $results);
+			$return->setTemplate("inventaire/inventaire/import_result.phtml");
+			return $return;
 		}
 	
 		// Redirect to list of inventaires
