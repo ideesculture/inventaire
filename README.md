@@ -57,4 +57,4 @@ Se placer à la racine de l'application inventaire et télécharger le module Dl
 
 ### Charger la base de données avec la structure de départ
 
-_en cours de rédaction_
+_en cours de rédaction..._
