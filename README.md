@@ -16,6 +16,7 @@ L'impression de votre inventaire est une obligation légale qui répond à des i
 * php-intl
 * php-curl
 * extension PECL http
+* DluwTwBootstrap pour ZendFramework
 
 ## Installation
 ----------------------------
@@ -32,6 +33,14 @@ Ce projet utilise des bibliothèques libres (ZendFramework 2, ZfcUser, DOMpdf…
     cd inventaire
     php composer.phar update
 
+### Télécharger DluwTwBootstrap
+Installation manuelle (recommandée)
+
+Se placer à la racine de l'application inventaire et télécharger le module DluTwBootstrap dans le répertoire _vendor_ :
+
+	git clone https://bitbucket.org/dlu/dlutwbootstrap.git ./vendor/DluTwBootstrap
+
+
 ### Paramétrer la configuration de l'application
 #### En ligne de commandes
 
@@ -45,3 +54,7 @@ Ce projet utilise des bibliothèques libres (ZendFramework 2, ZfcUser, DOMpdf…
 * recopier le fichier **config/autoload/local.php.exemple** dans **config/autoload/local.php**
 
 * ouvrir le fichier **config/autoload/local.php**
+
+### Charger la base de données avec la structure de départ
+
+_en cours de rédaction_
