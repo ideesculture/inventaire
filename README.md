@@ -28,17 +28,10 @@ Si vous avez besoin de l'extension PECL http :
 	pecl install pecl_http
 
 ### Mettre à jour les bibliothèques requises à l'aide de composer
-Ce projet utilise des bibliothèques libres (ZendFramework 2, ZfcUser, DOMpdf…). Pour des raisons de maintenance, ces bibliothèques ne sont pas incluses dans le code source du programme, il faut les télécharger lors de l'installation en ligne de commande :
+Ce projet utilise des bibliothèques libres (ZendFramework 2, DOMpdf…). Pour des raisons de maintenance, certaines de ces bibliothèques ne sont pas incluses dans le code source du programme (uniquement les versions personnalisées le sont), il faut les télécharger lors de l'installation en ligne de commande :
 
     cd inventaire
     php composer.phar update
-
-### Télécharger DluwTwBootstrap
-Installation manuelle (recommandée)
-
-Se placer à la racine de l'application inventaire et télécharger le module DluTwBootstrap dans le répertoire _vendor_ :
-
-	git clone https://bitbucket.org/dlu/dlutwbootstrap.git ./vendor/DluTwBootstrap
 
 
 ### Paramétrer la configuration de l'application
@@ -56,5 +49,11 @@ Se placer à la racine de l'application inventaire et télécharger le module Dl
 * ouvrir le fichier **config/autoload/local.php**
 
 ### Charger la base de données avec la structure de départ
+
+#### Dans phpMyAdmin ou en ligne de commandes, charger la base
+
+Utiliser le fichier 
+
+	install/database_structure.sql
 
 _en cours de rédaction..._

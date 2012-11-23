@@ -6,5 +6,4 @@ autoload.php
 dino
 doctrine
 os
-zf-commons
-bjyoungblood
+zf-commons/zfc-base
