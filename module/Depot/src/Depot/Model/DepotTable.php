@@ -11,7 +11,7 @@ use Zend\Paginator\Adapter\DbSelect;
 
 class DepotTable extends AbstractTableGateway
 {
-	protected $table ='depot';
+	protected $table ='inventaire_depot';
 
 	public function __construct(Adapter $adapter)
 	{

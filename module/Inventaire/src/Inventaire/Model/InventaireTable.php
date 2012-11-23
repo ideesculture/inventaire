@@ -12,7 +12,7 @@ use Inventaire\Form\InventaireForm;
 
 class InventaireTable extends AbstractTableGateway
 {
-	protected $table ='inventaire';
+	protected $table ='inventaire_inventaire';
 
 	public function __construct(Adapter $adapter)
 	{
