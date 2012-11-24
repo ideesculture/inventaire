@@ -33,7 +33,7 @@ class PhotoTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('inventaire', 'photo.inventaire_id = inventaire.id');
+		->join('inventaire', 'inventaire_photo.inventaire_id = inventaire_inventaire.id');
 				
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();
@@ -51,7 +51,7 @@ class PhotoTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('inventaire', 'photo.inventaire_id = inventaire.id');
+		->join('inventaire', 'inventaire_photo.inventaire_id = inventaire_inventaire.id');
 				
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();
@@ -89,7 +89,7 @@ class PhotoTable extends AbstractTableGateway
         $sql = new Sql($this->adapter);
         $select = $sql->select();
         $select->from($this->table)
-              ->join('inventaire', 'photo.inventaire_id = inventaire.id');
+              ->join('inventaire_inventaire', 'inventaire_photo.inventaire_id = inventaire_inventaire.id');
 
         $where = new  Where();
         $where->equalTo('inventaire_id', $id) ;

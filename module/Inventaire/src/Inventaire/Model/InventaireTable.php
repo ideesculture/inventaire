@@ -53,7 +53,7 @@ class InventaireTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('inventaire_photo', 'inventaire.id = photo.inventaire_id', array('credits','file'),'left');
+		->join('inventaire_photo', 'inventaire_inventaire.id = inventaire_id', array('credits','file'),'left');
 		if ($year) {
 			$select->where("YEAR(date_inscription) = ".$year);
 		}
@@ -73,7 +73,7 @@ class InventaireTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('inventaire_photo', 'inventaire.id = photo.inventaire_id', array('credits','file'),'left');
+		->join('inventaire_photo', 'inventaire_inventaire.id = inventaire_id', array('credits','file'),'left');
 		if ($year) {
 			$select->where("YEAR(date_inscription) = ".$year);
 		}
@@ -96,7 +96,7 @@ class InventaireTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('inventaire_photo', 'inventaire.id = photo.inventaire_id', array('credits','file'),'left');
+		->join('inventaire_photo', 'inventaire_inventaire.id = inventaire_photo.inventaire_id', array('credits','file'),'left');
 		$where = "";
 		if(is_array($inventaireSearchArray) && count($inventaireSearchArray)>0) {
 			foreach($inventaireSearchArray as $key => $value) {
@@ -150,7 +150,7 @@ class InventaireTable extends AbstractTableGateway
 	
 	public function getInventaireYearsAsOptions()
 	{
-		$sql = "SELECT year(date_inscription) AS year FROM inventaire WHERE year(date_inscription) > 0 GROUP BY year(date_inscription) ORDER BY 1";
+		$sql = "SELECT year(date_inscription) AS year FROM inventaire_inventaire WHERE year(date_inscription) > 0 GROUP BY year(date_inscription) ORDER BY 1";
     	$statement = $this->adapter->query($sql);
     	$res =  $statement->execute();
     	$rownumber=0;

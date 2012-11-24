@@ -92,7 +92,7 @@ class DepotTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('photo', 'depot.id = photo.depot_id', array('credits','file'),'left');
+		->join('photo', 'inventaire_depot.id = inventaire_photo2.depot_id', array('credits','file'),'left');
 		$where = "";
 		if(is_array($depotSearchArray) && count($depotSearchArray)>0) {
 			foreach($depotSearchArray as $key => $value) {
@@ -146,7 +146,7 @@ class DepotTable extends AbstractTableGateway
 	
 	public function getDepotYearsAsOptions()
 	{
-		$sql = "SELECT year(date_inscription) AS year FROM depot WHERE year(date_inscription) > 0 GROUP BY year(date_inscription) ORDER BY 1";
+		$sql = "SELECT year(date_inscription) AS year FROM inventaire_depot WHERE year(date_inscription) > 0 GROUP BY year(date_inscription) ORDER BY 1";
     	$statement = $this->adapter->query($sql);
     	$res =  $statement->execute();
     	$rownumber=0;
