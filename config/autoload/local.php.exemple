@@ -1,5 +1,4 @@
 <?php
-<?php
 /**
  * Fichier de configuration locale
  */
@@ -14,7 +13,7 @@ return array(
     ),
     // Paramétrage des accès aux webservices de CollectiveAccess
 	'ca' => array(
-    	'ca_service_url' => "http://localhost/~gmichelin/github/collectiveaccess-providence-french/service.php",
+    	'ca_service_url' => "http://localhost/providence/service.php",
         'username' => 'utilisateur-webservices-collectiveaccess',
         'password' => 'motdepasse-webservices-collectiveaccess',
     	'object_status' => 0,
