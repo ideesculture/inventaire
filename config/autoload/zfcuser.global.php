@@ -29,7 +29,7 @@ $settings = array(
      *
      * Accepted values: boolean true or false
      */
-    //'enable_registration' => false,
+    'enable_registration' => false,
 
     /**
      * Enable Username
@@ -90,7 +90,7 @@ $settings = array(
      *
      * Accepted values: boolean true or false
      */
-    'login_after_registration' => true,
+    'login_after_registration' => false,
 
     /**
      * Registration Form Captcha

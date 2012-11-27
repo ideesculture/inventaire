@@ -78,7 +78,7 @@ L'arrêté du 25 mai 2004 indique que <i>\"lorsque le bien déposé est issu de 
                 ),
 			'options'       => array(
             	'label'             => "Références de l'acte de dépôt",
-                'hint'              => '',
+                'hint'              => '1885 déposé ; Ref : arrêté du 25 novembre 1885',
                 'description'       => "Date et références de l'acte unilatéral ou contractuel autorisant la mise en dépôt du bien.",
 			)));
 
@@ -105,7 +105,7 @@ L'arrêté du 25 mai 2004 indique que <i>\"lorsque le bien déposé est issu de 
                 ),
             'options'       => array(
             	'label'             => "Propriétaire",
-                'hint'              => "",
+                'hint'              => "Ville de Bordeaux",
                 'description'       => "Nom de la personne morale ou physique propriétaire du bien déposé.",
              )));
 

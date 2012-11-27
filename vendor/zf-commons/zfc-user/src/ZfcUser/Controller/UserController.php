@@ -205,6 +205,68 @@ class UserController extends AbstractActionController
     }
 
     /**
+     * Register new user
+     */
+    public function addAction()
+    {
+        // if the user is logged in, we don't need to register
+        //if ($this->zfcUserAuthentication()->getAuthService()->hasIdentity()) {
+            // redirect to the login redirect route
+        //    return $this->redirect()->toRoute($this->getOptions()->getLoginRedirectRoute());
+        //}
+
+        $request = $this->getRequest();
+        $service = $this->getUserService();
+        $form = $this->getRegisterForm();
+
+        /*if ($this->getOptions()->getUseRedirectParameterIfPresent() && $request->getQuery()->get('redirect')) {
+            $redirect = $request->getQuery()->get('redirect');
+        } else {
+            $redirect = false;
+        }*/
+
+        //$redirectUrl = $this->url()->fromRoute('zfcuser/add');
+        //$prg = $this->prg($redirectUrl, true);
+
+        /*if ($prg instanceof Response) {
+            return $prg;
+        } elseif ($prg === false) {
+            return array(
+                'registerForm' => $form,
+                'enableRegistration' => $this->getOptions()->getEnableRegistration(),
+                'redirect' => $redirect,
+            );
+        }*/
+
+        $post = $prg;
+        $user = $service->register($post);
+
+        if (!$user) {
+            return array(
+                'registerForm' => $form,
+                'enableRegistration' => $this->getOptions()->getEnableRegistration(),
+                'redirect' => $redirect,
+            );
+        }
+
+       /* if ($service->getOptions()->getLoginAfterRegistration()) {
+            $identityFields = $service->getOptions()->getAuthIdentityFields();
+            if (in_array('email', $identityFields)) {
+                $post['identity'] = $user->getEmail();
+            } elseif (in_array('username', $identityFields)) {
+                $post['identity'] = $user->getUsername();
+            }
+            $post['credential'] = $post['password'];
+            $request->setPost(new Parameters($post));
+            return $this->forward()->dispatch('zfcuser', array('action' => 'authenticate'));
+        }*/
+
+        // TODO: Add the redirect parameter here...
+        return $this->redirect()->toUrl($this->url()->fromRoute('zfcuser/login') . ($redirect ? '?redirect='.$redirect : ''));
+    	
+    }
+    
+    /**
      * Change the users password
      */
     public function changepasswordAction()
@@ -406,5 +468,15 @@ class UserController extends AbstractActionController
     {
         $this->changeEmailForm = $changeEmailForm;
         return $this;
+    }
+    
+    public function getAllUsersAction()
+    {
+    	$request = $this->getRequest();
+    	$service = $this->getUserService();
+    	$form = $this->getRegisterForm();
+    	
+    	$users = $service->getAllUsers();
+    	return array("users"=>$users);
     }
 }

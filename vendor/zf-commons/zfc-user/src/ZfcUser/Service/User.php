@@ -88,6 +88,12 @@ class User extends EventProvider implements ServiceManagerAwareInterface
         return $user;
     }
 
+    public function getAllUsers()
+    {
+    	$records = $this->getUserMapper()->findAll();
+    	return $records;
+    }
+    
     /**
      * change the current users password
      *

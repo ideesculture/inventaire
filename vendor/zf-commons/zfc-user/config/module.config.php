@@ -74,7 +74,27 @@ return array(
                             ),
                         ),
                     ),
-                    'changepassword' => array(
+                    'add' => array(
+                        'type' => 'Literal',
+                        'options' => array(
+                            'route' => '/add',
+                            'defaults' => array(
+                                'controller' => 'zfcuser',
+                                'action'     => 'add',
+                            ),
+                        ),
+                    ),
+                	'getAllUsers' => array(
+                			'type' => 'Literal',
+               				'options' => array(
+               						'route' => '/getAllUsers',
+               						'defaults' => array(
+               								'controller' => 'zfcuser',
+               								'action'     => 'getAllUsers',
+               						),
+               				),
+               		),         		
+               		'changepassword' => array(
                         'type' => 'Literal',
                         'options' => array(
                             'route' => '/change-password',
