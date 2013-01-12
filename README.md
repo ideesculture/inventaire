@@ -21,8 +21,28 @@ L'impression de votre inventaire est une obligation légale qui répond à des i
 ## Installation
 ----------------------------
 
+### Prérequis Apache
+Apache doit avoir l'extension *mod_rewrite* installée et configurée. 
+Sous Ubuntu server, ceci se fait à l'aide de :
+
+	a2enmod rewrite
+	service apache2 restart
+
+
+Les fichiers .htaccess doivent être autorisés. Vous pouvez réaliser cela en modifiant le paramètre :
+
+	AllowOverride None
+	
+en :
+
+	AllowOverride FileInfo
+
+dans votre fichier *httpd.conf* ou équivalent.
+
+A titre d'exemple, vous trouverez dans le répertoire *install* un exemple de fichier de configuration pour un vhost d'Apache. Le répertoire *DocumentRoot* doit pointer vers *inventaire/public*
+
 ### PECL http
-Si vous avez besoin de l'extension PECL http :
+L'extension PECL http est requise pour activer les webservices vers CollectiveAccess :
 
 	apt-get install libcurl3-openssl-dev
 	pecl install pecl_http
@@ -56,4 +76,3 @@ Utiliser le fichier
 
 	install/database_structure.sql
 
-_en cours de rédaction..._
