@@ -1,0 +1,7 @@
+<?php
+	// module/Inventaire/view/inventaire/inventaire/listingExportExcel2007.phtml
+
+	header('Content-type: application/vnd.ms-excel');
+	header('Content-Disposition:inline;filename=Fichier.xls');
+	$writer = new \PHPExcel_Writer_Excel5($workbook);
+	$writer->save('php://output');

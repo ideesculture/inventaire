@@ -25,7 +25,7 @@ class InventaireController extends AbstractActionController
 	
 	private function listingPHPExcel()
 	{
-		$year = (int) $this->params()->fromRoute('annee', 1);
+		$year = (int) $this->params()->fromRoute('annee');
 		
 		// Inclusion PHPExcel
 		require_once __DIR__.'/../../../../../vendor/os/php-excel/PHPExcel/PHPExcel.php';
@@ -90,21 +90,20 @@ class InventaireController extends AbstractActionController
 		return $view;
 	}
 
-	public function testAction() {
-		return new ViewModel(array());
-	}
-	
 	public function listingAction()
 	{
-		return new ViewModel(array(
+		$year = (int) $this->params()->fromRoute('annee');
+		$view = new ViewModel(array(
 				'auth' => array(
 						'logged' => $this::isLogged(),
 						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
 						),
 				// TODO : corriger, reprendre depuis la route ou un post
-				'inventaires' => $this->getInventaireTable()->fetchAll("2012"),
+				'inventaires' => $this->getInventaireTable()->fetchAll($year),
 				'page' => $this->params()->fromRoute('page'),
 		));
+		//$view->setTerminal(true);
+		return $view;
 	}
 	
 	public function listAction()
@@ -139,6 +138,18 @@ class InventaireController extends AbstractActionController
     	$result->setTerminal(true);
 		$result->setVariables(array('workbook' => $workbook));
 		
+		return $result;
+	}
+
+	public function listingExportExcel5Action()
+	{
+		$workbook = $this::listingPHPExcel();
+	
+		// Désactivation du layout
+		$result = new ViewModel();
+		$result->setTerminal(true);
+		$result->setVariables(array('workbook' => $workbook));
+	
 		return $result;
 	}
 	
@@ -271,7 +282,7 @@ class InventaireController extends AbstractActionController
     	}
     	return new ViewModel(array(
     			'inventaire' => $this->getInventaireTable()->getInventaire($id),
-    			//'photo'  => $this->getPhotoTable()->getPhotoByInventaireId($id),
+    			'photo'  => $this->getPhotoTable()->getPhotoByInventaireId($id),
     			'fields' => $this->getInventaireTable()->getFieldsName(),
     			'fieldsname' => $this->getInventaireTable()->getFieldsHumanName()
     	));

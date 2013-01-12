@@ -24,11 +24,11 @@ class InventaireTable extends AbstractTableGateway
 		$this->initialize();
 	}
 
-	public function fetchAll($year)
+	public function fetchAll()
 	{
 		$resultSet = $this->select();
 		if ($year) {
-			$select->where("YEAR(date_inscription) = ".$year);
+			$resultSet = $this->select()->where("YEAR(date_inscription) = ".$year);
 		}
 		
 		return $resultSet;

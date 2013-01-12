@@ -1,5 +1,5 @@
 <?php
-// module/Editions/view/editions/editions/test-pdf.phtml:
+// module/Inventaire
 define("__LOCALE__","fr_FR");
 $this->plugin("currencyformat")->setCurrencyCode("EUR")->setLocale(__LOCALE__);
 
@@ -143,15 +143,16 @@ foreach ($inventaires as $inventaire) { ?>
 	<div class="hero-unit">
 		<?php if ($inventaire->file) : ?>
     <div style="clear:both; position:relative;">
-        <div style="position:absolute; left:0pt; width:130pt;">
+       	         <div style="position:absolute; right:0pt; width:130pt;">
         	<p><span class="label">Numéro d'inventaire</span></p>
         	<h4><?php print $this->escapeHtml($inventaire->numinv); //1 ?></h4>
             <p><img src="<?php print $imagepath; ?>/files/assets/<?php print $this->escapeHtml($inventaire->file); //1 ?>" style="width:120pt;"></p>
 			<p><span class="label">Date d'acquisition</span></p>
 			<p><?php print $this->dateFormat(new DateTime($inventaire->date_acquisition), IntlDateFormatter::LONG, IntlDateFormatter::NONE, __LOCALE__); //4 ?></p>
 			</div>
+    
 		<?php endif;?>
-    	<div style="margin-left:134pt;">
+    	<div style="margin-left:0pt;">
 			<p><span class="label">Désignation</span></p>
 			<h3><?php print $this->escapeHtml($inventaire->designation); //8?></h3>
     		<p><span class="label">Mode d'acquisition</span>  <?php print $this->escapeHtml($inventaire->mode_acquisition); //2?></p>
@@ -170,6 +171,7 @@ foreach ($inventaires as $inventaire) { ?>
 			<p><span class="label">Provenance</span> <?php print $this->escapeHtml($inventaire->provenance); //17 ?></p>
 			<p><span class="label">Observations</span> <?php print $this->escapeHtml($inventaire->observations); //18 ?></p>
    	 </div>
+   	 
 	</div>
 	</div>
 <?php 

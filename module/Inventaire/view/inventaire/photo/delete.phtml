@@ -1,0 +1,24 @@
+<?php
+// module/Inventaire/view/inventaire/photo/delete.phtml:
+
+$title = 'Supprimer une photo';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
+<p>Etes vous sur de vouloir supprimer cette photo ?
+</p>
+<p>Cette modification est définitive.</p>
+<?php
+$url = $this->url('photo', array(
+    'action' => 'delete',
+    'id'     => $this->inventaire_id,
+));
+?>
+<form action="<?php echo $url; ?>" method="post">
+<div>
+    <input type="hidden" name="id" value="<?php echo (int) $photo->inventaire_id; ?>" />
+    <input type="submit" name="del" value="Yes" />
+    <input type="submit" name="del" value="No" />
+</div>
+</form>

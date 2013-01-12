@@ -123,7 +123,9 @@ if($auth["logged"]) {
 	<div class="span6">
 		<span class="pull-right">
 			<div class="btn-group">
-			<a class="btn btn-success btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listingExportCSV'));?>"><i class="icon-th icon-white"></i> Export tableur CSV</a>
+			<a class="btn btn-success btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listingExportCSV'));?>"><i class="icon-th icon-white"></i> CSV</a>
+			<a class="btn btn-success btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listingExportExcel5'));?>"><i class="icon-th icon-white"></i> Excel 5</a>
+			<a class="btn btn-success btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listingExportExcel2007'));?>"><i class="icon-th icon-white"></i> Excel 2007</a>
 			<a class="btn btn-info btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listing'));?>"><i class="icon-th-list icon-white"></i> Afficher toutes les colonnes</a>
 			</div>
 		</span>
