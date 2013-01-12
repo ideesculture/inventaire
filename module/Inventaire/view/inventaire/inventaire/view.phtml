@@ -14,7 +14,18 @@ $this->headTitle($title);
 		<table class="table">
 		<tr><td>
 		<?php if(isset($photo->file)) :?>
-			<span style="float:right;"><img style="width:300px;" src="/files/assets/<?php print $this->escapeHtml($photo->file); //1 ?>"></span>
+			<span style="float:right;">
+			<img style="width:300px;" src="/files/assets/<?php print $this->escapeHtml($photo->file); //1 ?>">
+			<p>
+			<?php print $photo->credits;?>
+			</p>
+			<p class="btn-group pull-right">
+			<a  class="btn btn-small btn-success" href="<?php echo $this->url('photo',
+				array('action'=>'edit', 'id' => $photo->id));?>"><i class="icon-pencil icon-white"></i> Modifier</a>
+			<a  class="btn btn-small btn-warning" href="<?php echo $this->url('photo',
+				array('action'=>'delete', 'id' => $photo->id));?>"><i class="icon-remove icon-white"></i> Supprimer</a>
+			</p>
+			</span>
 		<?php endif ?>
 		<?php foreach($fields as $field) {
 			print "<p><b>".$fieldsname[$field]."</b> : ";
@@ -37,7 +48,7 @@ $this->headTitle($title);
 		    <?php if (!$inventaire->validated) { ?> 
 				<a  class="btn btn-success" href="<?php echo $this->url('inventaire',
 				array('action'=>'edit', 'id' => $inventaire->id));?>"><i class="icon-pencil icon-white"></i> Modifier</a>
-				<a  class="btn btn-success" href="<?php echo $this->url('inventaire',
+				<a  class="btn btn-warning" href="<?php echo $this->url('inventaire',
 				array('action'=>'delete', 'id' => $inventaire->id));?>"><i class="icon-remove icon-white"></i> Supprimer</a>
 				<a  class="btn btn-warning" href="<?php echo $this->url('inventaire',
 				array('action'=>'validate', 'id' => $inventaire->id));?>"><i class="icon-check icon-white"></i> Valider</a>
