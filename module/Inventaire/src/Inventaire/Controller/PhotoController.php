@@ -114,6 +114,32 @@ class PhotoController extends AbstractActionController
 		return array();
 	}
 
+	public function deleteAction()
+	{
+		$id = (int) $this->params()->fromRoute('id', 0);
+		if (!$id) {
+			return $this->redirect()->toRoute('photo');
+		}
+	
+		$request = $this->getRequest();
+		if ($request->isPost()) {
+			$del = $request->getPost('del', 'No');
+	
+			if ($del == 'Yes') {
+				$id = (int) $request->getPost('id');
+				$this->getPhotoTable()->deletePhoto($id);
+			}
+	
+			// Redirect to list of inventaires
+			return $this->redirect()->toRoute('photo');
+		}
+	
+		return array(
+				'id'    => $id,
+				'photo' => $this->getPhotoTable()->getPhoto($id)
+		);
+	}
+	
 	public function getInventaireTable()
 	{
 		if (!$this->inventaireTable) {
