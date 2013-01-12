@@ -30,8 +30,11 @@ $this->headTitle($title);
 	<?php foreach ($photos as $photo) : ?>
 	  <li>
 	    <div class="thumbnail">
-	      <p><?php print $this->escapeHtml($photo->numinv);?></p>
-	      
+	      <p><?php print $this->escapeHtml($photo->numinv);?>
+	      <small><?php 
+	      		$designation = $this->escapeHtml($photo->designation);
+	      		print (strlen($designation)>29 ? $designation : $designation);?>
+	      </small></p>
 	      <div style="height:200px;text-align:center;">
 	      <div style="max-height:200px;margin:auto;">
       		<a href="/inventaire/view/<?php print $photo->inventaire_id;?>" title="<?php echo $this->escapeHtml($photo->designation);?>">
