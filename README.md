@@ -75,4 +75,17 @@ Ce projet utilise des bibliothèques libres (ZendFramework 2, DOMpdf…). Pour d
 Utiliser le fichier 
 
 	install/database_structure.sql
+	
+### Se connecter
 
+* login **test**
+
+* mot de passe **testtest**
+
+## Erreurs
+--------------------------
+* **Problème de connexion à la base MySQL**
+
+		Connect Error: could not find driver
+	
+	Vous n'avez pas configuré **inventaire/config/local.php**. Recopiez **inventaire/config/local.php.exemple** dans **inventaire/config/local.php** et modifiez le contenu du fichier pour configurer l'accès à la base de données MySQL.
