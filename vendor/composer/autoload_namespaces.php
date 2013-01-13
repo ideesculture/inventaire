@@ -12,5 +12,6 @@ return array(
     'ZendTest\\' => $vendorDir . '/zendframework/zendframework/tests/',
     'Doctrine\\Common\\' => $vendorDir . '/doctrine/common/lib/',
     'DluTwBootstrap' => $vendorDir . '/dlu/dlutwbootstrap/src/',
+    'Doctrine\\Common' => $vendorDir . '/doctrine/common/lib/',
     'DOMPDFModule' => $vendorDir . '/dino/dompdf-module/src/',
 );
