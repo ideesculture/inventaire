@@ -8,8 +8,8 @@ use Zend\Stdlib\Hydrator\HydratorInterface;
 
 class User extends AbstractDbMapper implements UserInterface
 {
-    protected $tableName  = 'inventaire_users';
-    
+    protected $tableName  = 'user';
+
     public function findByEmail($email)
     {
         $select = $this->getSelect()

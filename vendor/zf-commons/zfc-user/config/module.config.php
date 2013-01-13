@@ -10,11 +10,6 @@ return array(
             'zfcuser' => 'ZfcUser\Controller\UserController',
         ),
     ),
-    'controller_plugins' => array(
-        'invokables' => array(
-            'zfcuserauthentication' => 'ZfcUser\Controller\Plugin\ZfcUserAuthentication',
-        ),
-    ),
     'service_manager' => array(
         'aliases' => array(
             'zfcuser_zend_db_adapter' => 'Zend\Db\Adapter\Adapter',
@@ -74,27 +69,7 @@ return array(
                             ),
                         ),
                     ),
-                    'add' => array(
-                        'type' => 'Literal',
-                        'options' => array(
-                            'route' => '/add',
-                            'defaults' => array(
-                                'controller' => 'zfcuser',
-                                'action'     => 'add',
-                            ),
-                        ),
-                    ),
-                	'getAllUsers' => array(
-                			'type' => 'Literal',
-               				'options' => array(
-               						'route' => '/getAllUsers',
-               						'defaults' => array(
-               								'controller' => 'zfcuser',
-               								'action'     => 'getAllUsers',
-               						),
-               				),
-               		),         		
-               		'changepassword' => array(
+                    'changepassword' => array(
                         'type' => 'Literal',
                         'options' => array(
                             'route' => '/change-password',

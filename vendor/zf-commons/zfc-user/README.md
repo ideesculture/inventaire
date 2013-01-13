@@ -50,12 +50,46 @@ Installation
 
 ### Main Setup
 
+#### By cloning project
+
 1. Install the [ZfcBase](https://github.com/ZF-Commons/ZfcBase) ZF2 module
-   by cloning it into `./vendor/` and enabling it in your
-   `application.config.php` file.
-2. Clone this project into your `./vendor/` directory and enable it in your
-   `application.config.php` file.
-3. Import the SQL schema located in `./vendor/ZfcUser/data/schema.sql`.
+   by cloning it into `./vendor/`.
+2. Clone this project into your `./vendor/` directory.
+
+#### With composer
+
+1. Add this project and [ZfcBase](https://github.com/ZF-Commons/ZfcBase) in your composer.json:
+
+    ```json
+    "require": {
+        "zf-commons/zfc-base": "dev-master",
+        "zf-commons/zfc-user": "dev-master"
+    }
+    ```
+
+2. Now tell composer to download ZfcUser by running the command:
+
+    ```bash
+    $ php composer.phar update
+    ```
+
+#### Post installation
+
+1. Enabling it in your `application.config.php`file.
+
+    ```php
+    <?php
+    return array(
+        'modules' => array(
+            // ...
+            'ZfcBase',
+            'ZfcUser',
+        ),
+        // ...
+    );
+    ```
+
+2. Then Import the SQL schema located in `./vendor/ZfcUser/data/schema.sql`.
 
 ### Post-Install: Doctrine2 ORM
 
@@ -165,6 +199,13 @@ The following options are available:
 - **password_cost** - This should be an integer between 4 and 31. The number
   represents the base-2 logarithm of the iteration count used for hashing.
   Default is `10` (about 10 hashes per second on an i5).
+- **enable_user_state** - Boolean value, enable user state usage. Should user's
+  state be used in the registration/login process?
+- **default_user_state** - Integer value, default user state upon registration.
+  What state user should have upon registration?
+- **allowed_login_states** - Array value, states which are allowing user to login.
+  When user tries to login, is his/her state one of the following? Include null if
+  you want user's with no state to login as well.
 
 Changing Registration Captcha Element
 -------------------------------------

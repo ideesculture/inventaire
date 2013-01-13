@@ -15,7 +15,7 @@ class Base extends ProvidesEventsForm
         $this->add(array(
             'name' => 'username',
             'options' => array(
-                'label' => "Nom de l'utilisateur",
+                'label' => 'Username',
             ),
             'attributes' => array(
                 'type' => 'text'
@@ -25,7 +25,7 @@ class Base extends ProvidesEventsForm
         $this->add(array(
             'name' => 'email',
             'options' => array(
-                'label' => 'E-mail',
+                'label' => 'Email',
             ),
             'attributes' => array(
                 'type' => 'text'
@@ -35,7 +35,7 @@ class Base extends ProvidesEventsForm
         $this->add(array(
             'name' => 'display_name',
             'options' => array(
-                'label' => 'Nom affiché',
+                'label' => 'Display Name',
             ),
             'attributes' => array(
                 'type' => 'text'
@@ -45,7 +45,7 @@ class Base extends ProvidesEventsForm
         $this->add(array(
             'name' => 'password',
             'options' => array(
-                'label' => 'Mot de passe',
+                'label' => 'Password',
             ),
             'attributes' => array(
                 'type' => 'password'
@@ -55,7 +55,7 @@ class Base extends ProvidesEventsForm
         $this->add(array(
             'name' => 'passwordVerify',
             'options' => array(
-                'label' => 'Vérification du mot de passe',
+                'label' => 'Password Verify',
             ),
             'attributes' => array(
                 'type' => 'password'
@@ -67,17 +67,15 @@ class Base extends ProvidesEventsForm
                 'name' => 'captcha',
                 'type' => 'Zend\Form\Element\Captcha',
                 'options' => array(
-                    'label' => "Veuillez saisir le texte suivant",
-                ),
-                'attributes' => array(
-                    'captcha' => $this->getOptions()->getFormCaptchaOptions(),
+                    'label' => 'Please type the following text',
+                    'captcha' => $this->getRegistrationOptions()->getFormCaptchaOptions(),
                 ),
             ));
         }
 
         $submitElement = new Element\Button('submit');
         $submitElement
-            ->setLabel('Valider')
+            ->setLabel('Submit')
             ->setAttributes(array(
                 'type'  => 'submit',
             ));

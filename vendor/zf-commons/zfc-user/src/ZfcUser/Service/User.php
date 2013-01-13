@@ -82,18 +82,19 @@ class User extends EventProvider implements ServiceManagerAwareInterface
         if ($this->getOptions()->getEnableDisplayName()) {
             $user->setDisplayName($data['display_name']);
         }
+
+        // If user state is enabled, set the default state value
+        if ($this->getOptions()->getEnableUserState()) {
+            if ($this->getOptions()->getDefaultUserState()) {
+                $user->setState($this->getOptions()->getDefaultUserState());
+            }
+        }
         $this->getEventManager()->trigger(__FUNCTION__, $this, array('user' => $user, 'form' => $form));
         $this->getUserMapper()->insert($user);
         $this->getEventManager()->trigger(__FUNCTION__.'.post', $this, array('user' => $user, 'form' => $form));
         return $user;
     }
 
-    public function getAllUsers()
-    {
-    	$records = $this->getUserMapper()->findAll();
-    	return $records;
-    }
-    
     /**
      * change the current users password
      *
@@ -272,7 +273,7 @@ class User extends EventProvider implements ServiceManagerAwareInterface
     /**
      * Set service manager instance
      *
-     * @param ServiceManager $locator
+     * @param ServiceManager $serviceManager
      * @return User
      */
     public function setServiceManager(ServiceManager $serviceManager)
