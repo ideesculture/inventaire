@@ -21,8 +21,6 @@
     	"doctrine/common": "2.*",
     	"dino/dompdf-module": "dev-master",
     	"zf-commons/zfc-base": "dev-master",
-    	"os/php-excel": "dev-master",
-	"zf-commons/zfc-base": "dev-master",
-        "zf-commons/zfc-user": "dev-master"
+    	"os/php-excel": "dev-master"
 	}
 }
