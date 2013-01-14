@@ -89,3 +89,9 @@ Utiliser le fichier
 		Connect Error: could not find driver
 	
 	Vous n'avez pas configuré **inventaire/config/local.php**. Recopiez **inventaire/config/local.php.exemple** dans **inventaire/config/local.php** et modifiez le contenu du fichier pour configurer l'accès à la base de données MySQL.
+	
+* **La base de données n'existe pas**
+
+		Connect Error: SQLSTATE[HY000] [1049] Unknown database 'inventaire'
+	
+	Créer la base de données MySQL et utiliser install/database_structure.sql pour la remplir avec les données de base.
