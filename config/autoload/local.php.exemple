@@ -11,6 +11,11 @@ return array(
         'password' => 'mot-de-passe-mysql',
         'dsn'            => 'mysql:dbname=inventaire;host=localhost',
     ),
+	// Paramétrage de l'accès à l'installation de Providence (CollectiveAccess)
+	'ca_direct' => array(
+		'path' => '/Users/gmichelin/Sites/github/providence', 		// path to root dir of Providence
+		'url' => 'http://localhost/~gmichelin/github/providence' 	// url root of Providence
+	),
     // Paramétrage des accès aux webservices de CollectiveAccess
 	'ca' => array(
     	'ca_service_url' => "http://localhost/providence/service.php",
@@ -20,5 +25,115 @@ return array(
     	'object_access' => 1,
     	'object_type_id' => 21
     ),
-
+	// Correspondance pour les exports depuis l'appli Inventaire vers CollectiveAccess
+	'ca_export_mapping' => array(
+		'inventaire' => array(
+			// Exemple de paramétrage simple de correspondance pour l'export (champ de l'inventaire vers attribut simple)
+			// 'ca_objects.codeattributsimple' => array("valeur" => "nomchampinventaire")
+			'ca_objects.idno'=> 'numinv',
+			'ca_objects.acquisitionMethod'=> array(
+				"valeur" => 'mode_acquisition'),//OK
+			'ca_entities.preferred_labels'=>array( 
+				"valeur" => 'donateur'),
+			'ca_objects.acquisitionDate'=>array( 
+				"valeur" => 'date_acquisition'),//OK
+			'ca_objects.comments'=>array( 
+				"valeur" => 'avis'),//OK
+			'ca_objects.prix'=>array( 
+				"valeur" => 'prix'),
+			'ca_objects.date_inventaire'=>array( 
+				"valeur" => 'date_inscription'), //OK
+			'ca_objects.preferred_labels'=>array( 
+				"valeur" => 'designation'),//OK
+			'ca_objects.inscription_c'=>array( //A TESTER
+				"valeur" => 'inscription',
+				"container" => 	array(
+					"inscription_presence" => "inscription1",
+					"inscription_info" => "^valeur")), 
+			'ca_objects.materiaux'=>array( 
+				"valeur" => 'materiaux'),
+			'ca_objects.techniqueFabrication'=>array( 
+				"valeur" => 'techniques'), 
+			'ca_objects.dimensions'=>array( //A TESTER
+				"valeur" => 'mesures',
+				"container" => array(
+					"dimensions_width" => "10 cm",
+					"dimensions_height" => "11 cm",
+					"dimensions_depth" => "12 cm",
+					"circumference" => "13 cm",
+					"dimensions_type" => "i2")),
+			'ca_objects.constatEtat.remarques_etatActuel'=>array( 
+				"valeur" => 'etat'), 
+			'ca_entities.preferred_labels'=>array( 
+				"valeur" => 'auteur'),
+			'ca_objects.style'=>array( 
+				"valeur" => 'epoque'),
+			'ca_objects.fonctions'=>array( 
+				"valeur" => 'usage'), 
+			'ca_places.preferred_labels'=>array( 
+				"valeur" => 'provenance') ,
+			'ca_objects.observations'=>array( 
+				"valeur" => 'observations') //OK
+			),
+		'depot' => array(),
+	),
+	// Correspondance pour les imports depuis CollectiveAccess vers l'appli Inventaire  
+	'ca_import_mapping' => array(
+		'inventaire' => array(
+			"numinv" => array(
+				"field" => 'ca_objects.idno'),
+			"mode_acquisition" => array(
+				"field" => 'ca_objects.AcquisitionMode'),
+			'donateur'=>array(
+				"field" => 'ca_entities.preferred_labels',
+				"options" => array(
+					"template" => "^ca_entities.preferred_labels.displayname (^relationship_typename)",
+					"restrictToRelationshipTypes" => array("donateur","testateur","vendeur")
+				)
+			), 
+			'date_acquisition'=>array( //date_acteAcquisition 
+				"field" => 'ca_objects.date_ref_acteAcquisition.date_acteAcquisition',
+				"post-treatment" => 'caDateToUnixTimestamp'),
+			'avis'=>array( 
+				"field" => 'ca_objects.avisScientifiques'),// A REVOIR
+			'prix'=>array( 
+				"field" => 'ca_objects.prix',
+				"post-treatment" => 'convertcurrencytoeuros'), //OK
+			'date_inscription'=>array( 
+				"field" => 'ca_objects.date_inventaire',
+				"post-treatment" => 'caDateToUnixTimestamp'),
+			'designation'=>array( 
+				"field" => 'ca_objects.preferred_labels'),//OK
+			'inscription'=>array( //A TESTER
+				"field" => 'ca_objects.inscription_c'), 
+			'materiaux'=>array( 
+				"field" => 'ca_objects.materiaux_tech_c',
+				"options" => array("template" => "^materiaux")
+			),
+			'techniques'=>array( 
+				"field" => 'ca_objects.materiaux_tech_c',
+				"options" => array("template" => "^techniques")
+			),
+			'mesures'=>array( //A TESTER
+				"field" => 'ca_objects.dimensions'),
+			'etat'=>array( 
+				"field" => 'ca_objects.constatEtat'), 
+			'auteur'=>array(
+				"field" => 'ca_entities.preferred_labels',
+				"options" => array(
+					"template" => "^ca_entities.preferred_labels.displayname (^relationship_typename)",
+					"restrictToRelationshipTypes" => array("auteur")
+				),
+			),
+			'epoque'=>array(
+				"field" => 'ca_objects.useDate'),
+			'usage'=>array( 
+				"field" => 'ca_objects.fonctions'), 
+			'provenance'=>array( 
+				"field" => 'ca_places.preferred_labels') ,
+			'observations'=>array( 
+				"field" => 'ca_objects.observations')
+		),
+		'depot' => array()
+	)
 );
