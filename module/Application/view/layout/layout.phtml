@@ -50,13 +50,10 @@
                     <div class="nav-collapse collapse">
                         <ul class="nav">
                             <li <?php print ($this->url() == "/" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Accueil'); ?></a></li>
-                            <li <?php print ($this->url() == "/inventaire" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('inventaire') ?>"><?php echo $this->translate('Inventaire des collections'); ?></a></li>
-                            <li <?php print ($this->url() == "/search" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('search') ?>"><?php echo $this->translate('Recherche'); ?></a></li>
-                            <li <?php print ($this->url() == "/photo" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('photo') ?>"><?php echo $this->translate('Photos'); ?></a></li>
-                            <li <?php print ($this->url() == "/depot" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('depot') ?>"><?php echo $this->translate('Dépôts'); ?></a></li>
-                            <?php if ($this->zfcUserIdentity() && ($this->zfcUserIdentity()->getId() == 1)) :?>
-								<li <?php print ($this->url() == "/zfcuser" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('home')."../user" ?>">Gestion des utilisateurs</a></li>
-                            <?php endif; ?>
+                            <li <?php print ($this->url() == "/inventaire" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('inventaire') ?>"><?php echo $this->translate('Biens acquis'); ?></a></li>
+                            <li <?php print ($this->url() == "/depot" ? "class=\"active\"" : "") ?>><a href="<?php echo $this->url('depot') ?>"><?php echo $this->translate('Biens reçus en dépôts'); ?></a></li>
+
+                            <li><a href="http://localhost/~gmichelin/github/providence">CollectiveAccess</a>
                         </ul>
                     </div><!--/.nav-collapse -->
                 </div>

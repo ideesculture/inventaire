@@ -72,7 +72,7 @@ class PhotoController extends AbstractActionController
 			 
 			if ($form->isValid()) {
 				// Validation du fichier uploadé : taille, dimensions en pixel et extension (png et jpg)
-				$size = new Size(array('min'=>20000, 'max' =>2000000)); //minimum bytes filesize
+				$size = new Size(array('min'=>10000, 'max' =>2000000)); //minimum bytes filesize
 				$extension = new Extension(array('extension'=>'png,jpg,jpeg'));
 				$imagesize = new ImageSize(array(
 						'minwidth'=>150,

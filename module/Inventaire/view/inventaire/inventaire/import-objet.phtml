@@ -1,0 +1,53 @@
+<?php
+// module/Inventaire/view/inventaire/inventaire/index.phtml:
+
+$title = 'Import depuis la base CollectiveAccess';
+$this->headTitle($title);
+
+$ca_id = ( isset($ca_id) ? true : false );
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+<?php
+if(!$ca_id) :
+?>
+<div class="row">
+	<div class="span12">
+	<form action="<?php echo $this->url; ?>" method="post">
+	    <div>
+	    	<h3><label class="control-label required" for="ca_id">Identifiant interne CollectiveAccess <small>différent du numéro d'inventaire</small></label>
+	    	<input type="text" name="ca_id" /></h3>
+	    </div>
+	    <div>
+	    	 <input type="submit" name="insert" value="Importer" class="btn btn-info btn-large" />
+	    </div>
+	</form>
+	</div>
+</div>
+<?php else :?>
+
+<div class="row">
+	<div class="span12">
+		<?php  foreach($results as $key=>$result) : ?>
+			<?php print "<h2>".$result["designation"]." <small>".$result["numinv"]."</small></h2><p>(objet ".$key.")</p>";?>
+			<?php if(!isset($result["error"])) : ?>
+				<div class="alert alert-success">
+				<button type="button" class="close" data-dismiss="alert">×</button>
+					Import réussi
+				</div>
+			<?php else : ?>
+				<div class="alert alert-error">
+				<button type="button" class="close" data-dismiss="alert">×</button>
+					<?php print $result["error"];?>
+				</div>
+			<?php endif; ?>
+		<?php endforeach; ?>
+	</div> 
+</div>
+<?php endif;?>
+<div class="row">
+	<div class="span12">
+		<p class="btn-group">
+		    <a class="btn btn-info" href="<?php echo $this->url('inventaire', array());?>">Revenir à la liste des objets</a>
+		</p>
+	</div>
+</div>

@@ -20,6 +20,13 @@ class InventaireForm extends Form
                        'attributes' => array(),
                    ));
  
+        //Hidden
+        $this->add(array(
+                       'name'       => 'ca_id',
+                       'type'       => 'Zend\Form\Element\Hidden',
+                       'attributes' => array(),
+                   ));
+ 
         //Fieldset One
         $this->add(array(
             'name'          => 'fsOne',

@@ -23,7 +23,56 @@ class InventaireTable extends AbstractTableGateway
 		
 		$this->initialize();
 	}
+	
+	private function preloadCaDirect($setup_path) {
+		$path = getcwd();
+		
+		// AUTHENTIFICATION
+		chdir($setup_path);
+		$result = include($setup_path."/setup.php");
+		chdir($path);
+		if ($result) {
+			require_once(__CA_LIB_DIR__.'/core/Db.php');
+			return true;
+		} else {
+			return false;
+		}
+	}
 
+	private function convertcurrency($from, $to, $amount)
+	{
+		$url = "http://currency-api.appspot.com/api/$from/$to.json?key=9fa0b032430252b51c673ba5076593943b83a18e&amount=$amount";
+		//print $url;die();
+		$result = file_get_contents($url);
+		$result = json_decode($result);
+	
+		if ($result->success)
+		{
+			return $result->amount;
+		} else {
+			return false;
+		}
+	}
+	
+	private function caAuth(\RestClient $client, array $caWsConfig)
+	{
+		// Récupération de la config
+		// Authentification
+		$res = $client->post($caWsConfig["ca_service_url"]."/iteminfo/ItemInfo/rest",
+				array("method"=>"auth", "username" => $caWsConfig["username"], "password" => $caWsConfig["password"])
+		);
+		// Traitement de la réponse
+		$simplexml_response = new \SimpleXMLElement($client->response_object->body);
+		// Retourne FALSE si la connexion n'est pas OK
+		if ($simplexml_response->auth->status != "success") return false;
+		return $client;
+	}
+	private function remplace_placeholder_par_valeur(&$item,$key,$valeur){
+		if(stripos($item,"^valeur")){
+			$item=str_ireplace("^valeur", $valeur, $item);
+		}
+	}
+	
 	public function fetchAll()
 	{
 		$resultSet = $this->select();
@@ -205,6 +254,22 @@ class InventaireTable extends AbstractTableGateway
 		return true;
 	}
 	
+	public function checkInventaireByCaId($ca_id)
+	{
+
+		$rowset = $this->select(array(
+				'ca_id' => $ca_id,
+		));
+
+		$row = $rowset->current();
+
+		if (!$row) {
+			return false;
+		}
+		
+		return $row;
+	}
+	
 	public function getArrayCopy()
 	{
 		return get_object_vars($this);
@@ -213,6 +278,7 @@ class InventaireTable extends AbstractTableGateway
 	public function saveInventaire(Inventaire $inventaire)
 	{
 		$data = array(
+				'ca_id' => $inventaire->ca_id,
 				'numinv' => $inventaire->numinv,
 				'mode_acquisition' => $inventaire->mode_acquisition,//2
 				'donateur' => $inventaire->donateur,//3
@@ -235,8 +301,11 @@ class InventaireTable extends AbstractTableGateway
 		);
 
 		$id = (int) $inventaire->id;
-
+		
 		if ($id == 0) {
+			if (($inventaire->ca_id) && ($conflit=$this->checkInventaireByCaId($inventaire->ca_id))) {
+				throw new \Exception("L'enregistrement ".$conflit->numinv." ".$conflit->designation." est déjà lié à cet objet de CollectiveAccess : <small>id = ".$inventaire->ca_id."</small>");
+			}
 			if (!$this->checkInventaireByNuminv($inventaire->numinv)) {
 				$this->insert($data);
 			} else {
@@ -317,11 +386,38 @@ class InventaireTable extends AbstractTableGateway
 	}
 	
 	
-	public function validateInventaire($id)
+	public function validateInventaire(Inventaire $inventaire, array $options=array())
 	{
+		$id = (int) $inventaire->id;
+		if(($inventaire->ca_id) && ($options["updateCaDate"] == true)) {
+			if(!$this->preloadCaDirect($options["path"])) {
+				throw new \Exception("Impossible d'accéder à CollectiveAccess.");
+			}
+			include_once(__CA_MODELS_DIR__."/ca_objects.php");
+			$t_object = new \ca_objects($inventaire->ca_id);
+			$t_object->setMode(ACCESS_WRITE);
+			// retrait de la date d'ajout à l'inventaire si précédemment renseigné
+			$t_object->removeAttributes("date_inventaire");
+			$t_object->update();
+			if ($t_object->numErrors()) throw new \Exception("Impossible de supprimer la date d'ajout à l'inventaire déjà renseignée.");
+			$t_object->addAttribute(array("date_inventaire" => date("Y-m-d")),"date_inventaire");
+			$t_object->update();
+			if ($t_object->numErrors()) throw new \Exception("Impossible de définir la nouvelle date d'ajout à l'inventaire.");
+			unset($t_object);
+		}
 		$this->update(
 			// set
 			array("validated" => TRUE),
+			// where
+			"id = $id");
+	}	
+	
+	public function unvalidateInventaire(Inventaire $inventaire)
+	{
+		$id = (int) $inventaire->id;
+		$this->update(
+			// set
+			array("validated" => FALSE),
 			// where
 			"id = $id");
 	}	
@@ -333,24 +429,7 @@ class InventaireTable extends AbstractTableGateway
 		));
 	}
 	
-	private function caAuth(\RestClient $client, array $caWsConfig)
-	{
-		// Récupération de la config
-		// Authentification
-		$res = $client->post($caWsConfig["ca_service_url"]."/iteminfo/ItemInfo/rest",
-				array("method"=>"auth", "username" => $caWsConfig["username"], "password" => $caWsConfig["password"])
-		);
-		// Traitement de la réponse
-		$simplexml_response = new \SimpleXMLElement($client->response_object->body);
-		// Retourne FALSE si la connexion n'est pas OK
-		if ($simplexml_response->auth->status != "success") return false;
-		return $client;
-	}
-	private function remplace_placeholder_par_valeur(&$item,$key,$valeur){
-		if(stripos($item,"^valeur")){
-			$item=str_ireplace("^valeur", $valeur, $item);
-		}
-	}
+
 	public function caWsExport($id, array $caWsConfig)
 	{
 
@@ -370,10 +449,15 @@ class InventaireTable extends AbstractTableGateway
 		$res = $c->post($url."/cataloguing/Cataloguing/rest",
 				array(
 						"method" => "add","type" => "ca_objects",
-						"fieldInfo" => array('idno' => $idno,'status' => 0,'access' => 1,'type_id' => 21)
+						"fieldInfo" => array('idno' => $idno,'status' => 0,'access' => 1,'type_id' => 21, 'source_id' => 29, 'batch_id' => 0)
 				));
-
+		print "\n".$c->response_object->body;
+		die();	
 		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
+		if ($simplexml_response === false) {
+			print $c->response_object->body;
+			die();
+		}
 		// Traitement des erreurs
 		if ($simplexml_response->add->status != "success")
 			throw new \Exception("<b>Impossible d'ajouter l'objet dans la base CA</b> : ".$simplexml_response->add->response->message);
@@ -456,11 +540,105 @@ class InventaireTable extends AbstractTableGateway
 		return true;		
 	}
 	
+	public function caDirectExport($id, array $caDirectConfig)
+	{
+		$champs_traites = array("prix","comments","observations","acquisitionDate","date_inventaire","acquisitionMethod");
+		// prix OK, acquisitionDate, 
+		$inventaire = $this->getInventaire($id);
+		
+		$path = getcwd();
+		$setup_path = $caDirectConfig["setup"];
+		//var_dump($setup_path);die();
+		$mappings = $caDirectConfig["inventaire"];
+		
+		// AUTHENTIFICATION
+		chdir($setup_path);
+		include($setup_path."/setup.php");
+		chdir($path);
+		require_once(__CA_LIB_DIR__.'/core/Db.php');
+		include_once(__CA_MODELS_DIR__."/ca_locales.php");
+		include_once(__CA_MODELS_DIR__."/ca_objects.php");
+		include_once(__CA_MODELS_DIR__."/ca_lists.php");
+		
+		$t_locale = new \ca_locales();
+		$locale_id = $t_locale->loadLocaleByCode('fr_FR');		// default locale_id
+		$t_list = new \ca_lists();
+		$object_type = $t_list->getItemIDFromList('object_types', 'art');
+
+		// INSERTION OBJET
+		// le cas échéant, renseignement de ca_objects.idno
+		if (isset($mappings["ca_objects.idno"])) $idno=$inventaire->$mappings["ca_objects.idno"]; else $idno="";
+		$t_object = new \ca_objects();
+		$t_object->setMode(ACCESS_WRITE);
+		$t_object->set('idno', $idno);
+		$t_object->set('status', 0);
+		$t_object->set('access', 1);
+		$t_object->set('type_id', $object_type);
+		$t_object->set('batch_id', 0);
+		
+		/******************************************
+		 * Object insertion in the database       *
+		 ******************************************/ 
+		$t_object->insert();
+		$errors=join('; ', $t_object->getErrors());
+
+		// Traitement des erreurs
+		if ($errors)
+			throw new \Exception("<b>Impossible d'ajouter l'objet dans la base CA</b> : ".$errors);
+	
+		// AJOUT DU TITRE ca_objects.preferred_labels
+		//var_dump($mappings);die();
+		$t_object->addLabel(array('name' => $inventaire->$mappings["ca_objects.preferred_labels"]["valeur"]), $locale_id, null, true);
+		$t_object->update();
+		$errors=join('; ', $t_object->getErrors());
+		
+		// Traitement des erreurs
+		if ($errors)
+			throw new \Exception("<b>Erreur lors de l'ajout du titre de l'objet dans la base CA</b> : ".$errors);
+	
+		// TRAITEMENT DES AUTRES CHAMPS
+		foreach($mappings as $field => $mapping) {
+			// Le titre et l'idno sont ignorés car déjà traités
+			if (in_array($field,array("ca_objects.idno", "ca_objects.preferred_labels"))) break 1;
+				
+			// Traitement des valeurs spécifiques (ajout suffixe, préfixe...)
+			$valeur = $inventaire -> $mapping["valeur"];
+				
+			// Si pas de valeur à traiter, on passe
+			if (!$valeur) break 1;
+				
+			$fields = explode(".",$field);
+			$table = $fields[0];
+			$fieldname = $fields[1];
+				
+			// Traitement des champs OK, à retirer une fois que tous les champs sont OK
+			if (in_array($fieldname, $champs_traites)) {
+				if ($fieldname == "prix") $valeur = $inventaire->$mapping["valeur"]." EUR";
+				$t_object->addAttribute(array($fieldname  => $valeur),$fieldname);
+				$t_object->update();
+				$errors=join('; ', $t_object->getErrors());
+				if ($errors)
+					throw new \Exception("<b>Erreur lors de l'ajout du titre de l'objet dans la base CA</b> : ".$errors);
+
+			} elseif (isset($mapping["container"])) {
+				// Si le champ contient un conteneur, on remplace l'emplacement ^valeur par la valeur avant d'insérer dans la base
+				$container=str_ireplace("^valeur", $valeur, $mapping["container"]);
+				$t_object->addAttribute($container,$fieldname);
+				$t_object->update();
+				$errors=join('; ', $t_object->getErrors());
+				if ($errors)
+					throw new \Exception("<b>Erreur lors de l'ajout du titre de l'objet dans la base CA</b> : ".$errors);	
+	
+			}
+		}
+		return true;
+	}
+	
+	
 	public function caWsAvailableSets(array $caWsConfig)
 	{
 		
 		$c = new \RestClient();
-		
 		// Authentification
 		if (! $this->caAuth($c, $caWsConfig) ) throw new \Exception("Impossible de se connecter aux webservices de CollectiveAccess, veuillez vérifier votre configuration");
 			
@@ -470,7 +648,7 @@ class InventaireTable extends AbstractTableGateway
 				));
 		
 		$simplexml_response = new \SimpleXMLElement($c->response_object->body);
-		
+		var_dump($simplexml_response);die();
 		// Traitement des erreurs
 		if ($simplexml_response->getSets->status != "success")
 			throw new \Exception("<b>Impossible de récupérer la liste des ensembles (set) de la base CA</b> : ".$simplexml_response->getSets->response->message);
@@ -595,4 +773,101 @@ class InventaireTable extends AbstractTableGateway
 		return $return;
 	}
 	
+	public function caDirectImportObject($ca_id, array $caDirectConfig)
+	{
+		$return = array();
+	
+		if(!$this->preloadCaDirect($caDirectConfig["path"])) {
+			throw new \Exception("Impossible d'accéder à CollectiveAccess.");
+		}
+		
+		$inventaire = new Inventaire();
+		$inventaire->id = 0;
+		$inventaire->ca_id = $ca_id;
+		$inventaire->validated = 0;
+		$mappings = $caDirectConfig["inventaire"];
+		
+		include_once(__CA_MODELS_DIR__."/ca_locales.php");
+		include_once(__CA_MODELS_DIR__."/ca_objects.php");
+		include_once(__CA_MODELS_DIR__."/ca_lists.php");
+		
+		$t_locale = new \ca_locales();
+		$locale_id = $t_locale->loadLocaleByCode('fr_FR'); // Stockage explicite en français
+		$t_list = new \ca_lists();
+		$object_type = $t_list->getItemIDFromList('object_types', 'art');
+		
+		$t_object = new \ca_objects($ca_id);
+		$t_object->setMode(ACCESS_WRITE);
+
+		// ATTRIBUTS
+		foreach ($mappings as $target => $attribute) {
+			$data = explode(".",$attribute["field"]);
+			
+			// GESTION DES OPTIONS POUR LE get()
+			$options = array("convertCodesToDisplayText"=>"true");
+			if ($attribute["options"]) $options = array_merge($options,$attribute["options"]);
+			// RECUPERATION DU CHAMP POUR L'AFFICHAGE
+			$response = $t_object->get($attribute["field"], $options);
+			
+			// POST-TRAITEMENT
+			if ($attribute["post-treatment"]) {
+				switch($attribute["post-treatment"]) {
+					// Conversion monétaire
+					case 'convertcurrencytoeuros' :
+						preg_match('/([[:graph:]]*) ([[:graph:]]*)/i',$response, $matches);
+						if ($matches[1] != "EUR") {
+							$conversionresult = $this->convertcurrency($matches[1], "EUR", $matches[2]);
+							if($conversionresult) {
+								$response=$conversionresult;
+							} else {
+								throw new \Exception("Erreur dans la conversion de devise de ".$response." en euros.");
+							}
+						} else {
+							$response = $matches[2];
+						}
+						// Remplacement du point par la virgule
+						$response = str_replace(".", ",",$response);
+						break;
+					// Conversion vers une date au format JJ/MM/AAAA
+					case 'caDateToUnixTimestamp' :
+						$response = date('Y-m-d',caDateToUnixTimestamp($response));
+						break;
+					// Post-traitement non reconnu
+					default :
+						throw new \Exception("Post-traitement non reconnu : ".$attribute["post-treatment"]);
+				}
+			} 
+
+			// DEFINITION DE L'ATTRIBUT
+			$inventaire->$target = $response;
+
+		}
+		
+		if (!$inventaire->numinv) {
+			$return["error"] = "<b>Objet $ca_id sans numéro d'inventaire</b>";
+			return $return;
+		}
+		$return["numinv"]=$inventaire->numinv;
+		
+		if (!$inventaire->designation) {
+			$return["error"] = "<b>Objet $ca_id sans titre</b>";
+			return $return;
+		}
+		$return["designation"]=$inventaire->designation;
+		
+		$result = $this->saveInventaire($inventaire);
+		
+		$inventaire_id = $this->checkInventaireByCaId($ca_id)->id;
+		if(!$inventaire_id) {
+			return new \Exception("Problème de vérification inventaire_id.");
+		}
+		$t_object->removeAttributes("inventaire_id");
+		$t_object->update();
+		if ($t_object->numErrors()) throw new \Exception("Impossible de supprimer la date d'ajout à l'inventaire déjà renseignée.");
+		$t_object->addAttribute(array("inventaire_id" => $inventaire_id),"inventaire_id");
+		$t_object->update();
+		
+		return $return;
+	}
+
 }

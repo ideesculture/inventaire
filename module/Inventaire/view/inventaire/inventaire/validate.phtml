@@ -6,11 +6,20 @@ $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
 
-<p>Etes vous sur de vouloir valider
+<h3>Etes vous sur de vouloir valider
     <b><?php echo $this->escapeHtml($inventaire->designation); ?></b>, correspondant au numéro d'inventaire
     <b><?php echo $this->escapeHtml($inventaire->numinv); ?></b> ?
+</h3>
+<?php if($inventaire->ca_id) : ?>
+<p>
+	<span class="label label-important">Important</span> La date d'inscription à l'inventaire définie dans la base CollectiveAccess va être redéfinie à la date du jour de validation (<?php print date("d/m/Y"); ?>).
 </p>
-<p>Après validation, l'objet ne sera plus modifiable. Cette modification est définitive.</p>
+<?php endif;?>
+    <div class="alert">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p>Après validation, l'objet ne sera plus modifiable. Cette modification est <strong>définitive</strong>.</p>
+    </div>
+
 <?php
 $url = $this->url('inventaire', array(
     'action' => 'validate',
@@ -20,7 +29,7 @@ $url = $this->url('inventaire', array(
 <form action="<?php echo $url; ?>" method="post">
 <div>
     <input type="hidden" name="id" value="<?php echo (int) $inventaire->id; ?>" />
-    <input type="submit" name="validate" value="Yes" />
-    <input type="submit" name="validate" value="No" />
+    <input type="submit" name="validate" class="btn btn-warning" value="Yes" />
+    <input type="submit" name="validate" class="btn btn-info" value="No" />
 </div>
 </form>

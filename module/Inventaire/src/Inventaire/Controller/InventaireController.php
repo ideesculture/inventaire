@@ -16,7 +16,7 @@ use Inventaire\Form\InventaireForm;
 use DOMPDFModule\View\Model\PdfModel;
 
 //require dirname(__FILE__).'/cawrapper/ItemService.php';
-require dirname(__FILE__).'/restlib/rest_client.php';
+//require dirname(__FILE__).'/restlib/rest_client.php';
 
 class InventaireController extends AbstractActionController
 {
@@ -70,6 +70,7 @@ class InventaireController extends AbstractActionController
 	{
 		$page = (int) $this->params()->fromRoute('page', 1);
 		$year = (int) $this->params()->fromRoute('annee', "");
+		$config = $this->getServiceLocator()->get('Config');
 		
 		$iteratorAdapter = new \Zend\Paginator\Adapter\Iterator($this->getInventaireTable()->fetchAllFullInfosPaginator($year));
 		$paginator = new \Zend\Paginator\Paginator($iteratorAdapter);
@@ -85,7 +86,8 @@ class InventaireController extends AbstractActionController
 				'yearsOptions' => $this->getInventaireTable()->getInventaireYearsAsOptions(),
 				'fields' => $this->getInventaireTable()->getFieldsName(),
 				'fieldsname' => $this->getInventaireTable()->getFieldsHumanName(),
-				'page'=>$page
+				'page'=>$page,
+				'config_ca_direct'=>$config["ca_direct"]
 		));
 		return $view;
 	}
@@ -280,11 +282,18 @@ class InventaireController extends AbstractActionController
     	if (!$id) {
     		return $this->redirect()->toRoute('inventaire', array());
     	}
+    	$config = $this->getServiceLocator()->get('Config');
+    	$config_ca_direct = $config["ca_direct"];
     	return new ViewModel(array(
+				'auth' => array(
+						'logged' => $this::isLogged(),
+						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
+						),
     			'inventaire' => $this->getInventaireTable()->getInventaire($id),
     			'photo'  => $this->getPhotoTable()->getPhotoByInventaireId($id),
     			'fields' => $this->getInventaireTable()->getFieldsName(),
-    			'fieldsname' => $this->getInventaireTable()->getFieldsHumanName()
+    			'fieldsname' => $this->getInventaireTable()->getFieldsHumanName(),
+    			'config_ca_direct' => $config_ca_direct
     	));
     }
     
@@ -320,14 +329,16 @@ class InventaireController extends AbstractActionController
         if (!$id) {
             return $this->redirect()->toRoute('inventaire');
         }
-
+        
         $request = $this->getRequest();
         if ($request->isPost()) {
             $validate = $request->getPost('validate', 'No');
 
             if ($validate == 'Yes') {
                 $id = (int) $request->getPost('id');
-                $this->getInventaireTable()->validateInventaire($id);
+                $config = $this->getServiceLocator()->get('Config');
+				$inventaire = $this->getInventaireTable()->getInventaire($id);
+                $this->getInventaireTable()->validateInventaire($inventaire, array("updateCaDate" => true,"path"=> $config["ca_direct"]["path"]));
             }
 
             // Redirect to list of inventaires
@@ -340,6 +351,20 @@ class InventaireController extends AbstractActionController
         );
     }
 
+    public function unvalidateAction()
+    {
+    	$id = (int) $this->params()->fromRoute('id', 0);
+    	if (!$id) {
+    		return $this->redirect()->toRoute('inventaire');
+    	}
+    
+		$inventaire = $this->getInventaireTable()->getInventaire($id);
+    	$this->getInventaireTable()->unvalidateInventaire($inventaire);
+    	
+    	// Redirect to list of inventaires
+		return $this->redirect()->toRoute('inventaire');
+    }
+    
     public function getInventaireTable()
 	{
 		if (!$this->inventaireTable) {
@@ -380,8 +405,8 @@ class InventaireController extends AbstractActionController
 		if ($insert == 'Yes') {
         	$id = (int) $request->getPost('id');
         	$config = $this->getServiceLocator()->get('Config');
-        	$config_export = array_merge($config["ca"],$config["ca_export_mapping"]);
-        	$this->getInventaireTable()->caWsExport($id,$config_export);
+        	$config_export = array_merge($config["ca_direct"],$config["ca_export_mapping"]);
+        	$this->getInventaireTable()->caDirectExport($id,$config_export);
         	return array(
         			'id'    => $id,
         			'inventaire'=>$this->getInventaireTable()->getInventaire($id),
@@ -395,6 +420,30 @@ class InventaireController extends AbstractActionController
             ));
 	}
 
+	public function importObjetAction()
+	{
+		$request = $this->getRequest();
+		if ($request->isPost()) {
+			$ca_id = $request->getPost('ca_id', '0');
+		} else {
+			$ca_id = (int) $this->params()->fromRoute('id', 0);
+		}
+		
+		if (!$ca_id) {
+			return array();
+		}
+
+        $config = $this->getServiceLocator()->get('Config');
+		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
+		
+		$result=$this->getInventaireTable()->caDirectImportObject($ca_id,$config_import);
+
+		$return = new ViewModel();
+		$return->setVariable('ca_id', $ca_id);
+		$return->setVariable('results', array($ca_id => $result));
+		return $return;
+	}
+	
 	public function importAction()
 	{
 	
@@ -402,6 +451,8 @@ class InventaireController extends AbstractActionController
 		$request = $this->getRequest();
 		$config = $this->getServiceLocator()->get('Config');
 		$config_import=array_merge($config["ca"],$config["ca_import_mapping"]);
+		$test=$this->getInventaireTable()->caWsAvailableSets($config_import);
+		var_dump($test);die();
 		if (!$request->isPost()) {
 			//print "ici";die();
 			return array(

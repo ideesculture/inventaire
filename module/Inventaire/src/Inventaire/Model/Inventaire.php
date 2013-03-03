@@ -10,7 +10,8 @@ use Zend\InputFilter\InputFilterInterface;
 class Inventaire implements InputFilterAwareInterface
 {
 	public $id;
-
+	public $ca_id;
+	
 /* a) Rubriques relatives au statut juridique des biens et aux conditions de leur acquisition
  * 
 	N° colonne	Rubrique
@@ -72,6 +73,7 @@ class Inventaire implements InputFilterAwareInterface
 	public function exchangeArray($data)
 	{
 		$this->id     = (isset($data['id'])) ? $data['id'] : null;
+		$this->ca_id     = (isset($data['ca_id'])) ? $data['ca_id'] : null;
 		$this->numinv = (isset($data['numinv'])) ? $data['numinv'] : null;//1
 		$this->mode_acquisition = (isset($data['mode_acquisition'])) ? $data['mode_acquisition'] : null;//2
 		$this->donateur = (isset($data['donateur'])) ? $data['donateur'] : null;//3
