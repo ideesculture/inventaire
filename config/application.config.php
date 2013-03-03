@@ -7,6 +7,7 @@ return array(
     	'Application',
         'Inventaire',
         'Editions',
+    	'Recolement',
     	'DOMPDFModule',
     	'DluTwBootstrap',
     	'Depot'
