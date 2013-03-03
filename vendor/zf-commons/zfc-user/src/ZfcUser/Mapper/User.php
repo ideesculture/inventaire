@@ -8,7 +8,7 @@ use Zend\Stdlib\Hydrator\HydratorInterface;
 
 class User extends AbstractDbMapper implements UserInterface
 {
-    protected $tableName  = 'inventaire_users';
+    protected $tableName  = 'user';
 
     public function findByEmail($email)
     {
@@ -40,6 +40,14 @@ class User extends AbstractDbMapper implements UserInterface
         return $entity;
     }
 
+    public function getTableName(){
+        return $this->tableName;
+    }
+    
+    public function setTableName($tableName){
+        $this->tableName=$tableName;
+    }    
+    
     public function insert($entity, $tableName = null, HydratorInterface $hydrator = null)
     {
         $result = parent::insert($entity, $tableName, $hydrator);

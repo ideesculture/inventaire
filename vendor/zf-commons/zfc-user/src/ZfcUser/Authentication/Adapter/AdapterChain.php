@@ -76,7 +76,18 @@ class AdapterChain extends EventProvider implements AdapterInterface
                 $listener[0]->getStorage()->clear();
             }
         }
-        $this;
+        return $this;
+    }
+
+    /**
+     * logoutAdapters
+     *
+     * @return AdapterChain
+     */
+    public function logoutAdapters()
+    {
+        //Adapters might need to perform additional cleanup after logout
+        $this->getEventManager()->trigger('logout', $this->getEvent());
     }
 
     /**

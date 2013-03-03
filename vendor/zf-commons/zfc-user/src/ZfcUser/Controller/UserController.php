@@ -87,7 +87,10 @@ class UserController extends AbstractActionController
             $this->flashMessenger()->setNamespace('zfcuser-login-form')->addMessage($this->failedLoginMessage);
             return $this->redirect()->toUrl($this->url()->fromRoute('zfcuser/login').($redirect ? '?redirect='.$redirect : ''));
         }
+
         // clear adapters
+        $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
+        $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
 
         return $this->forward()->dispatch('zfcuser', array('action' => 'authenticate'));
     }
@@ -98,6 +101,7 @@ class UserController extends AbstractActionController
     public function logoutAction()
     {
         $this->zfcUserAuthentication()->getAuthAdapter()->resetAdapters();
+        $this->zfcUserAuthentication()->getAuthAdapter()->logoutAdapters();
         $this->zfcUserAuthentication()->getAuthService()->clearIdentity();
 
         $redirect = $this->params()->fromPost('redirect', $this->params()->fromQuery('redirect', false));
@@ -178,6 +182,8 @@ class UserController extends AbstractActionController
 
         $post = $prg;
         $user = $service->register($post);
+
+        $redirect = isset($prg['redirect']) ? $prg['redirect'] : null;
 
         if (!$user) {
             return array(

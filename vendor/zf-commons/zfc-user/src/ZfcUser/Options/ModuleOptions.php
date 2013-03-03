@@ -61,6 +61,11 @@ class ModuleOptions extends AbstractOptions implements
     /**
      * @var array
      */
+    protected $authAdapters = array( 100 => 'ZfcUser\Authentication\Adapter\Db' );
+
+    /**
+     * @var array
+     */
     protected $authIdentityFields = array( 'email' );
 
     /**
@@ -97,6 +102,12 @@ class ModuleOptions extends AbstractOptions implements
      * @var int
      */
     protected $passwordCost = 14;
+    
+    /**
+     * @var string
+     */
+    
+    protected $tableName = 'user';
 
     /**
      * @var array
@@ -353,6 +364,28 @@ class ModuleOptions extends AbstractOptions implements
     }
 
     /**
+     * set auth adapters
+     *
+     * @param array $authAdapterss
+     * @return ModuleOptions
+     */
+    public function setAuthAdapters($authAdapters)
+    {
+        $this->authAdapters = $authAdapters;
+        return $this;
+    }
+
+    /**
+     * get auth adapters
+     *
+     * @return array
+     */
+    public function getAuthAdapters()
+    {
+        return $this->authAdapters;
+    }
+
+    /**
      * set auth identity fields
      *
      * @param array $authIdentityFields
@@ -482,6 +515,24 @@ class ModuleOptions extends AbstractOptions implements
     public function getPasswordCost()
     {
         return $this->passwordCost;
+    }
+    
+    /**
+     * set user table name
+     * 
+     * @param string $tableName
+     */
+    public function setTableName($tableName){
+        $this->tableName=$tableName;
+    }
+    
+    /**
+     * get user table name
+     * 
+     * @return string
+     */
+    public function getTableName(){
+        return $this->tableName;
     }
 
     /**
