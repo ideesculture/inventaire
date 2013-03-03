@@ -95,3 +95,15 @@ Utiliser le fichier
 		Connect Error: SQLSTATE[HY000] [1049] Unknown database 'inventaire'
 	
 	Créer la base de données MySQL et utiliser install/database_structure.sql pour la remplir avec les données de base.
+	
+* **Impossible d'exporter ou d'importer des données depuis CA**
+
+		Fatal error: Call to undefined function http_post_fields()
+		
+	Installer l'extension PECL http et redémarrez Apache.
+	
+* **Pas d'accès aux webservices CA**
+	
+		Access denied
+	
+	Vérifier dans *Providence* les accès de l'utilisateur déclaré dans **config/autoload/local.php**
