@@ -810,7 +810,7 @@ class InventaireTable extends AbstractTableGateway
 			$response = $t_object->get($attribute["field"], $options);
 			
 			// POST-TRAITEMENT
-			if ($attribute["post-treatment"]) {
+			if (($attribute["post-treatment"]) && ($response)) {
 				switch($attribute["post-treatment"]) {
 					// Conversion monétaire
 					case 'convertcurrencytoeuros' :
