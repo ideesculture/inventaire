@@ -161,6 +161,22 @@ div.thumbnail {
 	background:white ;
 }
 
+/*
+ * Ajustements formulaires de saisie
+ */
+ 
+label {
+	font-weight:bold;
+} 
+
+.help-inline {
+	background-color: rgba(255, 255, 255, 0.4);
+	border-radius:5px;
+	padding:5px;
+	margin-top: 4px;
+	margin-bottom:4px;
+	font-style:italic;
+}
 
 
 /* Ajustement Responsive design
