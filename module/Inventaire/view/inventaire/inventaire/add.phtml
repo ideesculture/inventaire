@@ -22,81 +22,91 @@ $displayOptions = array(
 		    'required'              => true,
     		),
 		'mode_acquisition'		=> array(
-    		'class'             => 'span5',
-    		'rows'              => 3,
-    		'required'          => false,
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
 		),
     	'donateur'		=> array(
-    		'class'             => 'span5',
-    		'rows'              => 3,
-    		'required'          => false,
-    	),
-	    'date_acquisition' 	=> array(
-	    	'class'				=> 'span2',
-	    	'required'			=> false,
-	    	'appendIcon'           => 'icon-calendar',
-	    ),
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
+    	'date_acquisition' 	=> array(
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
         'avis'				=> array(
-            'class'             => 'span5',
-            'rows'              => 3,
-			'required'          => false,
-        ),
-        'designation'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
+        'prix'				=> array(
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
+		'date_inscription'	=> array(
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
+		'designation'				=> array(
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
         'inscription'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
         'materiaux'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
         'techniques'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
         'mesures'                => array(
-        		'class'                 => 'input-xxlarge',
-        		'prependIcon'           => 'icon-resize-full',
-        		'required'              => true,
-        ),
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
         'etat'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
         'auteur'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
         'epoque'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
         'usage'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
-        'provenance'				=> array(
-        		'class'             => 'span5',
+		),
+		'provenance'				=> array(
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
-        'observations'				=> array(
-        		'class'             => 'span5',
+		),
+		'observations'				=> array(
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        )
-    )
+		)
+	)
 );
  
 //Form object
@@ -125,13 +135,5 @@ echo $this->formTwb($form, $formType, $displayOptions);
 <script>
 		$(function(){
 			window.prettyPrint && prettyPrint();
-			$('#date_acquisition').datepicker({
-				format: 'yyyy-mm-dd',
-				weekStart: 1
-			});
-			$('#date_inscription').datepicker({
-				format: 'yyyy-mm-dd',
-				weekStart: 1
-			});
 		});
 </script>

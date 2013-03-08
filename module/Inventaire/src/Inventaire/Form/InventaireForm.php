@@ -78,9 +78,9 @@ class InventaireForm extends Form
          $this->add(//Date
         		array(
         				'name'          => 'date_acquisition',
-        				'type'          => 'Zend\Form\Element\Date',
+        				'type'          => 'Zend\Form\Element\Textarea',
         				'attributes'    => array(
-        						'value'       => "",
+        						'value'       => "Date d'acquisition",
         				),
         				'options'       => array(
         						'label'             => "Date d'acquisition",
@@ -110,7 +110,7 @@ pour un avis favorable rendu le 25 mai 2004 par la commission scientifique natio
         $this->add(
         		array(
         				'name'          => 'prix',
-        				'type'          => 'Zend\Form\Element\Text',
+        				'type'          => 'Zend\Form\Element\Textarea',
         				'attributes'    => array(
         						'placeholder'        => 'prix en euros',
         						
@@ -118,14 +118,14 @@ pour un avis favorable rendu le 25 mai 2004 par la commission scientifique natio
         				'options'       => array(
         						'label'              => "Prix",
         						'description'        => "Le prix n'est mentionné que pour les achats. Il est exclusivement indiqué en euros.",
-        						'appendText'    => '€',
+        						'hint'    => '€',
         				)
         		)
         );
         $this->add(//Date
         		array(
         				'name'          => 'date_inscription',
-        				'type'          => 'Zend\Form\Element\Date',
+        				'type'          => 'Zend\Form\Element\Textarea',
         				'attributes'    => array(
         						'value'       => "",
         				),
@@ -209,7 +209,7 @@ manufacturée, industrielle, série, prototype,...) pour les collections scienti
         $this->add(//Textarea
         		array(
         				'name'          => 'mesures',
-        				'type'          => 'Zend\Form\Element\Text',
+        				'type'          => 'Zend\Form\Element\Textarea',
         				'attributes'    => array(
         						'placeholder'       => "mesures (avec précision des unités de mesure)",
         				),
