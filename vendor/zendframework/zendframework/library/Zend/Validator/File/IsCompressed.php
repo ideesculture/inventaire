@@ -79,14 +79,10 @@ class IsCompressed extends MimeType
             $options = ArrayUtils::iteratorToArray($options);
         }
 
-        if ($options === null) {
-            $options = array();
+        if (empty($options)) {
+            $options = array('mimeType' => $default);
         }
 
         parent::__construct($options);
-
-        if (!$this->getMimeType()) {
-            $this->setMimeType($default);
-        }
     }
 }

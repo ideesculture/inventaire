@@ -123,9 +123,8 @@ class Rbac extends AbstractIterator
     /**
      * Determines if access is granted by checking the role and child roles for permission.
      *
-     * @param  string                                                  $permission
-     * @param  \Zend\Permissions\Rbac\AssertionInterface|Callable|null $assert
-     * @return bool
+     * @param string                                                  $permission
+     * @param \Zend\Permissions\Rbac\AssertionInterface|Callable|null $assert
      */
     public function isGranted($role, $permission, $assert = null)
     {

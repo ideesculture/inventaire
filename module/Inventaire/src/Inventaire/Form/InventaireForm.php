@@ -70,7 +70,7 @@ class InventaireForm extends Form
             	'placeholder'       => "nom du donateur, testateur, vendeur",
                 ),
             'options'       => array(
-            	'label'             => "Donateur",
+            	'label'             => "Nom donateur, testateur, vendeur",
                 'hint'              => "Henri Crocq (donateur) ; vente Dupille de Saint-Séverin, Paris, 1785/02/21-26, n° 37",
                 'description'       => "Dans le cas des ventes publiques, on indique les références de la vacation ou de la prisée. NB : Les noms des donateurs, testateurs ou vendeurs ne sont communicables au public que dans les conditions prévues par la réglementation relative aux archives.",
              )));

@@ -22,6 +22,20 @@ class PhotoController extends AbstractActionController
 	private function isLogged() {
 		if ($this->zfcUserAuthentication()->hasIdentity()) return true; else return false;
 	}
+	private function preloadCaDirect($setup_path) {
+		$path = getcwd();
+		
+		// AUTHENTIFICATION
+		chdir($setup_path);
+		$result = include($setup_path."/setup.php");
+		chdir($path);
+		if ($result) {
+			require_once(__CA_LIB_DIR__.'/core/Db.php');
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	public function indexAction()
 	{
@@ -41,6 +55,49 @@ class PhotoController extends AbstractActionController
 				'fields' => $this->getPhotoTable()->getFieldsName(),
 				'fieldsname' => $this->getPhotoTable()->getFieldsHumanName()
 		));
+	}
+	
+	public function getPhotoFromCaAction()
+	{
+		$inventaire_id = (int) $this->params()->fromRoute('inventaire_id', 0);
+		if (!$inventaire_id) {
+			return $this->redirect()->toRoute('photo', array(
+					'action' => 'index'
+			));
+		}
+		if ($id=$this->getPhotoTable()->getPhotoByInventaireId($inventaire_id))
+			$this->getPhotoTable()->deletePhoto($id);
+		$id=0;
+		$ca_id = $this->getInventaireTable()->getCaIdFromInventaireId($inventaire_id);
+		$config = $this->getServiceLocator()->get('Config');
+        if(!$this->preloadCaDirect($config["ca_direct"]["path"])) {
+			throw new \Exception("Impossible d'accéder à CollectiveAccess.");
+		}
+				
+		include_once(__CA_MODELS_DIR__."/ca_locales.php");
+		include_once(__CA_MODELS_DIR__."/ca_objects.php");
+		
+		$t_locale = new \ca_locales();
+		$locale_id = $t_locale->loadLocaleByCode('fr_FR'); // Stockage explicite en français
+		$t_list = new \ca_lists();
+		$object_type = $t_list->getItemIDFromList('object_types', 'art');
+		
+		$t_object = new \ca_objects($ca_id);
+		$t_object->setMode(ACCESS_READ);
+		
+		$media = $t_object->getPrimaryRepresentation(array('large'));
+		if (!copy(
+				$media["paths"]["large"],
+				($file = dirname(__DIR__).'/../../../../public/files/assets/'.basename($media["paths"]["large"]))
+			)) {
+			throw new \Exception("Impossible de recopier le fichier image dans public/files/assets.");
+		}
+		$photo = new Photo();
+		$photo->exchangeArray(array("id" => 0, "inventaire_id" => $inventaire_id,  "credits" => "", "file" => $file));
+		$this->getPhotoTable()->savePhoto($photo);
+        return $this->redirect()->toRoute('photo', array(
+        	'action' => 'added'
+         ));					
 	}
 	
 	public function addAction()
@@ -73,7 +130,7 @@ class PhotoController extends AbstractActionController
 			if ($form->isValid()) {
 				// Validation du fichier uploadé : taille, dimensions en pixel et extension (png et jpg)
 				$size = new Size(array('min'=>10000, 'max' =>2000000)); //minimum bytes filesize
-				$extension = new Extension(array('extension'=>'png,jpg,jpeg'));
+				$extension = new Extension(array('extension'=>array('png','jpg','jpeg')));
 				$imagesize = new ImageSize(array(
 						'minwidth'=>150,
 						'maxwidth'=>1500,
@@ -82,7 +139,7 @@ class PhotoController extends AbstractActionController
 						));
 				
 				$adapter = new \Zend\File\Transfer\Adapter\Http();
-				$adapter->setValidators(array($size,$extension,$imagesize), $File['name']);
+				$adapter->setValidators(array($size,$imagesize), $File['name']);
 				if (!$adapter->isValid()){
 					$dataError = $adapter->getMessages();
 					$error = array();

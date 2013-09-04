@@ -33,7 +33,7 @@ class MasterSlaveFeature extends AbstractFeature
     /**
      * Constructor
      *
-     * @param AdapterInterface $slaveAdapter
+     * @param Adapter $slaveAdapter
      */
     public function __construct(AdapterInterface $slaveAdapter, Sql $slaveSql = null)
     {

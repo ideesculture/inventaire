@@ -13,6 +13,7 @@ use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\ResponseInterface;
+use Zend\Stdlib\Nop;
 
 /**
  * Main application class for invoking applications

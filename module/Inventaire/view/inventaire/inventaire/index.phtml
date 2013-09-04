@@ -30,11 +30,18 @@ $this->headTitle($title);
 
 <div class="row">
 	<div class="span12">
+		<form method="post" action="<?php print $this->url('inventaire', array('action'=>'index', 'page'=>$page));?>">
+			<input name="brouillon" type="checkbox" <?php print ($brouillon) ? " checked=\"checked\"": null; ?> value="1" /> Afficher les brouillons
+			<button type="submit">go</button>
+		</form>
+	</div>
+	<div class="span12">
 		<table class="table  table-striped  bord-ronds-fond-blanc">
 		<tr>
-		    <th><?php print $fieldsname["numinv"]; ?></th>
-		    <th><?php print $fieldsname["designation"]; ?></th>
-		    <th><?php print $fieldsname["auteur"]; ?></th>
+		    <th>Numéro d'inventaire</th>
+		    <th>Désignation</th>
+		    <th>Auteur</th>
+		    <th>Inscription à l'inventaire</th>
 		    <th><span class="pull-right">Actions</span></th>
 		</tr>
 		<?php foreach ($inventaires as $inventaire) : ?>
@@ -52,37 +59,37 @@ $this->headTitle($title);
 			    	</span>
 			    <?php endif; ?>
 			    <a href="<?php print "/inventaire/view/".$this->escapeHtml($inventaire->id);?>" alt="Afficher" title="Afficher"> 
-			    <?php echo $this->escapeHtml($inventaire->numinv);?>
+			    <?php echo $inventaire->numinv_display;?>
 			    </a>
 		    </td>
 			<td>
-				<?php echo $this->escapeHtml($inventaire->designation);?>
+				<?php echo $inventaire->designation_display; ?>
 			</td>
 			<td>
-				<?php echo $this->escapeHtml($inventaire->auteur);?>
+				<?php echo $inventaire->auteur_display;?>
+			</td>
+			<td>
+				<?php echo $inventaire->date_inscription_display;?>
 			</td>
 			<td>
 				<span class="pull-right">
 					<div class="btn-group">
 					<?php if($auth["logged"]) : ?>
 						<?php if (!$inventaire->validated) : // Si l'enregistrement n'est pas validé, on peut le modifier ou le valider ?> 
-							<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'edit', 'id' => $inventaire->id));?>" title="Modifier"><i class="icon-pencil icon-white"></i></a>
 				        	<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
-				            array('action'=>'delete', 'id' => $inventaire->id));?>" title="Supprimer"><i class="icon-remove icon-white"></i></a>
+				            array('action'=>'delete', 'id' => $inventaire->id));?>" title="Retirer de la sélection"><i class="icon-remove icon-white"></i></a>
 							<a  class="btn btn-warning btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'validate', 'id' => $inventaire->id));?>" title="Valider"><i class="icon-ok icon-white"></i></a>
+							array('action'=>'validate', 'id' => $inventaire->id));?>" title="Inscrire à l'inventaire"><i class="icon-ok icon-white"></i></a>
 						<?php else :?> 
-							<a  class="btn disabled btn-small" title="Modifier"><i class="icon-pencil icon-white"></i></a>
 							<a  class="btn disabled btn-small" title="Supprimer"><i class="icon-remove icon-white"></i></a>
-							<a  class="btn disabled btn-small" title="Valider"><i class="icon-ok icon-white"></i></a>
+							<a  class="btn disabled btn-small" title="Inscrire à l'inventaire"><i class="icon-ok icon-white"></i></a>
 						<?php endif; ?>
 						<?php if (($config_ca_direct["url"]) && ($inventaire->ca_id)) :?>
 							<a  class="btn btn-success btn-small" 
 							href="<?php echo $config_ca_direct["url"]."/index.php/editor/objects/ObjectEditor/Summary/object_id/".$inventaire->ca_id; ?>" 
-							title="Afficher dans CA"><i class="icon-share icon-white"></i></a>
+							title="Modifier dans CA"><i class="icon-share icon-white"></i></a>
 						<?php else : ?>
-							<a  class="btn disabled btn-small" title="Afficher dans CA"><i class="icon-ok icon-white"></i></a>
+							<a  class="btn disabled btn-small" title="Modifier dans CA"><i class="icon-ok icon-white"></i></a>
 						<?php endif ;?>
 					<?php endif; ?>
 				</div>
@@ -121,11 +128,10 @@ if($auth["logged"]) {
 		<div class="btn-group">
 		<a class="btn btn-success" href="<?php echo $this->url('inventaire',array('action'=>'importObjet'));?>">
 			<i class="icon-circle-arrow-down icon-white icon-large"></i> Importer depuis CA</a>
-		<a class="btn btn-success" href="<?php echo $this->url('inventaire', array('action'=>'add'));?>"><i class="icon-plus icon-white icon-large"></i> Ajouter un objet</a>
 		<a class="btn btn-success" href="<?php echo $this->url('inventaire', array('action'=>'listingExportPdf'));?>"><i class="icon-book icon-white icon-large"></i> Générer le PDF</a>
 		<a class="btn btn-info" href="<?php echo $this->url('photo', array('action'=>'index'));?>"><i class="icon-camera icon-white icon-large"></i> Afficher les photos</a>
 		</div>
-	</div>
+	</div><!--
 	<div class="span6">
 		<span class="pull-right">
 			<div class="btn-group">
@@ -135,7 +141,7 @@ if($auth["logged"]) {
 			<a class="btn btn-info btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listing'));?>"><i class="icon-th-list icon-white"></i> Afficher toutes les colonnes</a>
 			</div>
 		</span>
-	</div>
+	</div>-->
 </div>
 <p>&nbsp;</p>
 <?php 

@@ -103,7 +103,6 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
      * Register statement prototype
      *
      * @param Statement $statementPrototype
-     * @return Oci8
      */
     public function registerStatementPrototype(Statement $statementPrototype)
     {
@@ -124,7 +123,6 @@ class Oci8 implements DriverInterface, Profiler\ProfilerAwareInterface
      * Register result prototype
      *
      * @param Result $resultPrototype
-     * @return Oci8
      */
     public function registerResultPrototype(Result $resultPrototype)
     {

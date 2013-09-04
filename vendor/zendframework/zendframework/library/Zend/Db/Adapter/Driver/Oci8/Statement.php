@@ -119,7 +119,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
      * Set Parameter container
      *
      * @param ParameterContainer $parameterContainer
-     * @return Statement
      */
     public function setParameterContainer(ParameterContainer $parameterContainer)
     {
@@ -185,7 +184,6 @@ class Statement implements StatementInterface, Profiler\ProfilerAwareInterface
 
     /**
      * @param string $sql
-     * @return Statement
      */
     public function prepare($sql = null)
     {

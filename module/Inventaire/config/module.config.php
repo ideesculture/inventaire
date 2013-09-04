@@ -17,17 +17,19 @@ return array(
             'inventaire' => array(
                 'type'    => 'segment',
                 'options' => array(
-                    'route'    => '/inventaire[/:action[/:id][/annee/:annee][/page/:page]]',
+                    'route'    => '/inventaire[/:action[/:id][/brouillon/:brouillon][/annee/:annee][/page/:page]]',
                     'constraints'  => array(
                         'action'   => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'       => '[0-9]+',
                     	'page'     => '[0-9]+',
-                    	'annee'    => '[0-9]+'
-                     ),
+                    	'annee'    => '[0-9]+',
+                    	'brouillon' => '[0-1]'
+                    ),
                     'defaults' => array(
                         'controller' => 'Inventaire\Controller\Inventaire',
                         'action'     => 'index',
-                        'page' 		 => 1
+                        'page' 		 => 1,
+                        'brouillon'	 => 1
                     ),
                 ),
              ),

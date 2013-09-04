@@ -41,7 +41,7 @@ abstract class AbstractWriter implements WriterInterface
     /**
      * Formats the log message before writing
      *
-     * @var Formatter\FormatterInterface
+     * @var Formatter
      */
     protected $formatter;
 

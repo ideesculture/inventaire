@@ -19,7 +19,6 @@ use Zend\Stdlib\RequestInterface as Request;
  * Query route.
  *
  * @see        http://guides.rubyonrails.org/routing.html
- * @deprecated
  */
 class Query implements RouteInterface
 {
@@ -51,7 +50,7 @@ class Query implements RouteInterface
     /**
      * factory(): defined by RouteInterface interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::factory()
+     * @see    Route::factory()
      * @param  array|Traversable $options
      * @throws Exception\InvalidArgumentException
      * @return Query
@@ -75,7 +74,7 @@ class Query implements RouteInterface
     /**
      * match(): defined by RouteInterface interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::match()
+     * @see    Route::match()
      * @param  Request $request
      * @param  int|null $pathOffset
      * @return RouteMatch
@@ -112,7 +111,7 @@ class Query implements RouteInterface
 
     /**
      * assemble(): Defined by RouteInterface interface.
-     * @see    \Zend\Mvc\Router\RouteInterface::assemble()
+     * @see    Route::assemble()
      *
      * @param  array $params
      * @param  array $options
@@ -138,7 +137,7 @@ class Query implements RouteInterface
     /**
      * getAssembledParams(): defined by RouteInterface interface.
      *
-     * @see    RouteInterface::getAssembledParams
+     * @see    Route::getAssembledParams
      * @return array
      */
     public function getAssembledParams()

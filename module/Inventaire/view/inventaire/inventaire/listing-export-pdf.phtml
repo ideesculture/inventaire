@@ -11,11 +11,15 @@ if (!isset($titre)) $titre = 'Mon inventaire';
 <head>
 <style type="text/css">
 @page {margin-top: 1cm;margin-left: 1cm;margin-bottom:3cm;margin-right: 1cm;}
-body {font:12pt JosefinSans, helvetica;}
-h1, h2, h3, h4 {font-family:PaytoneOne, helvetica;}
+body {font:10pt helvetica;}
+h1, h2, h3, h4 {font-family:helvetica;}
 p {margin:0 0 3 0;}
 .photo {display:block;float:left;}
-.label {padding:2pt;background:#f5f5f5;font-size:8pt;font-weight:normal;}
+.label {background:#f0f0f0;color:#555555;font-size: 7pt;width:85pt;}
+table.table-content {
+	width:100%;
+}
+.content {font-size: 8pt;}
 .hero-unit{display:block;padding:3pt;margin:2pt;margin-bottom:10pt;border-bottom:1pt solid gray;}
 .hero-unit h1, .hero-unit h2, .hero-unit h3, .hero-unit h4 {margin:0px;line-height:0.8;letter-spacing:-1pt;}
 .hero-unit h1 {margin-bottom:6pt;font-size:25pt;}
@@ -28,7 +32,7 @@ p {margin:0 0 3 0;}
 #page-de-titre DIV {width:4.2cm;}
 #page-de-titre H3 {color:#f5f5f5;font-size:9pt;line-height:5pt;margin:0pt;padding:0pt;}
 #page-de-titre H4.surtitre {color:#d5d5d5;font-size:18pt;line-height:7pt;letter-spacing:3pt;margin:0pt;padding:0pt;}
-#page-de-titre #titre {position:absolute;top:6cm;left:5cm;width:9cm;font-size:9pt;}
+#page-de-titre #titre {position:absolute;top:4cm;left:5cm;width:9cm;font-size:9pt;}
 #page-de-titre #titre H1 {color:#68B604;}
 #page-de-titre #dates-registre {position:absolute;top:12cm;left:5cm;width:9cm;font-size:9pt;}
 #page-de-titre #dates-registre H3,
@@ -83,7 +87,7 @@ p {margin:0 0 3 0;}
 <?php 
 $this->headTitle($titre);
 ?>
-
+<!--
 <div id="page-de-titre">
 	<div id="titre">
 		<?php 
@@ -118,11 +122,10 @@ $this->headTitle($titre);
 </div>
 
 <div class="page-break"></div>
-
+-->
 <!-- page blanche en dos de page de titre -->
 
-<div class="page-break"></div>
-
+<!--
 <div id="pages-liminaires">
 	<div id="contenu">
 		<?php 
@@ -132,45 +135,41 @@ $this->headTitle($titre);
 </div>
 
 <div class="page-break"></div>
-
+-->
 <!-- page blanche après les pages liminaires -->
-
-<div class="page-break"></div>
 
 <?php
 $labels = array("numinv" => "Numéro d'inventaire");
 foreach ($inventaires as $inventaire) { ?>
 	<div class="hero-unit">
-		<?php print $inventaire->prix; ?>
     	<div style="clear:both; position:relative;">
-			<?php if ($inventaire->file) : ?>
-       	    	<div style="position:absolute; right:0pt; width:130pt;">
-        		<p><span class="label">Numéro d'inventaire</span></p>
-        		<h4><?php print $this->escapeHtml($inventaire->numinv); //1 ?></h4>
-            	<p><img src="<?php print $imagepath; ?>/files/assets/<?php print $this->escapeHtml($inventaire->file); //1 ?>" style="width:120pt;"></p>
-				<p><span class="label">Date d'acquisition</span></p>
-				<p><?php print $this->dateFormat(new DateTime($inventaire->date_acquisition), IntlDateFormatter::LONG, IntlDateFormatter::NONE, __LOCALE__); //4 ?></p>
-				</div>
-			<?php endif;?>
-    	  <div style="margin-left:0pt;width:410pt;">
-			<p><span class="label">Désignation</span></p>
-			<h3><?php print $this->escapeHtml($inventaire->designation); //8?></h3>
-    		<p><span class="label">Mode d'acquisition</span>  <?php print $this->escapeHtml($inventaire->mode_acquisition); //2?></p>
-			<p><span class="label">Donateur</span> <?php print $this->escapeHtml($inventaire->donateur); //3?></p>
-			<p><span class="label">Prix</span> <?php print ($inventaire->prix ? $this->currencyFormat($inventaire->prix) : ""); //6 ?></p>
-			<p><span class="label">Avis</span> <?php print $this->escapeHtml($inventaire->avis); //5?></p>
-			<p><span class="label">Inscription</span> <?php print $this->escapeHtml($inventaire->inscription); //9?></p>
-			<p><span class="label">Date d'inscription</span> <?php print $this->dateFormat(new DateTime($inventaire->date_inscription), IntlDateFormatter::LONG, IntlDateFormatter::NONE, __LOCALE__); //7 ?></p> 
-			<p><span class="label">Matériaux</span>  <?php print $this->escapeHtml($inventaire->materiaux); //10?></p>
-			<p><span class="label">Techniques</span> <?php print $this->escapeHtml($inventaire->techniques); //11?></p>
-			<p><span class="label">Mesures</span> <?php print $this->escapeHtml($inventaire->mesures); //12?></p>
-			<p><span class="label">Etat</span> <?php print $this->escapeHtml($inventaire->etat); //13?></p>
-			<p><span class="label">Auteur</span>  <?php print $this->escapeHtml($inventaire->auteur); //14 ?></p>
-			<p><span class="label">Epoque</span>  <?php print $this->escapeHtml($inventaire->epoque); //15 ?></p>
-			<p><span class="label">Usage</span>  <?php print $this->escapeHtml($inventaire->usage); //16 ?></p>
-			<p><span class="label">Provenance</span> <?php print $this->escapeHtml($inventaire->provenance); //17 ?></p>
-			<p><span class="label">Observations</span> <?php print $this->escapeHtml($inventaire->observations); //18 ?></p>
-   	 	  </div>
+				<table class="table-content">
+				<tr><td class="label">Numéro d'inventaire</td><td></td>
+				<?php if($inventaire->file != "") : ?>
+					<td class="label" rowspan="10">
+					<img src="<?php print $imagepath; ?>/files/assets/<?php print $inventaire->file; //1 ?>" style="width:120pt;">
+					</td></tr>
+				<?php $csimg = "colspan=\"2\""; 
+				endif; ?>
+				<tr><td colspan="2"><h4><?php print $inventaire->numinv_display; //1 ?></h4></td></tr>
+				<tr><td class="label">Désignation</td><td class="content"><?php print $inventaire->designation; //8?></td></tr>
+				<tr><td class="label">Mode d'acquisition</td><td class="content"><?php print $inventaire->mode_acquisition; //2?></td></tr>
+				<tr><td class="label">Date d'acquisition</td><td class="content"><?php print $inventaire->date_acquisition; ?></td></tr>    		
+				<tr><td class="label">Donateur</td><td class="content"><?php print $inventaire->donateur; //3?></td></tr>
+				<tr><td class="label">Prix</td><td class="content"><?php print $inventaire->prix; //6 ?></td></tr>
+				<tr><td class="label">Avis</td><td class="content"><?php print $inventaire->avis; //5?></td></tr>
+				<tr><td class="label">Inscription</td><td class="content"><?php print $inventaire->inscription; //9?></td></tr>
+				<tr><td class="label">Date d'inscription</td><td class="content"><?php print $inventaire->date_inscription; //7 ?></td></tr> 
+				<tr><td class="label">Matériaux</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->materiaux; //10?></td></tr>
+				<tr><td class="label">Techniques</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->techniques; //11?></td></tr>
+				<tr><td class="label">Mesures</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->mesures; //12?></td></tr>
+				<tr><td class="label">Etat</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->etat; //13?></td></tr>
+				<tr><td class="label">Auteur</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->auteur; //14 ?></td></tr>
+				<tr><td class="label">Epoque</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->epoque; //15 ?></td></tr>
+				<tr><td class="label">Usage</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->usage; //16 ?></td></tr>
+				<tr><td class="label">Provenance</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->provenance; //17 ?></td></tr>
+				<tr><td class="label">Observations</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->observations; //18 ?></td></tr>
+				</table>
 		</div>
 	</div>
 <?php 
@@ -178,7 +177,7 @@ foreach ($inventaires as $inventaire) { ?>
 ?>
 <p class="fin-impression">
 	fin de l'impression
-</p>
+</td></tr>
 
 <div class="page-break"></div>
 

@@ -68,19 +68,16 @@ $this->headTitle($title);
 					if($auth["logged"]) {
 						// Si l'enregistrement n'est pas validé, on peut le modifier ou le valider
 						if (!$inventaire->validated) { ?> 
-							<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'edit', 'id' => $inventaire->id));?>">Modifier</a>
 				        	<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
-				            array('action'=>'delete', 'id' => $inventaire->id));?>">Supprimer</a>
+				            array('action'=>'delete', 'id' => $inventaire->id));?>">Retirer de la sélection</a>
 							<a  class="btn btn-warning btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'validate', 'id' => $inventaire->id));?>">Valider</a>
+							array('action'=>'validate', 'id' => $inventaire->id));?>">Inscrire à l'inventaire</a>
 						<?php
 						// Si l'enregistrement est validé, aucune modification possible
 						} else { 
 						?>
-							<a  class="btn disabled btn-small">Modifier</a>
-							<a  class="btn disabled btn-small">Supprimer</a>
-							<a  class="btn disabled btn-small">Valider</a>
+							<a  class="btn disabled btn-small">Retirer de la sélection</a>
+							<a  class="btn disabled btn-small">Inscrire à l'inventaire</a>
 						<?php 
 						}
 					}

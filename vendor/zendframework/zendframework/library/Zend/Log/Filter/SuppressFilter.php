@@ -9,7 +9,6 @@
 
 namespace Zend\Log\Filter;
 
-use Traversable;
 use Zend\Log\Exception;
 
 class SuppressFilter implements FilterInterface

@@ -109,19 +109,16 @@ $this->headTitle($title);
 					if($auth["logged"]) {
 						// Si l'enregistrement n'est pas validé, on peut le modifier ou le valider
 						if (!$inventaire->validated) { ?> 
-							<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'edit', 'id' => $inventaire->id));?>" title="Modifier"><i class="icon-pencil icon-white"></i></a>
 				        	<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
-				            array('action'=>'delete', 'id' => $inventaire->id));?>" title="Supprimer"><i class="icon-remove icon-white"></i></a>
+				            array('action'=>'delete', 'id' => $inventaire->id));?>" title="Retirer de la sélection"><i class="icon-remove icon-white"></i></a>
 							<a  class="btn btn-warning btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'validate', 'id' => $inventaire->id));?>" title="Valider"><i class="icon-check icon-white"></i></a>
+							array('action'=>'validate', 'id' => $inventaire->id));?>" title="Inscrire à l'inventaire"><i class="icon-check icon-white"></i></a>
 						<?php
 						// Si l'enregistrement est validé, aucune modification possible
 						} else { 
 						?>
-							<a  class="btn disabled btn-small" title="Modifier"><i class="icon-pencil icon-white"></i></a>
-							<a  class="btn disabled btn-small" title="Supprimer"><i class="icon-remove icon-white"></i></a>
-							<a  class="btn disabled btn-small" title="Valider"><i class="icon-check icon-white"></i></a>
+							<a  class="btn disabled btn-small" title="Retirer de la sélection"><i class="icon-remove icon-white"></i></a>
+							<a  class="btn disabled btn-small" title="Inscrire à l'inventaire"><i class="icon-check icon-white"></i></a>
 						<?php 
 						}
 					}

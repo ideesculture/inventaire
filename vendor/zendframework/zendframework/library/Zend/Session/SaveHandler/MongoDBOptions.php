@@ -73,7 +73,7 @@ class MongoDBOptions extends AbstractOptions
      *
      * @param string $database
      * @return MongoDBOptions
-     * @throws InvalidArgumentException
+     * @throws Zend\Session\Exception\InvalidArgumentException
      */
     public function setDatabase($database)
     {
@@ -100,7 +100,7 @@ class MongoDBOptions extends AbstractOptions
      *
      * @param string $collection
      * @return MongoDBOptions
-     * @throws InvalidArgumentException
+     * @throws Zend\Session\Exception\InvalidArgumentException
      */
     public function setCollection($collection)
     {
@@ -150,7 +150,7 @@ class MongoDBOptions extends AbstractOptions
      *
      * @param string $nameField
      * @return MongoDBOptions
-     * @throws InvalidArgumentException
+     * @throws Zend\Session\Exception\InvalidArgumentException
      */
     public function setNameField($nameField)
     {
@@ -177,7 +177,7 @@ class MongoDBOptions extends AbstractOptions
      *
      * @param string $dataField
      * @return MongoDBOptions
-     * @throws InvalidArgumentException
+     * @throws Zend\Session\Exception\InvalidArgumentException
      */
     public function setDataField($dataField)
     {
@@ -204,7 +204,7 @@ class MongoDBOptions extends AbstractOptions
      *
      * @param string $lifetimeField
      * @return MongoDBOptions
-     * @throws InvalidArgumentException
+     * @throws Zend\Session\Exception\InvalidArgumentException
      */
     public function setLifetimeField($lifetimeField)
     {
@@ -231,7 +231,7 @@ class MongoDBOptions extends AbstractOptions
      *
      * @param string $modifiedField
      * @return MongoDBOptions
-     * @throws InvalidArgumentException
+     * @throws Zend\Session\Exception\InvalidArgumentException
      */
     public function setModifiedField($modifiedField)
     {

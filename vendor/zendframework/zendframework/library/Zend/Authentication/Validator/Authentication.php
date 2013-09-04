@@ -46,7 +46,7 @@ class Authentication extends AbstractValidator
 
     /**
      * Authentication Adapter
-     * @var ValidatableAdapterInterface
+     * @var Zend\Authentication\Adapter\Adapter
      */
     protected $adapter;
 
@@ -64,7 +64,7 @@ class Authentication extends AbstractValidator
 
     /**
      * Authentication Service
-     * @var AuthenticationService
+     * @var Zend\Authentication\AuthenticationService
      */
     protected $service;
 
@@ -99,7 +99,7 @@ class Authentication extends AbstractValidator
     /**
      * Get Adapter
      *
-     * @return ValidatableAdapterInterface
+     * @return Zend\Authentication\Adapter\ValidatableAdapterInterface
      */
     public function getAdapter()
     {
@@ -109,7 +109,7 @@ class Authentication extends AbstractValidator
     /**
      * Set Adapter
      *
-     * @param  ValidatableAdapterInterface $adapter
+     * @param  Zend\Authentication\Adapter\ValidatableAdapterInterface $adapter
      * @return Authentication
      */
     public function setAdapter(ValidatableAdapterInterface $adapter)
@@ -168,7 +168,7 @@ class Authentication extends AbstractValidator
     /**
      * Get Service
      *
-     * @return AuthenticationService
+     * @return Zend\Authentication\AuthenticationService
      */
     public function getService()
     {
@@ -178,7 +178,7 @@ class Authentication extends AbstractValidator
     /**
      * Set Service
      *
-     * @param  AuthenticationService $service
+     * @param  Zend\Authentication\AuthenticationService $service
      * @return Authentication
      */
     public function setService(AuthenticationService $service)

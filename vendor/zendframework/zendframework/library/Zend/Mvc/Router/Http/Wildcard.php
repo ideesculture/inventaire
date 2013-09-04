@@ -66,7 +66,7 @@ class Wildcard implements RouteInterface
     /**
      * factory(): defined by RouteInterface interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::factory()
+     * @see    Route::factory()
      * @param  array|Traversable $options
      * @throws \Zend\Mvc\Router\Exception\InvalidArgumentException
      * @return Wildcard
@@ -97,7 +97,7 @@ class Wildcard implements RouteInterface
     /**
      * match(): defined by RouteInterface interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::match()
+     * @see    Route::match()
      * @param  Request $request
      * @param  int|null $pathOffset
      * @return RouteMatch
@@ -152,7 +152,7 @@ class Wildcard implements RouteInterface
     /**
      * assemble(): Defined by RouteInterface interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::assemble()
+     * @see    Route::assemble()
      * @param  array $params
      * @param  array $options
      * @return mixed
@@ -179,7 +179,7 @@ class Wildcard implements RouteInterface
     /**
      * getAssembledParams(): defined by RouteInterface interface.
      *
-     * @see    RouteInterface::getAssembledParams
+     * @see    Route::getAssembledParams
      * @return array
      */
     public function getAssembledParams()

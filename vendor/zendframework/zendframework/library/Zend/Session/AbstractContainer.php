@@ -198,7 +198,7 @@ abstract class AbstractContainer extends ArrayObject
             }
             $storage[$name] = $this->createContainer();
         }
-        if (!is_array($storage[$name]) && !$storage[$name] instanceof Traversable) {
+        if (!is_array($storage[$name]) && !$storage[$name] instanceof ArrayObject) {
             throw new Exception\RuntimeException('Container cannot write to storage due to type mismatch');
         }
 
@@ -456,16 +456,8 @@ abstract class AbstractContainer extends ArrayObject
      * @return array        Returns the old array
      * @see ArrayObject::exchangeArray()
      */
-    public function exchangeArray($input)
+    protected function exchangeArrayCompat($input)
     {
-        // handle arrayobject, iterators and the like:
-        if (is_object($input) && ($input instanceof ArrayObject || $input instanceof \ArrayObject)) {
-            $input = $input->getArrayCopy();
-        }
-        if (!is_array($input)) {
-            $input = (array) $input;
-        }
-
         $storage = $this->verifyNamespace();
         $name    = $this->getName();
 
@@ -492,7 +484,6 @@ abstract class AbstractContainer extends ArrayObject
         if ($container instanceof Traversable) {
             return $container;
         }
-
         return new ArrayIterator($container);
     }
 

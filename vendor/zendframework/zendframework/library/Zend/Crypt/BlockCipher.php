@@ -214,7 +214,7 @@ class BlockCipher
     /**
      * Get the original salt value
      *
-     * @return string
+     * @return type
      */
     public function getOriginalSalt()
     {

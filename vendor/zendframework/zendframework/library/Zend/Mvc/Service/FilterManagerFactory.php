@@ -20,7 +20,7 @@ class FilterManagerFactory extends AbstractPluginManagerFactory
      * Create and return the filter plugin manager
      *
      * @param  ServiceLocatorInterface $serviceLocator
-     * @return \Zend\Filter\FilterPluginManager
+     * @return FilterPluginManager
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {

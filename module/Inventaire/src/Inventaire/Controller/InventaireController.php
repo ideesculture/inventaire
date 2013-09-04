@@ -71,8 +71,19 @@ class InventaireController extends AbstractActionController
 		$page = (int) $this->params()->fromRoute('page', 1);
 		$year = (int) $this->params()->fromRoute('annee', "");
 		$config = $this->getServiceLocator()->get('Config');
+		$request = $this->getRequest();
+		if ($request->isPost()) {
+			$brouillon= (bool) $request->getPost('brouillon');
+		} else {
+			$brouillon = (bool) $this->params()->fromRoute('brouillon', 1);	
+		}
 		
-		$iteratorAdapter = new \Zend\Paginator\Adapter\Iterator($this->getInventaireTable()->fetchAllFullInfosPaginator($year));
+		
+		$iteratorAdapter = new \Zend\Paginator\Adapter\Iterator(
+			$this->getInventaireTable()->fetchAllFullInfosPaginator(
+				array("year"=>$year,"validated"=>!$brouillon)
+			)
+		);
 		$paginator = new \Zend\Paginator\Paginator($iteratorAdapter);
 		$paginator->setCurrentPageNumber($page);
 		$paginator->setItemCountPerPage(10);
@@ -84,6 +95,7 @@ class InventaireController extends AbstractActionController
 				//'inventaires' => $this->getInventaireTable()->fetchAllFullInfos(), //$paginator,
 				'inventaires' => $paginator, //$paginator,
 				'yearsOptions' => $this->getInventaireTable()->getInventaireYearsAsOptions(),
+				'brouillon' => $brouillon,
 				'fields' => $this->getInventaireTable()->getFieldsName(),
 				'fieldsname' => $this->getInventaireTable()->getFieldsHumanName(),
 				'page'=>$page,
@@ -293,6 +305,7 @@ class InventaireController extends AbstractActionController
     			'photo'  => $this->getPhotoTable()->getPhotoByInventaireId($id),
     			'fields' => $this->getInventaireTable()->getFieldsName(),
     			'fieldsname' => $this->getInventaireTable()->getFieldsHumanName(),
+    			'mandatoryfieldsname' => $this->getInventaireTable()->getMandatoryFieldsName(),
     			'config_ca_direct' => $config_ca_direct
     	));
     }
@@ -359,12 +372,13 @@ class InventaireController extends AbstractActionController
     	}
     
 		$inventaire = $this->getInventaireTable()->getInventaire($id);
-    	$this->getInventaireTable()->unvalidateInventaire($inventaire);
+		 $config = $this->getServiceLocator()->get('Config');
+    	$this->getInventaireTable()->unvalidateInventaire($inventaire, array("updateCaDate" => true,"path"=> $config["ca_direct"]["path"]));
     	
     	// Redirect to list of inventaires
 		return $this->redirect()->toRoute('inventaire');
     }
-    
+        
     public function getInventaireTable()
 	{
 		if (!$this->inventaireTable) {
@@ -444,6 +458,46 @@ class InventaireController extends AbstractActionController
 		return $return;
 	}
 	
+	public function refreshObjetAction()
+	{
+		$request = $this->getRequest();
+		if ($request->isPost()) {
+			$ca_id = $request->getPost('ca_id', '0');
+		} else {
+			$ca_id = (int) $this->params()->fromRoute('id', 0);
+		}
+		
+		if (!$ca_id) {
+			return array();
+		}
+
+		// si l'objet est dans l'appli inventaire
+		if ($this->getInventaireTable()->checkInventaireByCaId($ca_id)) {
+			// s'il est validé, aucune action possible, redirection vers un affichage simple
+			/* if ($this->validated) {
+				$this->redirect()->toRoute('inventaire', array(
+				'action' => "view",
+				'id'=> $id
+				));
+			} else {
+				// sinon suppression */
+				$id = $this->getInventaireTable()->checkInventaireByCaId($ca_id)->id;
+				$this->getInventaireTable()->deleteInventaire($id);
+			// }
+		}
+		
+        $config = $this->getServiceLocator()->get('Config');
+		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
+		
+		$result=$this->getInventaireTable()->caDirectImportObject($ca_id,$config_import);
+		$id = $this->getInventaireTable()->checkInventaireByCaId($ca_id)->id;
+		// Redirect to list of inventaires
+		$this->redirect()->toRoute('inventaire', array(
+				'action' => "view",
+				'id'=> $id
+		));
+	}
+	
 	public function importAction()
 	{
 	
@@ -477,5 +531,6 @@ class InventaireController extends AbstractActionController
 				'action' => 'index'
 		));
 	}
+
 }
 ?>

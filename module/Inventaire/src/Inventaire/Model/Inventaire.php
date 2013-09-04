@@ -24,12 +24,15 @@ class Inventaire implements InputFilterAwareInterface
 	7	Date d'inscription au registre d'inventaire
  */
 	public $numinv; //1
+	public $numinv_sort; 
+	public $numinv_display;
 	public $mode_acquisition;//2
 	public $donateur;//3
 	public $date_acquisition;//4
 	public $avis;//5
 	public $prix;//6
 	public $date_inscription;//7
+	public $date_inscription_display;
 	
 /* b) Rubriques portant description des biens
  * 
@@ -42,6 +45,7 @@ class Inventaire implements InputFilterAwareInterface
 	13	Indications particulières sur l'état du bien au moment de l'acquisition
  */	
 	public $designation;//8
+	public $designation_display;
 	public $inscription;//9
 	public $materiaux;//10
 	public $techniques;//11
@@ -58,6 +62,7 @@ class Inventaire implements InputFilterAwareInterface
 	18	Observations
  */			
 	public $auteur;//14
+	public $auteur_display;
 	public $epoque;//15
 	public $usage;//16
 	public $provenance;//17
@@ -75,12 +80,15 @@ class Inventaire implements InputFilterAwareInterface
 		$this->id     = (isset($data['id'])) ? $data['id'] : null;
 		$this->ca_id     = (isset($data['ca_id'])) ? $data['ca_id'] : null;
 		$this->numinv = (isset($data['numinv'])) ? $data['numinv'] : null;//1
+		$this->numinv_sort = (isset($data['numinv_sort'])) ? $data['numinv_sort'] : null;
+		$this->numinv_display = (isset($data['numinv_display'])) ? $data['numinv_display'] : null;
 		$this->mode_acquisition = (isset($data['mode_acquisition'])) ? $data['mode_acquisition'] : null;//2
 		$this->donateur = (isset($data['donateur'])) ? $data['donateur'] : null;//3
 		$this->date_acquisition = (isset($data['date_acquisition'])) ? $data['date_acquisition'] : null;//4
 		$this->avis = (isset($data['avis'])) ? $data['avis'] : null;//5
 		$this->prix = (isset($data['prix'])) ? $data['prix'] : null;//6
 		$this->date_inscription = (isset($data['date_inscription'])) ? $data['date_inscription'] : null;//7
+		$this->date_inscription_display = (isset($data['date_inscription_display'])) ? $data['date_inscription_display'] : null;
 		$this->designation  = (isset($data['designation'])) ? $data['designation'] : null;//8
 		$this->inscription = (isset($data['inscription'])) ? $data['inscription'] : null;//9
 		$this->materiaux = (isset($data['materiaux'])) ? $data['materiaux'] : null;//10
@@ -88,6 +96,7 @@ class Inventaire implements InputFilterAwareInterface
 		$this->mesures = (isset($data['mesures'])) ? $data['mesures'] : null;//12
 		$this->etat = (isset($data['etat'])) ? $data['etat'] : null;//13
 		$this->auteur = (isset($data['auteur'])) ? $data['auteur'] : null;//14 
+		$this->auteur_display = (isset($data['auteur_display'])) ? $data['auteur_display'] : null;//14 
 		$this->epoque = (isset($data['epoque'])) ? $data['epoque'] : null;//15
 		$this->usage = (isset($data['usage'])) ? $data['usage'] : null;//16
 		$this->provenance = (isset($data['provenance'])) ? $data['provenance'] : null;//17

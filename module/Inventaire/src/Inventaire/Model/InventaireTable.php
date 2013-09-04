@@ -96,7 +96,7 @@ class InventaireTable extends AbstractTableGateway
 		return $resultSet;
 	}
 
-	public function fetchAllFullInfos($year)
+	public function fetchAllFullInfos($year = null)
 	{
 		
 		$sql = new Sql($this->adapter);
@@ -106,7 +106,7 @@ class InventaireTable extends AbstractTableGateway
 		if ($year) {
 			$select->where("YEAR(date_inscription) = ".$year);
 		}
-		
+		$select->order("numinv_sort ASC");
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();
 		$statement = $sql->prepareStatementForSqlObject($select);
@@ -123,9 +123,7 @@ class InventaireTable extends AbstractTableGateway
 		$select = $sql->select();
 		$select->from($this->table)
 		->join('inventaire_photo', 'inventaire_inventaire.id = inventaire_id', array('credits','file'),'left');
-		if ($year) {
-			$select->where("YEAR(date_inscription) = ".$year);
-		}
+		$select->order("numinv_sort ASC");
 		
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();
@@ -798,61 +796,82 @@ class InventaireTable extends AbstractTableGateway
 		
 		$t_object = new \ca_objects($ca_id);
 		$t_object->setMode(ACCESS_WRITE);
-
+		$response_global = "";
 		// ATTRIBUTS
-		foreach ($mappings as $target => $attribute) {
-			$data = explode(".",$attribute["field"]);
-			
-			// GESTION DES OPTIONS POUR LE get()
-			$options = array("convertCodesToDisplayText"=>"true");
-			if ($attribute["options"]) $options = array_merge($options,$attribute["options"]);
-			// RECUPERATION DU CHAMP POUR L'AFFICHAGE
-			$response = $t_object->get($attribute["field"], $options);
-			
-			// POST-TRAITEMENT
-			if (($attribute["post-treatment"]) && ($response)) {
-				switch($attribute["post-treatment"]) {
-					// Conversion monétaire
-					case 'convertcurrencytoeuros' :
-						preg_match('/([[:graph:]]*) ([[:graph:]]*)/i',$response, $matches);
-						if ($matches[1] != "EUR") {
-							$conversionresult = $this->convertcurrency($matches[1], "EUR", $matches[2]);
-							if($conversionresult) {
-								$response=$conversionresult;
-							} else {
-								throw new \Exception("Erreur dans la conversion de devise de ".$response." en euros.");
-							}
-						} else {
-							$response = $matches[2];
+		foreach ($mappings as $target => $fields) {
+			$response_global = "";
+			foreach($fields as $attribute) {
+				$response = "";
+				$field = $attribute["field"];
+				$data = explode(".",$field);
+				
+				switch($data[0]) {
+					case "ca_entities" :
+						$entities = $t_object->getRelatedItems("ca_entities",array("restrictToRelationshipTypes"=>$attribute["relationshipTypeId"]));
+						foreach($entities as $entity) {
+							$response = ($response ? $response.", " : "").$entity["displayname"];
 						}
-						// Remplacement du point par la virgule
-						$response = str_replace(".", ",",$response);
 						break;
-					// Conversion vers une date au format JJ/MM/AAAA
-					case 'caDateToUnixTimestamp' :
-						$response = date('Y-m-d',caDateToUnixTimestamp($response));
+					case "ca_places" :
+						$places = $t_object->getRelatedItems("ca_places",array("restrictToRelationshipTypes"=>$attribute["relationshipTypeId"]));
+						foreach($places as $place) {
+							$response = ($response ? $response.", " : "").$place["displayname"];
+						}
 						break;
-					// Post-traitement non reconnu
-					default :
-						throw new \Exception("Post-traitement non reconnu : ".$attribute["post-treatment"]);
+					case "ca_objects" :
+					default:
+						// GESTION DES OPTIONS POUR LE get()
+						$options = array("convertCodesToDisplayText"=>"true", "locale"=>$locale_id);
+						if ($attribute["options"]) $options = array_merge($options,$attribute["options"]);
+						// RECUPERATION DU CHAMP POUR L'AFFICHAGE
+						
+						$response = $t_object->get($field, $options);
+
+						// POST-TRAITEMENT
+						if (($attribute["post-treatment"]) && ($response)) {
+							switch($attribute["post-treatment"]) {
+								// Conversion monétaire
+								case 'convertcurrencytoeuros' :
+									if ($response) {
+										preg_match('/([[:graph:]]*) ([[:graph:]]*)/i',$response, $matches);
+										if ($matches[1] != "EUR") {
+											$conversionresult = $this->convertcurrency($matches[1], "EUR", $matches[2]);
+											if($conversionresult) {
+												$response=$conversionresult;
+											} else {
+												throw new \Exception("Erreur dans la conversion de devise de ".$response." en euros ($response).");
+											}
+										} else {
+											$response = $matches[2];
+										}
+										// Remplacement du point par la virgule
+										$response = str_replace(".", ",",$response)." €";
+									}
+									break;
+									// Conversion vers une date au format JJ/MM/AAAA
+								case 'caDateToUnixTimestamp' :
+									$response = date('Y/m/d',caDateToUnixTimestamp($response));
+									break;
+									// Post-traitement non reconnu
+								default :
+									throw new \Exception("Post-traitement non reconnu : ".$attribute["post-treatment"]);
+							}
+						}
+						break;
 				}
+				$response_global .= ($response ? $attribute["prefixe"].$response.$attribute["suffixe"] : "");
 			} 
-
 			// DEFINITION DE L'ATTRIBUT
-			$inventaire->$target = $response;
-
+			$inventaire->$target = !$response_global ? "non renseigné" : $response_global;
 		}
-		
 		if (!$inventaire->numinv) {
-			$return["error"] = "<b>Objet $ca_id sans numéro d'inventaire</b>";
-			return $return;
+			return new \Exception("Objet $ca_id sans numéro d'inventaire");
 		}
 		$return["numinv"]=$inventaire->numinv;
 		
 		if (!$inventaire->designation) {
-			$return["error"] = "<b>Objet $ca_id sans titre</b>";
-			return $return;
-		}
+			return new \Exception("Objet $ca_id sans titre");
+			}
 		$return["designation"]=$inventaire->designation;
 		
 		$result = $this->saveInventaire($inventaire);
@@ -861,10 +880,13 @@ class InventaireTable extends AbstractTableGateway
 		if(!$inventaire_id) {
 			return new \Exception("Problème de vérification inventaire_id.");
 		}
+		
+		$return["id"]=$inventaire_id;
+		
 		$t_object->removeAttributes("inventaire_id");
-		$t_object->update();
+
 		if ($t_object->numErrors()) throw new \Exception("Impossible de supprimer la date d'ajout à l'inventaire déjà renseignée.");
-		$t_object->addAttribute(array("inventaire_id" => $inventaire_id),"inventaire_id");
+		//$t_object->addAttribute(array("inventaire_id" => $inventaire_id),"inventaire_id");
 		$t_object->update();
 		
 		return $return;

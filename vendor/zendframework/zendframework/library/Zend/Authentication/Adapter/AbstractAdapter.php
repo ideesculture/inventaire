@@ -61,7 +61,7 @@ abstract class AbstractAdapter implements ValidatableAdapterInterface
      * Sets the identity for binding
      *
      * @param  mixed          $identity
-     * @return AbstractAdapter
+     * @return AbstractAdpter
      */
     public function setIdentity($identity)
     {

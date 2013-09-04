@@ -7,10 +7,8 @@ return array(
     	'Application',
         'Inventaire',
         'Editions',
-    	'Recolement',
     	'DOMPDFModule',
-    	'DluTwBootstrap',
-    	'Depot'
+    	'DluTwBootstrap'
     ),
     'module_listener_options' => array(
         'config_glob_paths'    => array(

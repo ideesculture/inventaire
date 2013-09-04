@@ -178,7 +178,6 @@ class Bcrypt implements PasswordInterface
      * Set the backward compatibility $2a$ instead of $2y$ for PHP 5.3.7+
      *
      * @param boolean $value
-     * @return Bcrypt
      */
     public function setBackwardCompatibility($value)
     {

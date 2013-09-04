@@ -35,11 +35,6 @@ class DocBlockGenerator extends AbstractGenerator
     protected $indentation = '';
 
     /**
-     * @var boolean
-     */
-    protected $wordwrap = true;
-
-    /**
      * Build a DocBlock generator object from a reflection object
      *
      * @param  DocBlockReflection $reflectionDocBlock
@@ -194,29 +189,6 @@ class DocBlockGenerator extends AbstractGenerator
     }
 
     /**
-     * Set the word wrap
-     *
-     * @param boolean $value
-     * @return \Zend\Code\Generator\DocBlockGenerator
-     */
-    public function setWordWrap($value)
-    {
-        $this->wordwrap = (boolean) $value;
-
-        return $this;
-    }
-
-    /**
-     * Get the word wrap
-     *
-     * @return boolean
-     */
-    public function getWordWrap()
-    {
-        return $this->wordwrap;
-    }
-
-    /**
      * @return string
      */
     public function generate()
@@ -248,7 +220,7 @@ class DocBlockGenerator extends AbstractGenerator
     {
         $indent  = $this->getIndentation();
         $output  = $indent . '/**' . self::LINE_FEED;
-        $content = $this->getWordWrap() == true ? wordwrap($content, 80, self::LINE_FEED) : $content;
+        $content = wordwrap($content, 80, self::LINE_FEED);
         $lines   = explode(self::LINE_FEED, $content);
         foreach ($lines as $line) {
             $output .= $indent . ' *';

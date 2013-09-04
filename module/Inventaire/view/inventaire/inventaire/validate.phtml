@@ -1,24 +1,27 @@
 <?php
 // module/Inventaire/view/inventaire/inventaire/validate.phtml:
 
-$title = 'Valider un objet';
+$title = "Inscrire à l'inventaire";
 $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
 
-<h3>Etes vous sur de vouloir valider
-    <b><?php echo $this->escapeHtml($inventaire->designation); ?></b>, correspondant au numéro d'inventaire
-    <b><?php echo $this->escapeHtml($inventaire->numinv); ?></b> ?
-</h3>
-<?php if($inventaire->ca_id) : ?>
+<p>Etes vous sur de vouloir inscrire l'objet à l'inventaire l'objet suivant ?</p>
 <p>
-	<span class="label label-important">Important</span> La date d'inscription à l'inventaire définie dans la base CollectiveAccess va être redéfinie à la date du jour de validation (<?php print date("d/m/Y"); ?>).
+	Numéro d'inventaire : <b><?php echo $this->escapeHtml($inventaire->numinv_display); ?></b>
 </p>
-<?php endif;?>
-    <div class="alert">
+<p>
+	<?php echo $inventaire->designation; ?>
+</p>
+
+<div class="alert alert-info">
     <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <p>Après validation, l'objet ne sera plus modifiable. Cette modification est <strong>définitive</strong>.</p>
-    </div>
+    <p><b>Date d'inscription</b> La date d'inscription à l'inventaire définie dans la base CollectiveAccess va être redéfinie à la date du jour de validation (<?php print date("d/m/Y"); ?>).</p>
+</div>
+<div class="alert">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p><b>Modification définitive</b> Après inscription, l'objet ne sera plus modifiable.</p>
+</div>
 
 <?php
 $url = $this->url('inventaire', array(
@@ -29,7 +32,7 @@ $url = $this->url('inventaire', array(
 <form action="<?php echo $url; ?>" method="post">
 <div>
     <input type="hidden" name="id" value="<?php echo (int) $inventaire->id; ?>" />
-    <input type="submit" name="validate" class="btn btn-warning" value="Yes" />
-    <input type="submit" name="validate" class="btn btn-info" value="No" />
+    <button class="btn btn-warning" type="submit" name="validate" value="Yes">Inscrire à l'inventaire</button>
+    <button class="btn btn-info" type="submit" name="validate" value="No">Annuler</button>
 </div>
 </form>

@@ -215,13 +215,6 @@ class Predicate extends PredicateSet
         return $this;
     }
 
-    /**
-     * Create an expression, with parameter placeholders
-     *
-     * @param $expression
-     * @param $parameters
-     * @return $this
-     */
     public function expression($expression, $parameters)
     {
         $this->addPredicate(
@@ -236,24 +229,19 @@ class Predicate extends PredicateSet
     /**
      * Create "Literal" predicate
      *
-     * Literal predicate, for parameters, use expression()
+     * Utilizes Like predicate
      *
      * @param  string $literal
+     * @param  int|float|bool|string|array $parameter
      * @return Predicate
      */
-    public function literal($literal)
+    public function literal($literal, $expressionParameters = null)
     {
-        // process deprecated parameters from previous literal($literal, $parameters = null) signature
-        if (func_num_args() >= 2) {
-            $parameters = func_get_arg(1);
-            $predicate = new Expression($literal, $parameters);
-        }
-
-        // normal workflow for "Literals" here
-        if (!isset($predicate)) {
+        if ($expressionParameters) {
+            $predicate = new Expression($literal, $expressionParameters);
+        } else {
             $predicate = new Literal($literal);
         }
-
         $this->addPredicate(
             $predicate,
             ($this->nextPredicateCombineOperator) ?: $this->defaultCombination
@@ -307,7 +295,7 @@ class Predicate extends PredicateSet
      * Utilizes In predicate
      *
      * @param  string $identifier
-     * @param  array|\Zend\Db\Sql\Select $valueSet
+     * @param  array|Select $valueSet
      * @return Predicate
      */
     public function in($identifier, $valueSet = null)

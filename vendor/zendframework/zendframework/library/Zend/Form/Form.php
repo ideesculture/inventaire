@@ -321,7 +321,7 @@ class Form extends Fieldset implements FormInterface
                 continue;
             }
 
-            if (is_array($value) && is_array($match[$name])) {
+            if (is_array($value)) {
                 $data[$name] = $this->prepareBindData($value, $match[$name]);
             } else {
                 $data[$name] = $value;
@@ -558,8 +558,10 @@ class Form extends Fieldset implements FormInterface
                 $values = array();
 
                 if (isset($data[$key])) {
-                    foreach(array_keys($data[$key]) as $cKey) {
-                        $values[$cKey] = $value;
+                    $count = count($data[$key]);
+
+                    for ($i = 0; $i != $count; ++$i) {
+                        $values[] = $value;
                     }
                 }
 

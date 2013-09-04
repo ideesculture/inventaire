@@ -48,7 +48,7 @@ class Method implements RouteInterface
     /**
      * factory(): defined by RouteInterface interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::factory()
+     * @see    Route::factory()
      * @param  array|Traversable $options
      * @throws Exception\InvalidArgumentException
      * @return Method
@@ -75,7 +75,7 @@ class Method implements RouteInterface
     /**
      * match(): defined by RouteInterface interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::match()
+     * @see    Route::match()
      * @param  Request $request
      * @return RouteMatch|null
      */
@@ -99,7 +99,7 @@ class Method implements RouteInterface
     /**
      * assemble(): Defined by RouteInterface interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::assemble()
+     * @see    Route::assemble()
      * @param  array $params
      * @param  array $options
      * @return mixed
@@ -113,7 +113,7 @@ class Method implements RouteInterface
     /**
      * getAssembledParams(): defined by RouteInterface interface.
      *
-     * @see    RouteInterface::getAssembledParams
+     * @see    Route::getAssembledParams
      * @return array
      */
     public function getAssembledParams()

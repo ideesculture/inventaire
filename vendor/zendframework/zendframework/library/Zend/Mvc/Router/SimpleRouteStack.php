@@ -60,7 +60,7 @@ class SimpleRouteStack implements RouteStackInterface
     /**
      * factory(): defined by RouteInterface interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::factory()
+     * @see    Route::factory()
      * @param  array|Traversable $options
      * @return SimpleRouteStack
      * @throws Exception\InvalidArgumentException
@@ -124,7 +124,7 @@ class SimpleRouteStack implements RouteStackInterface
     /**
      * addRoutes(): defined by RouteStackInterface interface.
      *
-     * @see    RouteStackInterface::addRoutes()
+     * @see    RouteStack::addRoutes()
      * @param  array|Traversable $routes
      * @return SimpleRouteStack
      * @throws Exception\InvalidArgumentException
@@ -145,7 +145,7 @@ class SimpleRouteStack implements RouteStackInterface
     /**
      * addRoute(): defined by RouteStackInterface interface.
      *
-     * @see    RouteStackInterface::addRoute()
+     * @see    RouteStack::addRoute()
      * @param  string  $name
      * @param  mixed   $route
      * @param  integer $priority
@@ -169,7 +169,7 @@ class SimpleRouteStack implements RouteStackInterface
     /**
      * removeRoute(): defined by RouteStackInterface interface.
      *
-     * @see    RouteStackInterface::removeRoute()
+     * @see    RouteStack::removeRoute()
      * @param  string  $name
      * @return SimpleRouteStack
      */
@@ -282,7 +282,7 @@ class SimpleRouteStack implements RouteStackInterface
     /**
      * match(): defined by RouteInterface interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::match()
+     * @see    Route::match()
      * @param  Request $request
      * @return RouteMatch|null
      */
@@ -308,7 +308,7 @@ class SimpleRouteStack implements RouteStackInterface
     /**
      * assemble(): defined by RouteInterface interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::assemble()
+     * @see    Route::assemble()
      * @param  array $params
      * @param  array $options
      * @return mixed

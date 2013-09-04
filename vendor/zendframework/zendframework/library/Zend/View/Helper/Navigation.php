@@ -182,14 +182,12 @@ class Navigation extends AbstractNavigationHelper
             return false;
         }
 
-        $helper    = $plugins->get($proxy);
-        $container = $this->getContainer();
-        $hash      = spl_object_hash($container);
+        $helper = $plugins->get($proxy);
+        $class  = get_class($helper);
 
-        if (!isset($this->injected[$hash])) {
-            $helper->setContainer();
+        if (!isset($this->injected[$class])) {
             $this->inject($helper);
-            $this->injected[$hash] = true;
+            $this->injected[$class] = true;
         }
 
         return $helper;

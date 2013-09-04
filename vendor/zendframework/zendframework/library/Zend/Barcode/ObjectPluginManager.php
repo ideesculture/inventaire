@@ -21,11 +21,6 @@ use Zend\ServiceManager\AbstractPluginManager;
 class ObjectPluginManager extends AbstractPluginManager
 {
     /**
-     * @var bool Ensure services are not shared
-     */
-    protected $shareByDefault = false;
-
-    /**
      * Default set of barcode parsers
      *
      * @var array

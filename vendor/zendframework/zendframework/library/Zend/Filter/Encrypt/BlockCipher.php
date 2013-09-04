@@ -251,6 +251,8 @@ class BlockCipher implements EncryptionAlgorithmInterface
             $encrypted = $this->blockCipher->encrypt($value);
         } catch (CryptException\InvalidArgumentException $e) {
             throw new Exception\InvalidArgumentException($e->getMessage());
+        } catch (SymmetricException\InvalidArgumentException $e) {
+            throw new Exception\InvalidArgumentException($e->getMessage());
         }
         return $encrypted;
     }

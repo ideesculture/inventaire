@@ -260,7 +260,6 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
      *
      * @param  Where|\Closure|string|array|Predicate\PredicateInterface $predicate
      * @param  string $combination One of the OP_* constants from Predicate\PredicateSet
-     * @throws Exception\InvalidArgumentException
      * @return Select
      */
     public function where($predicate, $combination = Predicate\PredicateSet::OP_AND)
@@ -296,11 +295,6 @@ class Select extends AbstractSql implements SqlInterface, PreparableSqlInterface
                         } elseif (is_array($pvalue)) {
                             // if the value is an array, assume IN() is desired
                             $predicate = new Predicate\In($pkey, $pvalue);
-                        } elseif ($pvalue instanceof Predicate\PredicateInterface) {
-                            // 
-                            throw new Exception\InvalidArgumentException(
-                                'Using Predicate must not use string keys'
-                            ); 
                         } else {
                             // otherwise assume that array('foo' => 'bar') means "foo" = 'bar'
                             $predicate = new Predicate\Operator($pkey, Predicate\Operator::OP_EQ, $pvalue);

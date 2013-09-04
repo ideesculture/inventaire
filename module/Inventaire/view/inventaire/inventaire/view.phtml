@@ -20,23 +20,19 @@ $this->headTitle($title);
 			<?php print $photo->credits;?>
 			</p>
 			<p class="btn-group pull-right">
-			<a  class="btn btn-small btn-success" href="<?php echo $this->url('photo',
-				array('action'=>'edit', 'id' => $photo->id));?>"><i class="icon-pencil icon-white"></i> Modifier</a>
 			<a  class="btn btn-small btn-warning" href="<?php echo $this->url('photo',
-				array('action'=>'delete', 'id' => $photo->id));?>"><i class="icon-remove icon-white"></i> Supprimer</a>
+				array('action'=>'delete', 'id' => $photo->id));?>"><i class="icon-remove icon-white"></i> Retirer de la sélection</a>
 			</p>
 			</span>
 		<?php endif ?>
 		<?php foreach($fields as $field) {
-			print "<p><b>".$fieldsname[$field]."</b> : ";
-			if (!strtotime($inventaire->$field)) {
-				print $this->escapeHtml($inventaire->$field);
-			} else {
-				print $this->dateFormat(new DateTime($inventaire->$field), IntlDateFormatter::LONG, IntlDateFormatter::NONE, __LOCALE__); 
+				if ($inventaire->$field || in_array($field, $mandatoryfieldsname)) {
+					print "<p><b>".$fieldsname[$field]."</b> : </p><p><blockquote>".$inventaire->$field."</blockquote></p>\n";
+				} else {
+					print "<p style=\"color:lightgray;\"><b>".$fieldsname[$field]."</b> : </p><p><blockquote style=\"color:lightgray;\">Non renseigné</blockquote></p>\n";
+				}
 			}
-			print "</p>\n";
-		}
-		;?>
+		?>
 		</td></tr>
 		</table>
 	</div>
@@ -46,17 +42,15 @@ $this->headTitle($title);
 		<p class="btn-group">
 		    <a class="btn btn-info" href="<?php echo $this->url('inventaire', array());?>">Revenir à la liste des objets</a>
 		    <?php if (!$inventaire->validated && $auth["logged"]) : ?> 
-				<a  class="btn btn-success" href="<?php echo $this->url('inventaire',
-				array('action'=>'edit', 'id' => $inventaire->id));?>"><i class="icon-pencil icon-white"></i> Modifier</a>
 				<a  class="btn btn-warning" href="<?php echo $this->url('inventaire',
 				array('action'=>'delete', 'id' => $inventaire->id));?>"><i class="icon-remove icon-white"></i> Supprimer</a>
 				<a  class="btn btn-warning" href="<?php echo $this->url('inventaire',
-				array('action'=>'validate', 'id' => $inventaire->id));?>"><i class="icon-check icon-white"></i> Valider</a>
+				array('action'=>'validate', 'id' => $inventaire->id));?>"><i class="icon-check icon-white"></i> Inscrire à l'inventaire</a>
 			<?php endif; ?>
 			<?php if ($inventaire->ca_id) : ?>
 			<a  class="btn btn-success" 
 							href="<?php echo $config_ca_direct["url"]."/index.php/editor/objects/ObjectEditor/Summary/object_id/".$inventaire->ca_id; ?>" 
-							title="Afficher dans CA"><i class="icon-share icon-white"></i> Afficher dans CA</a>
+							title="Modifier dans CA"><i class="icon-share icon-white"></i> Modifier dans CA</a>
 			<?php endif; ?>
 		</p>
 	</div>

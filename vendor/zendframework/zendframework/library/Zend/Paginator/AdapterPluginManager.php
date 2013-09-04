@@ -46,7 +46,7 @@ class AdapterPluginManager extends AbstractPluginManager
      * @param  string $canonicalName
      * @param  string $requestedName
      * @return mixed
-     * @throws \Zend\ServiceManager\Exception\ServiceNotCreatedException If factory is not callable
+     * @throws Exception\ServiceNotCreatedException If factory is not callable
      */
     protected function createFromFactory($canonicalName, $requestedName)
     {

@@ -63,7 +63,6 @@ class NameInformation
 
     /**
      * @param  array $uses
-     * @return NameInformation
      */
     public function setUses(array $uses)
     {
@@ -75,7 +74,6 @@ class NameInformation
 
     /**
      * @param  array $uses
-     * @return NameInformation
      */
     public function addUses(array $uses)
     {

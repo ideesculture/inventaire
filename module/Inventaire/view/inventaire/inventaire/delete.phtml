@@ -1,12 +1,12 @@
 <?php
 // module/Inventaire/view/inventaire/inventaire/delete.phtml:
 
-$title = 'Supprimer un objet';
+$title = 'Retirer de la sélection un objet';
 $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
 
-<p>Etes vous sur de vouloir supprimer
+<p>Etes vous sur de vouloir retirer de la sélection
     <b><?php echo $this->escapeHtml($inventaire->designation); ?></b>, correspondant au numéro d'inventaire
     <b><?php echo $this->escapeHtml($inventaire->numinv); ?></b> ?
 </p>
@@ -20,7 +20,7 @@ $url = $this->url('inventaire', array(
 <form action="<?php echo $url; ?>" method="post">
 <div>
     <input type="hidden" name="id" value="<?php echo (int) $inventaire->id; ?>" />
-    <input type="submit" name="del" value="Yes" />
-    <input type="submit" name="del" value="No" />
+    <button class="btn btn-warning" type="submit" name="del" value="Yes">Oui</button>
+    <button class="btn btn-info" type="submit" name="del" value="No">Non</button>
 </div>
 </form>

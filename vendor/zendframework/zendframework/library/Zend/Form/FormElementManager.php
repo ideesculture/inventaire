@@ -36,7 +36,6 @@ class FormElementManager extends AbstractPluginManager
         'dateselect'    => 'Zend\Form\Element\DateSelect',
         'datetime'      => 'Zend\Form\Element\DateTime',
         'datetimelocal' => 'Zend\Form\Element\DateTimeLocal',
-        'datetimeselect' => 'Zend\Form\Element\DateTimeSelect',
         'element'       => 'Zend\Form\Element',
         'email'         => 'Zend\Form\Element\Email',
         'fieldset'      => 'Zend\Form\Fieldset',
@@ -85,7 +84,7 @@ class FormElementManager extends AbstractPluginManager
     public function injectFactory($element)
     {
         if ($element instanceof FormFactoryAwareInterface) {
-            $element->getFormFactory()->setFormElementManager($this);
+            $element->setFormFactory(new Factory($this));
         }
     }
 

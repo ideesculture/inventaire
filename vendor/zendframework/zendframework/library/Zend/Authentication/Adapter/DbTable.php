@@ -330,7 +330,7 @@ class DbTable extends AbstractAdapter
      * _authenticateCreateSelect() - This method creates a Zend\Db\Sql\Select object that
      * is completely configured to be queried against the database.
      *
-     * @return Sql\Select
+     * @return DbSelect
      */
     protected function _authenticateCreateSelect()
     {
@@ -358,7 +358,7 @@ class DbTable extends AbstractAdapter
      * _authenticateQuerySelect() - This method accepts a Zend\Db\Sql\Select object and
      * performs a query against the database with that object.
      *
-     * @param  Sql\Select $dbSelect
+     * @param  DbSelect $dbSelect
      * @throws Exception\RuntimeException when an invalid select object is encountered
      * @return array
      */

@@ -11,7 +11,6 @@ namespace Zend\Mvc;
 
 use Zend\EventManager\EventManagerInterface;
 use Zend\EventManager\ListenerAggregateInterface;
-use Zend\Mvc\Application;
 
 class RouteListener implements ListenerAggregateInterface
 {
@@ -65,7 +64,7 @@ class RouteListener implements ListenerAggregateInterface
         $routeMatch = $router->match($request);
 
         if (!$routeMatch instanceof Router\RouteMatch) {
-            $e->setError(Application::ERROR_ROUTER_NO_MATCH);
+            $e->setError($target::ERROR_ROUTER_NO_MATCH);
 
             $results = $target->getEventManager()->trigger(MvcEvent::EVENT_DISPATCH_ERROR, $e);
             if (count($results)) {

@@ -90,7 +90,7 @@ class Catchall implements RouteInterface
     /**
      * factory(): defined by Route interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::factory()
+     * @see    Route::factory()
      * @param  array|Traversable $options
      * @return Simple
      */
@@ -118,7 +118,7 @@ class Catchall implements RouteInterface
     /**
      * assemble(): Defined by Route interface.
      *
-     * @see    \Zend\Mvc\Router\RouteInterface::assemble()
+     * @see    Route::assemble()
      * @param  array $params
      * @param  array $options
      * @return mixed
@@ -131,7 +131,7 @@ class Catchall implements RouteInterface
     /**
      * getAssembledParams(): defined by Route interface.
      *
-     * @see    RouteInterface::getAssembledParams
+     * @see    Route::getAssembledParams
      * @return array
      */
     public function getAssembledParams()

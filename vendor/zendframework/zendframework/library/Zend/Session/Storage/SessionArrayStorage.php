@@ -22,7 +22,11 @@ class SessionArrayStorage extends AbstractSessionArrayStorage
      */
     public function &__get($key)
     {
-        return $_SESSION[$key];
+        if (isset($_SESSION[$key])) {
+            return $_SESSION[$key];
+        }
+
+        return null;
     }
 
     /**
@@ -33,6 +37,10 @@ class SessionArrayStorage extends AbstractSessionArrayStorage
      */
     public function &offsetGet($key)
     {
-        return $_SESSION[$key];
+        if (isset($_SESSION[$key])) {
+            return $_SESSION[$key];
+        }
+
+        return null;
     }
 }
