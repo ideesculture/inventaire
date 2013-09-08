@@ -30,17 +30,18 @@ $this->headTitle($title);
 	<?php foreach ($photos as $photo) : ?>
 	  <li>
 	    <div class="thumbnail">
-	      <p><?php print $this->escapeHtml($photo->numinv);?>
+	      <p><?php print $this->escapeHtml($photo->numinv_display);?>
 	      <small><?php 
-	      		$designation = $this->escapeHtml($photo->designation);
+	      		$designation = $this->escapeHtml($photo->designation_display);
 	      		print (strlen($designation)>29 ? $designation : $designation);?>
 	      </small></p>
 	      <div style="height:200px;text-align:center;">
-	      <div style="max-height:200px;margin:auto;">
-      		<a href="/inventaire/view/<?php print $photo->inventaire_id;?>" title="<?php echo $this->escapeHtml($photo->designation);?>">
-	      	<img style="max-width:320px;max-height:100%;" class="img-rounded" src="<?php print "/files/assets/".$this->escapeHtml($photo->file);?>" alt="image">
-	      	</a>
-	      </div></div>
+	      	<div style="max-height:200px;margin:auto;">
+      			<a href="/inventaire/view/<?php print $photo->inventaire_id;?>" title="<?php echo $this->escapeHtml($photo->designation);?>">
+	      		<img style="max-width:320px;max-height:200px;" class="img-rounded" src="<?php print "/files/assets/".$this->escapeHtml($photo->file);?>" alt="image">
+	      		</a>
+	      </div>
+	      </div>
 	      <div style="height:60px;">
 		      <?php if ($photo->credits) : ?>
 			  <p><small>
