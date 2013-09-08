@@ -140,8 +140,8 @@ body {
 HTML, body, .container, .content  {height: 100%}
 #wrap {min-height: 100%}
 
-footer {position:relative;bottom:0px;color:gray;margin-bottom:-10px;padding:10px 10px 30px 10px;background:url("../images/cuir.png") repeat-x top left;border-radius: 10px 10px 0 0;box-shadow: 0px 0px 7px #000;}
-footer A {color:lightgray;}
+footer {position:relative;bottom:0px;color:gray;margin-bottom:-10px;padding:10px 10px 30px 10px;border-top:2px solid white;}
+footer A {}
 
 .form-actions {
 	background:none;
@@ -154,6 +154,9 @@ div.thumbnail,
 	box-shadow: 0px 0px 10px #aaa;
 	padding: 1em;
 }
+div.thumbnail p {
+	word-wrap: break-word;
+}	
 .bord-ronds-fond-blanc.login {
 	background:white url("../images/lock.png") no-repeat bottom right;
 }
