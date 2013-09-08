@@ -6,31 +6,31 @@
 // config/autoload/local.php:
 return array(
 
-	/* LOCAL
+	/* LOCAL */
 	// Paramétrage de la connexion à la base de données
     'db' => array(
-        'username' => 'root',
-        'password' => 'root_password',
+        'username' => 'inventaire',
+        'password' => 'inventaire',
         //'dsn'            => 'mysql:dbname=inventaire;host=localhost',
     	'dsn' =>  'mysql:dbname=inventaire'
     ),
 	'ca_direct' => array(
-		'path' => '/Users/gmichelin/Sites/smf',
-		'url' => 'http://localhost/~gmichelin/smf'
+		'path' => '/Sites/github/ideesculture_repo/musee',
+		'url' => 'http://musee.site'
 	),
     
-    /* DISTANT */	
+    /* DISTANT 	
 	// Paramétrage de la connexion à la base de données
     'db' => array(
-        'username' => 'user',
-        'password' => 'password',
+        'username' => 'inventairemusee',
+        'password' => '',
         //'dsn'            => 'mysql:dbname=inventaire;host=localhost',
-    	'dsn' =>  'mysql:dbname=inventaire'
+    	'dsn' =>  'mysql:dbname=inventairemusee'
     ),
 	'ca_direct' => array(
-		'path' => '/var/www/providence',
-		'url' => 'http://localhost/providence'
-	),
+		'path' => '/path-to-ca-install',
+		'url' => 'http://url.domain/path'
+	),*/
 	// Paramétrage des accès aux webservices de CollectiveAccess
 	'ca_import_mapping' => array(
 		'inventaire' => array(
