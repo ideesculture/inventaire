@@ -5,7 +5,6 @@ $title = "Import d'un ensemble depuis la base CollectiveAccess";
 $this->headTitle($title);
 
 $ca_set_id = ( isset($ca_set_id) ? true : false );
-//var_dump($results);die();
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
 <?php
@@ -16,7 +15,7 @@ if(!$ca_set_id) :
 	<form action="<?php echo $this->url; ?>" method="post">
 	    <div>
 	    	<h3><label class="control-label required" for="ca_id">Identifiant interne CollectiveAccess de l'ensemble </label>
-	    	<input type="text" name="ca_set_id" /></h3>
+	    	<input type="text" name="set_id" /></h3>
 	    </div>
 	    <div>
 	    	 <input type="submit" name="insert" value="Importer" class="btn btn-info btn-large" />
@@ -29,9 +28,9 @@ if(!$ca_set_id) :
 
 <div class="row">
 	<div class="span12">
-		<?php  foreach($results as $key=>$result) : ?>
+		<?php  foreach($result_imports as $key=>$result) : ?>
 			<div class="row">
-			<?php print ( $results_photos[$key]["file"] ? "<img src=\"/files/assets/".$results_photos[$key]["file"]."\" style=\"max-height:40px;max-width:40px;float:left;margin:4px 10px 4px 32px;\">" : "[".$results_photos[$key]["error"]."]" );?>
+			<?php print ( $result_imports_photos[$key]["file"] ? "<img src=\"/files/assets/".$results_photos[$key]["file"]."\" style=\"max-height:40px;max-width:40px;float:left;margin:4px 10px 4px 32px;\">" : "[".$result_imports_photos[$key]["error"]."]" );?>
 			<?php print "<p><b><a href=\"/inventaire/view/".$result["id"]."\">".$result["designation"]."</a></b> ".$result["numinv_display"]." (objet ".$key.")</p>";?>
 			</div>
 			<?php if(!isset($result["error"])) : ?>

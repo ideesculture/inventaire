@@ -126,10 +126,10 @@ if($auth["logged"]) {
 <div class="row">
 	<div class="span6">
 		<div class="btn-group">
-		<a class="btn btn-success" href="<?php echo $this->url('inventaire',array('action'=>'importObjet'));?>">
-			<i class="icon-circle-arrow-down icon-white icon-large"></i> Importer un objet</a>
-		<a class="btn btn-success" href="<?php echo $this->url('inventaire',array('action'=>'importSet'));?>">
-			<i class="icon-circle-arrow-down icon-white icon-large"></i> Importer un ensemble</a>
+		<a class="btn btn-success" href="<?php echo $this->url('inventaire',array('action'=>'afficherObjet'));?>">
+			<i class="icon-circle-arrow-down icon-white icon-large"></i> Importer/mettre à jour un objet</a>
+		<a class="btn btn-success" href="<?php echo $this->url('inventaire',array('action'=>'updateSet'));?>">
+			<i class="icon-circle-arrow-down icon-white icon-large"></i> Importer/mettre à jour un ensemble</a>
 		<a class="btn btn-success" href="<?php echo $this->url('inventaire', array('action'=>'listingExportPdf'));?>"><i class="icon-book icon-white icon-large"></i> Générer le PDF</a>
 		<a class="btn btn-info" href="<?php echo $this->url('photo', array('action'=>'index'));?>"><i class="icon-camera icon-white icon-large"></i> Afficher les photos</a>
 		</div>

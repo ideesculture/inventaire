@@ -10,6 +10,8 @@ use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Paginator\Adapter\DbSelect;
 use Inventaire\Form\InventaireForm;
 
+define('__CA_DONT_DO_SEARCH_INDEXING__',1);
+
 class InventaireTable extends AbstractTableGateway
 {
 	protected $table ='inventaire_inventaire';
@@ -408,20 +410,29 @@ class InventaireTable extends AbstractTableGateway
 	}
 	
 	
-	public function validateInventaire(Inventaire $inventaire, array $options=array())
+	public function validateInventaire(Inventaire $inventaire, $caDirectConfig = array(), $options=array())
 	{
 		$id = (int) $inventaire->id;
-		if(($inventaire->ca_id) && ($options["updateCaDate"] == true)) {
-			if(!$this->preloadCaDirect($options["path"])) {
+		if(($inventaire->ca_id) && (isset($options["updateCaDate"])) && ($options["updateCaDate"] == true)) {
+			if(!$this->preloadCaDirect($caDirectConfig["path"])) {
 				throw new \Exception("Impossible d'accéder à CollectiveAccess.");
 			}
+
+			include_once(__CA_MODELS_DIR__."/ca_locales.php");
 			include_once(__CA_MODELS_DIR__."/ca_objects.php");
+			include_once(__CA_MODELS_DIR__."/ca_lists.php");
+			include_once(__CA_MODELS_DIR__."/ca_attributes.php");
+			
+			$t_locale = new \ca_locales();
+			$locale_id = $t_locale->loadLocaleByCode('fr_FR'); // Stockage explicite en français
+			$t_list = new \ca_lists();
+			$object_type = $t_list->getItemIDFromList('object_types', 'art');
+			$t_attribute = new \ca_attributes();
+			
 			$t_object = new \ca_objects($inventaire->ca_id);
 			$t_object->setMode(ACCESS_WRITE);
-			// retrait de la date d'ajout à l'inventaire si précédemment renseigné
 			$t_object->removeAttributes("date_inventaire");
-			$t_object->update();
-			if ($t_object->numErrors()) throw new \Exception("Impossible de supprimer la date d'ajout à l'inventaire déjà renseignée.");
+			
 			$t_object->addAttribute(array("date_inventaire" => date("Y-m-d")),"date_inventaire");
 			$t_object->update();
 			if ($t_object->numErrors()) throw new \Exception("Impossible de définir la nouvelle date d'ajout à l'inventaire.");
@@ -429,7 +440,7 @@ class InventaireTable extends AbstractTableGateway
 		}
 		$this->update(
 			// set
-			array("validated" => TRUE),
+			array("validated" => 1),
 			// where
 			"id = $id");
 	}	
@@ -451,7 +462,7 @@ class InventaireTable extends AbstractTableGateway
 		));
 	}
 			
-	public function caDirectImportObject($ca_id, array $caDirectConfig)
+	public function caDirectImportObject($ca_id, array $caDirectConfig, $inventaire_id = 0)
 	{
 		$return = array();
 	
@@ -460,7 +471,7 @@ class InventaireTable extends AbstractTableGateway
 		}
 		
 		$inventaire = new Inventaire();
-		$inventaire->id = 0;
+		$inventaire->id = $inventaire_id;
 		$inventaire->ca_id = $ca_id;
 		$inventaire->validated = 0;
 		$mappings = $caDirectConfig["inventaire"];
@@ -572,6 +583,43 @@ class InventaireTable extends AbstractTableGateway
 		return $return;
 	}
 
+
+	/**
+	 * caGetSetItems : retourne les identifiants dans CA des objets contenus dans un set
+	 * 
+	 * @param $ca_set_id : id du set dans CollectiveAccess
+	 * @param array $caDirectConfig : informations de connexion locale à CA
+	 * @return \Exception|array : exception si erreur, sinon liste des ca_id des objets contenus dans le set
+	 */
+	public function caGetSetItems($ca_set_id, array $caDirectConfig)
+	{
+		$return = array();
+		
+		if(!$this->preloadCaDirect($caDirectConfig["path"])) {
+			return new \Exception("Impossible d'accéder à CollectiveAccess.");
+		}
+		
+		include_once(__CA_MODELS_DIR__."/ca_sets.php");
+			
+		$t_set = new \ca_sets($ca_set_id);
+		
+		$type = $t_set->getSetContentTypeName();
+		
+		if($type != "object") {
+			return new \Exception("L'ensemble choisi contient d'autres enregistrements que des objets.");
+		}
+		
+		
+		if(sizeof($t_set->getItemRowIDs())) {
+			foreach($t_set->getItemRowIDs() as $ca_id=>$void) {
+				$ca_ids[]=$ca_id;
+			}
+			return $ca_ids;
+		} else {
+			return new \Exception("L'ensemble choisi ne contient aucun objet.");
+		}
+	}
+	
 	public function caDirectImportSet($ca_set_id, array $caDirectConfig)
 	{
 		$return = array();

@@ -17,6 +17,7 @@ use Inventaire\Model\Photo;
 
 // définition de la classe pour la génération PDF
 use DOMPDFModule\View\Model\PdfModel;
+use Zend\View\Variables;
 
 class InventaireController extends AbstractActionController
 {
@@ -349,9 +350,12 @@ class InventaireController extends AbstractActionController
 
             if ($validate == 'Yes') {
                 $id = (int) $request->getPost('id');
+                
                 $config = $this->getServiceLocator()->get('Config');
+                $config_ca = $config["ca_direct"];
+                                
 				$inventaire = $this->getInventaireTable()->getInventaire($id);
-                $this->getInventaireTable()->validateInventaire($inventaire, array("updateCaDate" => true,"path"=> $config["ca_direct"]["path"]));
+                $this->getInventaireTable()->validateInventaire($inventaire, $config_ca, array("updateCaDate"=>true));
             }
 
             // Redirect to list of inventaires
@@ -434,7 +438,13 @@ class InventaireController extends AbstractActionController
             ));
 	}
 
-	public function importObjetAction()
+
+	/**
+	 * afficherObjetAction : La méthode afficherObjetAction réalise un import ou une mise à jour et redirige vers l'affichage de l'objet
+	 *  
+	 * @return multitype:|\Zend\View\Model\ViewModel
+	 */
+	public function afficherObjetAction()
 	{
 		$request = $this->getRequest();
 		if ($request->isPost()) {
@@ -447,106 +457,64 @@ class InventaireController extends AbstractActionController
 			return array();
 		}
 
-        $config = $this->getServiceLocator()->get('Config');
-		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
-		
-		$result_import=$this->getInventaireTable()->caDirectImportObject($ca_id, $config_import);
-		
-		if(isset($result_import["id"])) {
-			$result_photo_import=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_import["id"], $config_import);
-		} else {
-			$result_photo_import="not imported";
-		}
-		
-		$return = new ViewModel();
-		$return->setVariable('ca_id', $ca_id);
-		$return->setVariable('results', array($ca_id => $result_import));
-		$return->setVariable('results_photos', array($ca_id => $result_photo_import));
-		return $return;
-	}
-	
-	public function refreshObjetAction()
-	{
-		$request = $this->getRequest();
-		if ($request->isPost()) {
-			$ca_id = $request->getPost('ca_id', '0');
-		} else {
-			$ca_id = (int) $this->params()->fromRoute('id', 0);
-		}
-		
-		if (!$ca_id) {
-			return array();
-		}
-
-		// si l'objet est dans l'appli inventaire
-		if ($this->getInventaireTable()->checkInventaireByCaId($ca_id)) {
-			// s'il est validé, aucune action possible, redirection vers un affichage simple
-			/* if ($this->validated) {
-				$this->redirect()->toRoute('inventaire', array(
-				'action' => "view",
-				'id'=> $id
-				));
-			} else {
-				// sinon suppression */
-				$id = $this->getInventaireTable()->checkInventaireByCaId($ca_id)->id;
-				$this->getInventaireTable()->deleteInventaire($id);
-			// }
-		}
-		
-        $config = $this->getServiceLocator()->get('Config');
-		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
-		
-		$result=$this->getInventaireTable()->caDirectImportObject($ca_id,$config_import);
-
-		if(isset($result_import["id"])) {
-			$result_photo_import=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_import["id"], $config_import);
-		} else {
-			$result_photo_import="not imported";
-		}
-		
-		
-		$id = $this->getInventaireTable()->checkInventaireByCaId($ca_id)->id;
-		// Redirect to list of inventaires
-		$this->redirect()->toRoute('inventaire', array(
-				'action' => "view",
-				'id'=> $id
-		));
-	}
-	
-	public function importAction()
-	{
-	
-		// Traitement de la requête
-		$request = $this->getRequest();
 		$config = $this->getServiceLocator()->get('Config');
-		$config_import=array_merge($config["ca"],$config["ca_import_mapping"]);
-		$test=$this->getInventaireTable()->caWsAvailableSets($config_import);
-		var_dump($test);die();
-		if (!$request->isPost()) {
-			//print "ici";die();
-			return array(
-					'availableSets'=>$this->getInventaireTable()->caWsAvailableSets($config_import)
-			);
-		}
-		$set_id = (int) $request->getPost('set');
-	
-		if ($set_id) {
-			// Import des éléments contenus dans l'ensemble (set)
-			$results = $this->getInventaireTable()->caWsImportSet($set_id,$config_import);
+		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
 			
-			// Retour des résultats dans la vue
-			$return = new ViewModel();
-			$return->setVariable('results', $results);
-			$return->setTemplate("inventaire/inventaire/import_result.phtml");
-			return $return;
-		}
-	
-		// Redirect to list of inventaires
-		$this->redirect()->toRoute('inventaire', array(
-				'action' => 'index'
-		));
-	}
+		if ($this->getInventaireTable()->checkInventaireByCaId($ca_id)) {
+			// si l'objet est déjà dans la base inventaire
+			$id = $this->getInventaireTable()->checkInventaireByCaId($ca_id)->id;
+			$inventaire = $this->getInventaireTable()->getInventaire($id);
 
+			if ($inventaire->validated) {
+				// si validé on ne touche à rien
+				//var_dump($inventaire);die();
+				return $this->redirect()->toRoute('inventaire', array('action' => "view", 'id'=> $id ) );
+			} else {
+				// sinon pas validé, on met à jour
+				$result_import=$this->getInventaireTable()->caDirectImportObject($ca_id, $config_import, $id);
+			}
+		} else {
+			//sinon pas présent, on importe
+			$result_import=$this->getInventaireTable()->caDirectImportObject($ca_id, $config_import);
+			
+			if(isset($result_import["id"])) {
+				$id = $result_import["id"];
+				$result_photo_import=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_import["id"], $config_import);
+			} else {
+				$result_photo_import="not imported";
+				$return = new ViewModel();
+				$return->setVariable('ca_id', $ca_id);
+				$return->setVariable('results', array($ca_id => $result_import));
+				$return->setTemplate("inventaire/inventaire/import-objet.phtml");
+				return $return;
+			}
+		}
+		
+    	$config_ca_direct = $config["ca_direct"];
+    	
+    	$return = new ViewModel(array(
+				'auth' => array(
+						'logged' => $this::isLogged(),
+						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
+						),
+    			'inventaire' => $this->getInventaireTable()->getInventaire($id),
+    			'photo'  => $this->getPhotoTable()->getPhotoByInventaireId($id),
+    			'fields' => $this->getInventaireTable()->getFieldsName(),
+    			'fieldsname' => $this->getInventaireTable()->getFieldsHumanName(),
+    			'mandatoryfieldsname' => $this->getInventaireTable()->getMandatoryFieldsName(),
+    			'config_ca_direct' => $config_ca_direct
+    	));
+    	$return->setTemplate("inventaire/inventaire/view.phtml");
+    	
+    	return $return;
+    	 
+	}
+	
+	/**
+	 * importSetAction : importe le contenu d'un set de CA dans la base inventaire
+	 * 
+	 * @return multitype:|\Zend\View\Model\ViewModel
+	 */
 	public function importSetAction()
 	{
 		$request = $this->getRequest();
@@ -577,11 +545,81 @@ class InventaireController extends AbstractActionController
 				
 		$return = new ViewModel();
 		$return->setVariable('ca_set_id', $ca_set_id);
-		$return->setVariable('results', $result_imports);
-		$return->setVariable('results_photos', $result_photos_imports);
+		$return->setVariable('result_imports', $result_imports);
+		$return->setVariable('result_imports_photos', $result_photos_imports);
 		
 		return $return;
 	}
+
+	/**
+	 * updateSetAction : importe ou met à jour le contenu d'un set de CA dans la base inventaire
+	 *
+	 * @return multitype:|\Zend\View\Model\ViewModel
+	 */
+	public function updateSetAction()
+	{
+		$request = $this->getRequest();
+		if ($request->isPost()) {
+			$ca_set_id = $request->getPost('set_id', '0');
+			$confirm = $request->getPost('confirm', 'No');
+		} else {
+			$ca_set_id = (int) $this->params()->fromRoute('id', 0);
+		}
+	
+		if (!$ca_set_id) {
+			return array();
+		}
+		
+		if ($confirm == 'No') {
+			$return = new ViewModel();
+			$return->setVariable('set_id', $ca_set_id);
+			$return->setTemplate("inventaire/inventaire/update-set-confirm.phtml");
+			return $return;
+		}
+		
+		$result_photos_imports = array();
+	
+		$config = $this->getServiceLocator()->get('Config');
+		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
+	
+		$ca_ids=$this->getInventaireTable()->caGetSetItems($ca_set_id, $config_import);
+		foreach($ca_ids as $ca_id) {
+			
+			if ($this->getInventaireTable()->checkInventaireByCaId($ca_id)) {
+				// si l'objet est déjà dans la base inventaire
+				$id = $this->getInventaireTable()->checkInventaireByCaId($ca_id)->id;
+				$inventaire = $this->getInventaireTable()->getInventaire($id);
+				if ($inventaire->validated) {
+					// si validé on ne touche à rien
+					$result_imports[$ca_id]["id"]=$inventaire->id;
+					$result_imports[$ca_id]["numinv_display"]=$inventaire->numinv_display;
+					$result_imports[$ca_id]["designation_display"]=$inventaire->designation_display;
+					$result_imports[$ca_id]["error"]="objet inscrit à l'inventaire, modification impossible";
+				} else {
+					// sinon pas validé, on met à jour
+					$result_imports[$ca_id]=$this->getInventaireTable()->caDirectImportObject($ca_id, $config_import, $id);
+					$result_photo_imports[$ca_id]["error"]="ignoré, objet déjà présent dans l'inventaire";
+				}
+			} else {
+				//sinon pas présent, on importe
+				$result_imports[$ca_id]=$this->getInventaireTable()->caDirectImportObject($ca_id, $config_import);
+				
+				if(isset($result_imports[$ca_id]["id"])) {
+					$id = $result_imports[$ca_id]["id"];
+					$result_photo_imports[$ca_id]=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_imports[$ca_id]["id"], $config_import);
+				} else {
+					$result_photo_imports[$ca_id]["error"]="not imported";
+				}
+			}
+		}
+		$return = new ViewModel();
+		$return->setVariable('ca_set_id', $ca_set_id);
+		$return->setVariable('result_imports', $result_imports);
+		$return->setVariable('result_photos_imports', $result_photos_imports);
+	
+		return $return;
+	}
+	
 	
 }
 ?>
