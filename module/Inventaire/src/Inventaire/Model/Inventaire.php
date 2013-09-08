@@ -90,6 +90,7 @@ class Inventaire implements InputFilterAwareInterface
 		$this->date_inscription = (isset($data['date_inscription'])) ? $data['date_inscription'] : null;//7
 		$this->date_inscription_display = (isset($data['date_inscription_display'])) ? $data['date_inscription_display'] : null;
 		$this->designation  = (isset($data['designation'])) ? $data['designation'] : null;//8
+		$this->designation_display  = (isset($data['designation_display'])) ? $data['designation_display'] : null;//8
 		$this->inscription = (isset($data['inscription'])) ? $data['inscription'] : null;//9
 		$this->materiaux = (isset($data['materiaux'])) ? $data['materiaux'] : null;//10
 		$this->techniques = (isset($data['techniques'])) ? $data['techniques'] : null;//11
