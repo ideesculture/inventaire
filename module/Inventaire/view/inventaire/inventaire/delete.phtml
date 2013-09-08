@@ -5,10 +5,9 @@ $title = 'Retirer de la sélection un objet';
 $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
-
 <p>Etes vous sur de vouloir retirer de la sélection
-    <b><?php echo $this->escapeHtml($inventaire->designation); ?></b>, correspondant au numéro d'inventaire
-    <b><?php echo $this->escapeHtml($inventaire->numinv); ?></b> ?
+    <b><?php echo $this->escapeHtml($inventaire->designation_display); ?></b>, correspondant au numéro d'inventaire
+    <b><?php echo $this->escapeHtml($inventaire->numinv_display); ?></b> ?
 </p>
 <p>Cette modification est définitive.</p>
 <?php
