@@ -1,0 +1,27 @@
+<?php
+// module/Depot/view/depot/search/search.phtml:
+
+$title = 'Recherche';
+
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url(
+    'search',
+    array(
+        'action' => 'search'
+    )
+));
+$form->prepare();
+?>
+
+<?php 
+echo $this->form()->openTag($form);
+?>
+<?php 
+echo $this->formRow($form->get('designation')); //8
+echo $this->formSubmit($form->get('submit'));
+echo $this->form()->closeTag();

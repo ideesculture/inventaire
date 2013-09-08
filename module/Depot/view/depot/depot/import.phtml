@@ -1,0 +1,50 @@
+<?php
+// module/Depot/view/depot/depot/index.phtml:
+
+$title = 'Import depuis la base CollectiveAccess';
+$this->headTitle($title);
+
+?>
+<div class="row">
+	<div class="span6">
+		<h1><?php echo $this->escapeHtml($title); ?></h1>
+	</div>
+	<div class="span6">
+		<span class="pull-right">
+		<?php if ($auth["logged"]) { ?>
+			<p>	
+			<?php echo $this->gravatar($this->zfcUserIdentity()->getEmail(),array("img_size"=>24)) ?>
+			<a href="/user"><?php print $auth["login"] ?></a>
+			</p>
+			<?php 
+		} else {
+			?>
+			<p>
+			Vous n'êtes pas identifié 
+			<a class="btn btn-small btn-info" href="/">connexion</a>
+			</p>
+		<?php } ?>
+		</span>
+	</div>
+</div>
+
+<form action="<?php echo $url; ?>" method="post" class="bord-ronds-fond-blanc">
+
+<p>Merci de sélectionner l'ensemble à importer :</p>
+<?php
+$url = $this->url('depot', array(
+    'action' => 'import'
+)); ?>
+
+<select name="set">
+<?php  foreach($availableSets as $set) : ?>
+		<option value="<?php print $set["set_id"];?>">
+		<?php print $set["name"];?>
+		</option>
+<?php endforeach; ?> 
+</select> 
+<div>
+    <input type="submit" name="Submit" class="btn btn-info" value="Importer" />
+    <input type="button" name="Cancel" class="btn btn-warning"  value="Annuler" />
+</div>
+</form>

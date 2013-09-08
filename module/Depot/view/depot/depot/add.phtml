@@ -21,104 +21,97 @@ $displayOptions = array(
     		'prependIcon'           => 'icon-tag',
 		    'required'              => true,
     		),
-		'numdep'                => array(
-    		'class'                 => 'input-medium',
-    		'prependIcon'           => 'icon-tag',
-		    'required'              => true,
-    		),
-    	'date_ref_acte_depot'		=> array(
-    		'class'             => 'span5',
-    		'rows'              => 3,
-    		'required'          => false,
+		'mode_acquisition'		=> array(
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
 		),
-	    'date_entree' 	=> array(
-	    	'class'				=> 'span2',
-	    	'required'			=> false,
-	    	'appendIcon'           => 'icon-calendar',
-	    ),
-		'proprietaire'		=> array(
-    		'class'             => 'span5',
-    		'rows'              => 3,
-    		'required'          => false,
-    	),
-    	'date_ref_acte_fin'				=> array(
-    			'class'             => 'span5',
-    			'rows'              => 3,
-    			'required'          => false,
-    	),
-	    'date_inscription' 	=> array(
-	    	'class'				=> 'span2',
-	    	'required'			=> false,
-	    	'appendIcon'           => 'icon-calendar',
-	    ),
-        'designation'				=> array(
-        		'class'             => 'span5',
+    	'donateur'		=> array(
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
-        'inscriptions'				=> array(
-        		'class'             => 'span5',
+		),
+    	'date_acquisition' 	=> array(
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
+        'avis'				=> array(
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
+        'prix'				=> array(
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
+		'date_inscription'	=> array(
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
+		'designation'				=> array(
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
+        'inscription'				=> array(
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
         'materiaux'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
         'techniques'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
         'mesures'                => array(
-        		'class'                 => 'input-xxlarge',
-        		'prependIcon'           => 'icon-resize-full',
-        		'required'              => true,
-        ),
+        		'class'             => 'ckeditor',
+        		'rows'              => 3,
+        		'required'          => false,
+		),
         'etat'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
         'auteur'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
         'epoque'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
+		),
         'usage'				=> array(
-        		'class'             => 'span5',
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
-        'provenance'				=> array(
-        		'class'             => 'span5',
+		),
+		'provenance'				=> array(
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        ),
-        'observations'				=> array(
-        		'class'             => 'span5',
+		),
+		'observations'				=> array(
+        		'class'             => 'ckeditor',
         		'rows'              => 3,
         		'required'          => false,
-        )
-    )
+		)
+	)
 );
  
 //Form object
 $form           = $this->form;
-//Form type - one of the Twitter Bootstrap form types (horizontal, vertical, inline, search)
-//To set the form type, use the \DluTwBootstrap\Form\FormUtil::FORM_TYPE_... constants
-//The form type will be usually set here in the view script (to reuse the same view script/action controller method,
-//this demo sets the form type in the action controller)
 $formType       = "horizontal";
-//Validated data (if any)
-//$validData      = $this->validData;
-/* @var $form \DluTwBootstrapDemo\Form\BlockForm */
 $form->prepare();
 if ($form->getMessages()):
 ?>
@@ -136,67 +129,11 @@ if ($form->getMessages()):
 <?php
 endif;
  
-//Default form display (the 'one-liner')
-//Good for quick form preview or when there are no special presentation requirements
-//If you need more control over the form view, use the 'controlled' approach below
 echo $this->formTwb($form, $formType, $displayOptions);
-/*
-//Controlled form display
-//This is the recommended way of displaying the form since you have full control over its presentation
-//As implemented here it produces exactly the same output as the default (one-line) form display above
-//I.e. the rest of this view script produces the same output as echo $this->formTwb($form, $formType, $displayOptions);
-$fieldSet1  = $form->get('fsOne');
-$fieldSet2  = $form->get('fsTwo');
-//Form opening tag
-echo $this->formTwb()->openTag($form, $formType);
-//Hidden element
-echo $this->formRowTwb($form->get('hiddenField'));
-//Fieldset One - opening tag
-echo $this->formFieldsetTwb()->openTag($fieldSet1, $formType, $displayOptions['fieldsets']['fsOne']);
-//Text element
-echo $this->formRowTwb($fieldSet1->get('text'), $formType, $displayOptions['fieldsets']['fsOne']['elements']['text']);
-//Password element
-echo $this->formRowTwb($fieldSet1->get('password'), $formType, $displayOptions['fieldsets']['fsOne']['elements']['password']);
-//Textarea element
-echo $this->formRowTwb($fieldSet1->get('textarea'), $formType, $displayOptions['fieldsets']['fsOne']['elements']['textarea']);
-//Fieldset One - closing tag
-echo $this->formFieldsetTwb()->closeTag();
-//Fieldset Two - rendered en bloc
-echo $this->formFieldsetTwb($fieldSet2, $formType, $displayOptions['fieldsets']['fsTwo'], true, true, true);
-//Remaining elements outside of any fieldsets
-//Select element
-echo $this->formRowTwb($form->get('select'), $formType, $displayOptions['elements']['select']);
-//Multi Select element
-echo $this->formRowTwb($form->get('multiSelect'), $formType, $displayOptions['elements']['multiSelect']);
-//File element
-echo $this->formRowTwb($form->get('file'), $formType, $displayOptions['elements']['file']);
-//Text element with append/prepend text
-echo $this->formRowTwb($form->get('textAp'), $formType, $displayOptions['elements']['textAp']);
-//Text element with append/prepend icon
-echo $this->formRowTwb($form->get('iconAp'), $formType, $displayOptions['elements']['iconAp']);
-//CSRF
-echo $this->formRowTwb($form->get('csrf'));
-//Form actions
-$actions    = array(
-    $form->get('submitBtn'),
-    $form->get('resetBtn'),
-    $form->get('plainBtn'),
-);
-echo $this->formActionsTwb($actions, $formType, $displayOptions['elements']);
-//Form close tag
-echo $this->formTwb()->closeTag();
-*/
+
 ?> 
 <script>
 		$(function(){
 			window.prettyPrint && prettyPrint();
-			$('#date_entree').datepicker({
-				format: 'yyyy-mm-dd',
-				weekStart: 1
-			});
-			$('#date_inscription').datepicker({
-				format: 'yyyy-mm-dd',
-				weekStart: 1
-			});
 		});
 </script>

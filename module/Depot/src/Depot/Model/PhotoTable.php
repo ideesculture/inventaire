@@ -1,6 +1,6 @@
 <?php
-// module/Inventaire/src/Inventaire/Model/PhotoTable.php:
-namespace Inventaire\Model;
+// module/Depot/src/Depot/Model/PhotoTable.php:
+namespace Depot\Model;
 
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Sql;
@@ -10,7 +10,7 @@ use Zend\Db\TableGateway\AbstractTableGateway;
 
 class PhotoTable extends AbstractTableGateway
 {
-	protected $table ='inventaire_photo2';
+	protected $table ='inventaire_depot_photo';
 
 	public function __construct(Adapter $adapter)
 	{
@@ -22,6 +22,21 @@ class PhotoTable extends AbstractTableGateway
 		$this->initialize();
 	}
 
+	private function preloadCaDirect($setup_path) {
+		$path = getcwd();
+	
+		// AUTHENTIFICATION
+		chdir($setup_path);
+		$result = include($setup_path."/setup.php");
+		chdir($path);
+		if ($result) {
+			require_once(__CA_LIB_DIR__.'/core/Db.php');
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public function fetchAll()
 	{
 		$resultSet = $this->select();
@@ -33,7 +48,7 @@ class PhotoTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('inventaire_inventaire', 'inventaire_photo2.inventaire_id = inventaire_inventaire.id');
+		->join('depot_depot', 'depot_photo.depot_id = depot_depot.id');
 				
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();
@@ -51,7 +66,7 @@ class PhotoTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('inventaire_inventaire', 'inventaire_photo2.inventaire_id = inventaire_inventaire.id');
+		->join('depot_depot', 'depot_photo.depot_id = depot_depot.id');
 				
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();
@@ -84,15 +99,15 @@ class PhotoTable extends AbstractTableGateway
 		return $row;
 	}
 
-   public function getPhotoFullInfosByInventaireId($id)
+   public function getPhotoFullInfosByDepotId($id)
    {
         $sql = new Sql($this->adapter);
         $select = $sql->select();
         $select->from($this->table)
-              ->join('inventaire_inventaire', 'inventaire_photo2.inventaire_id = inventaire_inventaire.id');
+              ->join('depot_depot', 'depot_photo.depot_id = depot_depot.id');
 
         $where = new  Where();
-        $where->equalTo('inventaire_id', $id) ;
+        $where->equalTo('depot_id', $id) ;
         $select->where($where);
 
         //you can check your query by echo-ing :
@@ -103,12 +118,12 @@ class PhotoTable extends AbstractTableGateway
         return $result;
     }
 		
-	public function getPhotoByInventaireId($inventaire_id)
+	public function getPhotoByDepotId($depot_id)
 	{
-		$inventaire_id  = (int) $inventaire_id;
+		$depot_id  = (int) $depot_id;
 
 		$rowset = $this->select(array(
-				'inventaire_id' => $inventaire_id,
+				'depot_id' => $depot_id,
 		));
 
 		$row = $rowset->current();
@@ -129,7 +144,7 @@ class PhotoTable extends AbstractTableGateway
 	{
 		$data = array(
 				'id' => $photo->id,
-				'inventaire_id' => $photo->inventaire_id,
+				'depot_id' => $photo->depot_id,
 				'credits' => $photo->credits,
 				'file' => $photo->file
 		);
@@ -155,7 +170,7 @@ class PhotoTable extends AbstractTableGateway
 	{
 		return array(
 				"id", //1
-				"inventaire_id",     //2
+				"depot_id",     //2
 				"credits",     //3
 				"file"
 		);
@@ -165,7 +180,7 @@ class PhotoTable extends AbstractTableGateway
 	{
 		return array(
 				"id" => "Identifiant", //1
-				"inventaire_id" => "Identifiant de l'entrée d'inventaire correspondante",     //2
+				"depot_id" => "Identifiant de l'entrée d'depot correspondante",     //2
 				"credits" => "Crédits photo",     //3
 				"file" => "Fichier"
 		);
@@ -178,11 +193,56 @@ class PhotoTable extends AbstractTableGateway
 		));
 	}
 	
-	public function deletePhotoByInventaireId($inventaire_id)
+	public function deletePhotoByDepotId($depot_id)
 	{
 		$this->delete(array(
-				'inventaire_id' => $inventaire_id,
+				'depot_id' => $depot_id,
 		));
+	}
+
+	
+	public function caDirectImportPhoto($ca_id, $depot_id, array $caDirectConfig)
+	{
+		$return = array();
+		
+		if(!$this->preloadCaDirect($caDirectConfig["path"])) {
+			throw new \Exception("Impossible d'accéder à CollectiveAccess.");
+		}
+		
+		include_once(__CA_MODELS_DIR__."/ca_locales.php");
+		include_once(__CA_MODELS_DIR__."/ca_objects.php");
+		
+		$t_object = new \ca_objects($ca_id);
+		$t_object->setMode(ACCESS_READ);
+
+		$return["ca_id"]=$ca_id;
+		$return["depot_id"]=$depot_id;
+		
+		// Fetching primary media info
+		$media = $t_object->getPrimaryRepresentation(array('large'));
+		if ($media) {
+			// if we've a media, copy it
+			if (!copy(
+					$media["paths"]["large"],
+					dirname(__DIR__).'/../../../../public/files/assets/'.basename($media["paths"]["large"])
+			)) {
+				// copy has crashed
+				throw new \Exception("Impossible de recopier le fichier image dans public/files/assets.");
+			}
+		} else {
+			// no media defined
+			$return["error"]="Pas de représentation primaire";
+			return $return;
+		}
+
+		$file = basename($media["paths"]["large"]);
+		$return["file"] = $file;
+		
+		$photo = new Photo();
+		$photo->exchangeArray(array("id" => 0, "depot_id" => $depot_id,  "credits" => "", "file" => $file));
+		// saving photo info into database
+		$return["saved"] = $this->savePhoto($photo);
+		return $return;
 	}
 	
 }

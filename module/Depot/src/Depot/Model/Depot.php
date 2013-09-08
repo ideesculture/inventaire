@@ -10,21 +10,59 @@ use Zend\InputFilter\InputFilterInterface;
 class Depot implements InputFilterAwareInterface
 {
 	public $id;
-
+	public $ca_id;
+	
+/* a) Rubriques relatives au statut juridique des biens et aux conditions de leur acquisition
+ * 
+	N° colonne	Rubrique
+	1	N° depot
+	2	Mode d'acquisition
+	3	Nom du donateur, testateur ou vendeur
+	4	Date de l'acte d'acquisition et d'affectation au musée
+	5	Avis des instances scientifiques
+	6	Prix d'achat - subvention publique
+	7	Date d'inscription au registre d'depot
+ */
 	public $numinv; //1
-	public $numdep;//2
-	public $date_ref_acte_depot;//3
-	public $date_entree;//4
-	public $proprietaire;//5
-	public $date_ref_acte_fin;//6
+	public $numinv_sort; 
+	public $numinv_display;
+	public $mode_acquisition;//2
+	public $donateur;//3
+	public $date_acquisition;//4
+	public $avis;//5
+	public $prix;//6
 	public $date_inscription;//7
+	public $date_inscription_display;
+	
+/* b) Rubriques portant description des biens
+ * 
+	N° colonne	Rubrique
+	8	Désignation du bien
+	9	Marques et inscriptions
+	10	Matières ou matériaux
+	11	Techniques de réalisation, préparation, fabrication
+	12	Mesures
+	13	Indications particulières sur l'état du bien au moment de l'acquisition
+ */	
 	public $designation;//8
+	public $designation_display;
 	public $inscription;//9
 	public $materiaux;//10
 	public $techniques;//11
 	public $mesures;//12
 	public $etat;//13
+	
+/* c) Rubriques complémentaires
+ * 
+	N° colonne	Rubrique
+	14	Auteur, collecteur, fabricant, commanditaire...
+	15	Epoque, datation ou date de récolte (voire d'utilisation ou de découverte)
+	16	Fonction d'usage
+	17	Provenance géographique
+	18	Observations
+ */			
 	public $auteur;//14
+	public $auteur_display;
 	public $epoque;//15
 	public $usage;//16
 	public $provenance;//17
@@ -40,20 +78,26 @@ class Depot implements InputFilterAwareInterface
 	public function exchangeArray($data)
 	{
 		$this->id     = (isset($data['id'])) ? $data['id'] : null;
+		$this->ca_id     = (isset($data['ca_id'])) ? $data['ca_id'] : null;
 		$this->numinv = (isset($data['numinv'])) ? $data['numinv'] : null;//1
-		$this->numdep = (isset($data['numdep'])) ? $data['numdep'] : null;//2
-		$this->date_ref_acte_depot = (isset($data['date_ref_acte_depot'])) ? $data['date_ref_acte_depot'] : null;//3
-		$this->date_entree = (isset($data['date_entree'])) ? $data['date_entree'] : null;//4
-		$this->proprietaire = (isset($data['proprietaire'])) ? $data['proprietaire'] : null;//5
-		$this->date_ref_acte_fin = (isset($data['date_ref_acte_fin'])) ? $data['date_ref_acte_fin'] : null;//6
+		$this->numinv_sort = (isset($data['numinv_sort'])) ? $data['numinv_sort'] : null;
+		$this->numinv_display = (isset($data['numinv_display'])) ? $data['numinv_display'] : null;
+		$this->mode_acquisition = (isset($data['mode_acquisition'])) ? $data['mode_acquisition'] : null;//2
+		$this->donateur = (isset($data['donateur'])) ? $data['donateur'] : null;//3
+		$this->date_acquisition = (isset($data['date_acquisition'])) ? $data['date_acquisition'] : null;//4
+		$this->avis = (isset($data['avis'])) ? $data['avis'] : null;//5
+		$this->prix = (isset($data['prix'])) ? $data['prix'] : null;//6
 		$this->date_inscription = (isset($data['date_inscription'])) ? $data['date_inscription'] : null;//7
+		$this->date_inscription_display = (isset($data['date_inscription_display'])) ? $data['date_inscription_display'] : null;
 		$this->designation  = (isset($data['designation'])) ? $data['designation'] : null;//8
+		$this->designation_display  = (isset($data['designation_display'])) ? $data['designation_display'] : null;//8
 		$this->inscription = (isset($data['inscription'])) ? $data['inscription'] : null;//9
 		$this->materiaux = (isset($data['materiaux'])) ? $data['materiaux'] : null;//10
 		$this->techniques = (isset($data['techniques'])) ? $data['techniques'] : null;//11
 		$this->mesures = (isset($data['mesures'])) ? $data['mesures'] : null;//12
 		$this->etat = (isset($data['etat'])) ? $data['etat'] : null;//13
 		$this->auteur = (isset($data['auteur'])) ? $data['auteur'] : null;//14 
+		$this->auteur_display = (isset($data['auteur_display'])) ? $data['auteur_display'] : null;//14 
 		$this->epoque = (isset($data['epoque'])) ? $data['epoque'] : null;//15
 		$this->usage = (isset($data['usage'])) ? $data['usage'] : null;//16
 		$this->provenance = (isset($data['provenance'])) ? $data['provenance'] : null;//17
@@ -80,7 +124,7 @@ class Depot implements InputFilterAwareInterface
 	
 			$inputFilter->add($factory->createInput(array(
 					'name'     => 'id',
-					'required' => true,
+					'required' => false,
 					'filters'  => array(
 							array('name' => 'Int'),
 					),
@@ -105,25 +149,6 @@ class Depot implements InputFilterAwareInterface
 					),
 			)));
 	
-			$inputFilter->add($factory->createInput(array(
-					'name'     => 'numdep',
-					'required' => true,
-					'filters'  => array(
-							array('name' => 'StripTags'),
-							array('name' => 'StringTrim'),
-					),
-					'validators' => array(
-							array(
-									'name'    => 'StringLength',
-									'options' => array(
-											'encoding' => 'UTF-8',
-											'min'      => 1,
-											'max'      => 100,
-									),
-							),
-					),
-			)));
-			
 			$inputFilter->add($factory->createInput(array(
 					'name'     => 'designation',
 					'required' => true,
@@ -154,6 +179,30 @@ class Depot implements InputFilterAwareInterface
 					),
 			)));
 
+			$inputFilter->add($factory->createInput(array(
+					'name'     => 'date_validation',
+					'required' => false,
+					'filters'  => array(),
+					'validators' => array(
+							array(
+									'name'    => 'Date'
+							),
+					),
+			)));
+				
+			$inputFilter->add($factory->createInput(array(
+					'name'     => 'prix',
+					'required' => false,
+					'filters'  => array(
+							array('name' => 'StripTags'),
+							array('name' => 'StringTrim'),
+					),
+					'validators' => array(
+							array(
+									'name'    => 'Float'
+									),
+							),
+					)));
 			$this->inputFilter = $inputFilter;
 		}
 		

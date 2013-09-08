@@ -1,16 +1,28 @@
 <?php
 // module/Depot/view/depot/depot/validate.phtml:
 
-$title = 'Valider un objet';
+$title = "Inscrire à l'depot";
 $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
 
-<p>Etes vous sur de vouloir valider
-    <b><?php echo $this->escapeHtml($depot->designation); ?></b>, correspondant au numéro d'depot
-    <b><?php echo $this->escapeHtml($depot->numinv); ?></b> ?
+<p>Etes vous sur de vouloir inscrire l'objet à l'depot l'objet suivant ?</p>
+<p>
+	Numéro d'depot : <b><?php echo $this->escapeHtml($depot->numinv_display); ?></b>
 </p>
-<p>Après validation, l'objet ne sera plus modifiable. Cette modification est définitive.</p>
+<p>
+	<?php echo $depot->designation; ?>
+</p>
+
+<div class="alert alert-info">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p><b>Date d'inscription</b> La date d'inscription à l'depot définie dans la base CollectiveAccess va être redéfinie à la date du jour de validation (<?php print date("d/m/Y"); ?>).</p>
+</div>
+<div class="alert">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p><b>Modification définitive</b> Après inscription, l'objet ne sera plus modifiable.</p>
+</div>
+
 <?php
 $url = $this->url('depot', array(
     'action' => 'validate',
@@ -20,7 +32,7 @@ $url = $this->url('depot', array(
 <form action="<?php echo $url; ?>" method="post">
 <div>
     <input type="hidden" name="id" value="<?php echo (int) $depot->id; ?>" />
-    <input type="submit" name="validate" value="Yes" />
-    <input type="submit" name="validate" value="No" />
+    <button class="btn btn-warning" type="submit" name="validate" value="Yes">Inscrire à l'depot</button>
+    <button class="btn btn-info" type="submit" name="validate" value="No">Annuler</button>
 </div>
 </form>

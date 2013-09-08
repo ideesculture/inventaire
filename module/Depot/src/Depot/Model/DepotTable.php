@@ -1,5 +1,5 @@
 <?php
-// module/Inventaire/src/Depot/Model/DepotTable.php:
+// module/Depot/src/Depot/Model/DepotTable.php:
 namespace Depot\Model;
 
 use Zend\Db\Adapter\Adapter;
@@ -8,6 +8,9 @@ use Zend\Db\Sql\Where;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\AbstractTableGateway;
 use Zend\Paginator\Adapter\DbSelect;
+use Depot\Form\DepotForm;
+
+define('__CA_DONT_DO_SEARCH_INDEXING__',1);
 
 class DepotTable extends AbstractTableGateway
 {
@@ -22,12 +25,61 @@ class DepotTable extends AbstractTableGateway
 		
 		$this->initialize();
 	}
+	
+	private function preloadCaDirect($setup_path) {
+		$path = getcwd();
+		
+		// AUTHENTIFICATION
+		chdir($setup_path);
+		$result = include($setup_path."/setup.php");
+		chdir($path);
+		if ($result) {
+			require_once(__CA_LIB_DIR__.'/core/Db.php');
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-	public function fetchAll($year)
+	private function convertcurrency($from, $to, $amount)
+	{
+		$url = "http://currency-api.appspot.com/api/$from/$to.json?key=9fa0b032430252b51c673ba5076593943b83a18e&amount=$amount";
+		//print $url;die();
+		$result = file_get_contents($url);
+		$result = json_decode($result);
+	
+		if ($result->success)
+		{
+			return $result->amount;
+		} else {
+			return false;
+		}
+	}
+	
+	private function caAuth(\RestClient $client, array $caWsConfig)
+	{
+		// Récupération de la config
+		// Authentification
+		$res = $client->post($caWsConfig["ca_service_url"]."/iteminfo/ItemInfo/rest",
+				array("method"=>"auth", "username" => $caWsConfig["username"], "password" => $caWsConfig["password"])
+		);
+		// Traitement de la réponse
+		$simplexml_response = new \SimpleXMLElement($client->response_object->body);
+		// Retourne FALSE si la connexion n'est pas OK
+		if ($simplexml_response->auth->status != "success") return false;
+		return $client;
+	}
+	private function remplace_placeholder_par_valeur(&$item,$key,$valeur){
+		if(stripos($item,"^valeur")){
+			$item=str_ireplace("^valeur", $valeur, $item);
+		}
+	}
+	
+	public function fetchAll()
 	{
 		$resultSet = $this->select();
 		if ($year) {
-			$select->where("YEAR(date_inscription) = ".$year);
+			$resultSet = $this->select()->where("YEAR(date_inscription) = ".$year);
 		}
 		
 		return $resultSet;
@@ -46,16 +98,17 @@ class DepotTable extends AbstractTableGateway
 		return $resultSet;
 	}
 
-	public function fetchAllFullInfos($year)
+	public function fetchAllFullInfos($year = null)
 	{
 		
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
-		$select->from($this->table);
+		$select->from($this->table)
+		->join('inventaire_depot_photo', 'inventaire_depot.id = depot_id', array('credits','file'),'left');
 		if ($year) {
 			$select->where("YEAR(date_inscription) = ".$year);
 		}
-		
+		$select->order("numinv_sort ASC");
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();
 		$statement = $sql->prepareStatementForSqlObject($select);
@@ -70,12 +123,12 @@ class DepotTable extends AbstractTableGateway
 	{
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
-		$select->from($this->table);
-		if ($year) {
-			$select->where("YEAR(date_inscription) = ".$year);
-		}
+		$select->from($this->table)
+		->join('inventaire_depot_photo', 'inventaire_depot.id = depot_id', array('credits','file'),'left');
+		$select->order("numinv_sort ASC");
 		
 		//you can check your query by echo-ing :
+		//echo $select->getSqlString();
 		$statement = $sql->prepareStatementForSqlObject($select);
 	
 		$resultSet = new ResultSet();
@@ -92,7 +145,7 @@ class DepotTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('photo', 'inventaire_depot.id = inventaire_photo2.depot_id', array('credits','file'),'left');
+		->join('inventaire_depot_photo', 'inventaire_depot.id = depot_id', array('credits','file'),'left');
 		$where = "";
 		if(is_array($depotSearchArray) && count($depotSearchArray)>0) {
 			foreach($depotSearchArray as $key => $value) {
@@ -185,11 +238,11 @@ class DepotTable extends AbstractTableGateway
 		return $row;
 	}
 	
-	public function checkDepotByNumdep($numdep)
+	public function checkDepotByNuminv($numinv)
 	{
 
 		$rowset = $this->select(array(
-				'numdep' => $numdep,
+				'numinv' => $numinv,
 		));
 
 		$row = $rowset->current();
@@ -201,6 +254,22 @@ class DepotTable extends AbstractTableGateway
 		return true;
 	}
 	
+	public function checkDepotByCaId($ca_id)
+	{
+
+		$rowset = $this->select(array(
+				'ca_id' => $ca_id,
+		));
+
+		$row = $rowset->current();
+
+		if (!$row) {
+			return false;
+		}
+		
+		return $row;
+	}
+	
 	public function getArrayCopy()
 	{
 		return get_object_vars($this);
@@ -209,20 +278,26 @@ class DepotTable extends AbstractTableGateway
 	public function saveDepot(Depot $depot)
 	{
 		$data = array(
-				'numinv' => $depot->numinv,//1
-				'numdep'=> $depot->numdep,//2
-				'date_ref_acte_depot'=> $depot->date_ref_acte_depot,//3
-				'date_entree'=> $depot->date_entree,//4
-				'proprietaire'=> $depot->proprietaire,//5
-				'date_ref_acte_fin'=> $depot->date_ref_acte_fin,//6
-				'date_inscription' => $depot->date_inscription,//7
+				'ca_id' => $depot->ca_id,
+				'numinv' => $depot->numinv,
+				'numinv_sort' => $depot->numinv_sort,
+				'numinv_display' => $depot->numinv_display,
 				'designation' => $depot->designation,//8
+				'designation_display' => $depot->designation_display,//8
+				'mode_acquisition' => $depot->mode_acquisition,//2
+				'donateur' => $depot->donateur,//3
+				'date_acquisition' => $depot->date_acquisition,//4
+				'avis' => $depot->avis,//5
+				'prix' => $depot->prix,//6
+				'date_inscription' => $depot->date_inscription,//7
+				'date_inscription_display' => $depot->date_inscription_display,//7
 				'inscription' => $depot->inscription,//9
 				'materiaux' => $depot->materiaux,//10
 				'techniques' => $depot->techniques,//11
 				'mesures' => $depot->mesures,//12
 				'etat' => $depot->etat,//13
 				'auteur'  => $depot->auteur,//14
+				'auteur_display'  => $depot->auteur_display,//14
 				'epoque' => $depot->epoque,//15
 				'usage' => $depot->usage,//16
 				'provenance' => $depot->provenance,//17
@@ -231,12 +306,15 @@ class DepotTable extends AbstractTableGateway
 		);
 
 		$id = (int) $depot->id;
-
+		
 		if ($id == 0) {
-			if (!$this->checkDepotByNumDep($depot->numdep)) { 
+			if (($depot->ca_id) && ($conflit=$this->checkDepotByCaId($depot->ca_id))) {
+				throw new \Exception("L'enregistrement ".$conflit->numinv." ".$conflit->designation." est déjà lié à cet objet de CollectiveAccess : <small>id = ".$depot->ca_id."</small>");
+			}
+			if (!$this->checkDepotByNuminv($depot->numinv)) {
 				$this->insert($data);
 			} else {
-				throw new \Exception("Un autre enregistrement est déjà présent dans la base avec le même numéro de dépôt.");
+				throw new \Exception("Un autre enregistrement est déjà présent dans la base avec le même numéro d'depot.");
 			}
 		} elseif ($this->getDepot($id)) {
 			if(!$this->getDepot($id)->validated) {
@@ -255,16 +333,50 @@ class DepotTable extends AbstractTableGateway
 		}
 		return true;
 	}	
-	
+
+	/**
+	 * checkCaAllowedType() : vérifie si le type de l'objet dans CollectiveAccess correspond à un dépôt
+	 * 
+	 * @param int $ca_id l'identifiant de l'objet dans CA
+	 * @param array $caDirectConfig la configuration de connexion à l'installation de CA
+	 * @throws \Exception si la connexion à CA n'est pas possible ou qu'aucune valeur n'est définie pour ca_id
+	 * @return boolean vrai si le type est autorisé pour les dépôt (dep...), faux sinon
+	 */
+	public function checkCaAllowedType($ca_id,$caDirectConfig=array())
+	{
+		$authorized_types = array("dep","dep_art","dep_other","dep_costume","dep_ethno","dep_archeo","dep_nat","dep_techno");
+		
+		if(!$caDirectConfig) {
+			throw new \Exception("Informations de connexions à CollectiveAccess manquantes");
+		}
+		if(!$ca_id) {
+			throw new \Exception("checkCaAllowedType() : Aucun identifiant défini");
+		}
+		
+		if(!$this->preloadCaDirect($caDirectConfig["path"])) {
+			throw new \Exception("Impossible d'accéder à CollectiveAccess.");
+		}
+		
+		include_once(__CA_MODELS_DIR__."/ca_objects.php");
+		
+		$t_object = new \ca_objects($ca_id);
+		$t_object->setMode(ACCESS_READ);
+		
+		if(in_array($t_object->getTypeCode(), $authorized_types)) {
+			return true;
+		}
+		return false;
+	}
+
 	public function getFieldsName()
 	{
 		return array(
 				"numinv", //1
-				'numdep',//2
-				'date_ref_acte_depot',//3
-				'date_entree',//4
-				'proprietaire',//5
-				'date_ref_acte_fin',//6
+				"mode_acquisition",     //2
+				"donateur",     //3
+				"date_acquisition",     //4
+				"avis",     //5
+				"prix",     //6
 				"date_inscription",     //7
 				"designation",     //8
 				"inscription",     //9
@@ -280,6 +392,25 @@ class DepotTable extends AbstractTableGateway
 		);
 	}
 	
+	public function getMandatoryFieldsName()
+	{
+		return array(
+				"numinv", //1
+				"mode_acquisition",     //2
+				"donateur",     //3
+				"date_acquisition",     //4
+				"avis",     //5
+				"prix",     //6
+				"date_inscription",     //7
+				"designation",     //8
+				"inscription",     //9
+				"materiaux",     //10
+				"techniques",     //11
+				"mesures",     //12
+				"etat"     //13
+		);
+	}
+	
 	public function getFulltextFieldsName()
 	{
 		return array(
@@ -291,12 +422,12 @@ class DepotTable extends AbstractTableGateway
 	public function getFieldsHumanName()
 	{
 		return array(
-				"numinv" => "Numéro d'inventaire du déposant", //1
-				'numdep' => "Numéro de dépôt",//2
-				'date_ref_acte_depot' => "Références du dépôt",//3
-				'date_entree' => "Date d'entrée",//4
-				'proprietaire' => "Propriétaire",//5
-				'date_ref_acte_fin' => "Références de fin de dépôt",//6
+				"numinv" => "Numéro d'depot", //1
+				"mode_acquisition" => "Mode d'acquisition",     //2
+				"donateur" => "Donateur",     //3
+				"date_acquisition" => "Date d'acquisition",     //4
+				"avis" => "Avis",     //5
+				"prix" => "Prix",     //6
 				"date_inscription" => "Date d'inscription",     //7
 				"designation" => "Désignation",     //8
 				"inscription" => "Inscription",     //9
@@ -313,11 +444,47 @@ class DepotTable extends AbstractTableGateway
 	}
 	
 	
-	public function validateDepot($id)
+	public function validateDepot(Depot $depot, $caDirectConfig = array(), $options=array())
 	{
+		$id = (int) $depot->id;
+		if(($depot->ca_id) && (isset($options["updateCaDate"])) && ($options["updateCaDate"] == true)) {
+			if(!$this->preloadCaDirect($caDirectConfig["path"])) {
+				throw new \Exception("Impossible d'accéder à CollectiveAccess.");
+			}
+
+			include_once(__CA_MODELS_DIR__."/ca_locales.php");
+			include_once(__CA_MODELS_DIR__."/ca_objects.php");
+			include_once(__CA_MODELS_DIR__."/ca_lists.php");
+			include_once(__CA_MODELS_DIR__."/ca_attributes.php");
+			
+			$t_locale = new \ca_locales();
+			$locale_id = $t_locale->loadLocaleByCode('fr_FR'); // Stockage explicite en français
+			$t_list = new \ca_lists();
+			$object_type = $t_list->getItemIDFromList('object_types', 'art');
+			$t_attribute = new \ca_attributes();
+			
+			$t_object = new \ca_objects($depot->ca_id);
+			$t_object->setMode(ACCESS_WRITE);
+			$t_object->removeAttributes("date_depot");
+			
+			$t_object->addAttribute(array("date_depot" => date("Y-m-d")),"date_depot");
+			$t_object->update();
+			if ($t_object->numErrors()) throw new \Exception("Impossible de définir la nouvelle date d'ajout à l'depot.");
+			unset($t_object);
+		}
 		$this->update(
 			// set
-			array("validated" => TRUE),
+			array("validated" => 1),
+			// where
+			"id = $id");
+	}	
+	
+	public function unvalidateDepot(Depot $depot)
+	{
+		$id = (int) $depot->id;
+		$this->update(
+			// set
+			array("validated" => 0),
 			// where
 			"id = $id");
 	}	
@@ -328,4 +495,192 @@ class DepotTable extends AbstractTableGateway
 				'id' => $id,
 		));
 	}
+			
+	public function caDirectImportObject($ca_id, array $caDirectConfig, $depot_id = 0)
+	{
+		$return = array();
+	
+		if(!$this->preloadCaDirect($caDirectConfig["path"])) {
+			throw new \Exception("Impossible d'accéder à CollectiveAccess.");
+		}
+		
+		$depot = new Depot();
+		$depot->id = $depot_id;
+		$depot->ca_id = $ca_id;
+		$depot->validated = 0;
+		$mappings = $caDirectConfig["depot"];
+		
+		include_once(__CA_MODELS_DIR__."/ca_locales.php");
+		include_once(__CA_MODELS_DIR__."/ca_objects.php");
+		include_once(__CA_MODELS_DIR__."/ca_lists.php");
+		
+		$t_locale = new \ca_locales();
+		$locale_id = $t_locale->loadLocaleByCode('fr_FR'); // Stockage explicite en français
+		$t_list = new \ca_lists();
+		$object_type = $t_list->getItemIDFromList('object_types', 'art');
+		
+		$t_object = new \ca_objects($ca_id);
+		$t_object->setMode(ACCESS_WRITE);
+		$response_global = "";
+		// ATTRIBUTS
+		foreach ($mappings as $target => $fields) {
+			$response_global = "";
+			foreach($fields as $attribute) {
+				$response = "";
+				$field = $attribute["field"];
+				$data = explode(".",$field);
+				
+				switch($data[0]) {
+					case "ca_entities" :
+						$entities = $t_object->getRelatedItems("ca_entities",array("restrictToRelationshipTypes"=>$attribute["relationshipTypeId"]));
+						foreach($entities as $entity) {
+							$response = ($response ? $response.", " : "").$entity["displayname"];
+						}
+						break;
+					case "ca_places" :
+						$places = $t_object->getRelatedItems("ca_places",array("restrictToRelationshipTypes"=>$attribute["relationshipTypeId"]));
+						foreach($places as $place) {
+							$response = ($response ? $response.", " : "").$place["displayname"];
+						}
+						break;
+					case "ca_objects" :
+					default:
+						// GESTION DES OPTIONS POUR LE get()
+						$options = array("convertCodesToDisplayText"=>"true", "locale"=>$locale_id);
+						if ($attribute["options"]) $options = array_merge($options,$attribute["options"]);
+						// RECUPERATION DU CHAMP POUR L'AFFICHAGE
+						
+						$response = $t_object->get($field, $options);
+
+						// POST-TRAITEMENT
+						if (($attribute["post-treatment"]) && ($response)) {
+							switch($attribute["post-treatment"]) {
+								// Conversion monétaire
+								case 'convertcurrencytoeuros' :
+									if ($response) {
+										preg_match('/([[:graph:]]*) ([[:graph:]]*)/i',$response, $matches);
+										if ($matches[1] != "EUR") {
+											$conversionresult = $this->convertcurrency($matches[1], "EUR", $matches[2]);
+											if($conversionresult) {
+												$response=$conversionresult;
+											} else {
+												throw new \Exception("Erreur dans la conversion de devise de ".$response." en euros ($response).");
+											}
+										} else {
+											$response = $matches[2];
+										}
+										// Remplacement du point par la virgule
+										$response = str_replace(".", ",",$response)." €";
+									}
+									break;
+									// Conversion vers une date au format JJ/MM/AAAA
+								case 'caDateToUnixTimestamp' :
+									$response = date('Y/m/d',caDateToUnixTimestamp($response));
+									break;
+									// Post-traitement non reconnu
+								default :
+									throw new \Exception("Post-traitement non reconnu : ".$attribute["post-treatment"]);
+							}
+						}
+						break;
+				}
+				$response_global .= ($response ? $attribute["prefixe"].$response.$attribute["suffixe"] : "");
+			} 
+			// DEFINITION DE L'ATTRIBUT
+			$depot->$target = !$response_global ? "non renseigné" : $response_global;
+		}
+		if (!$depot->numinv) {
+			return new \Exception("Objet $ca_id sans numéro d'depot");
+		}
+		$return["numinv"]=$depot->numinv;
+		
+		if (!$depot->designation) {
+			return new \Exception("Objet $ca_id sans titre");
+			}
+		$return["designation"]=$depot->designation;
+		//var_dump($depot);die();
+		$result = $this->saveDepot($depot);
+		
+		$depot_id = $this->checkDepotByCaId($ca_id)->id;
+		if(!$depot_id) {
+			return new \Exception("Problème de vérification depot_id.");
+		}
+		
+		$return["id"]=$depot_id;
+		
+		$t_object->removeAttributes("depot_id");
+
+		if ($t_object->numErrors()) throw new \Exception("Impossible de supprimer la date d'ajout à l'depot déjà renseignée.");
+		//$t_object->addAttribute(array("depot_id" => $depot_id),"depot_id");
+		$t_object->update();
+		
+		return $return;
+	}
+
+
+	/**
+	 * caGetSetItems : retourne les identifiants dans CA des objets contenus dans un set
+	 * 
+	 * @param $ca_set_id : id du set dans CollectiveAccess
+	 * @param array $caDirectConfig : informations de connexion locale à CA
+	 * @return \Exception|array : exception si erreur, sinon liste des ca_id des objets contenus dans le set
+	 */
+	public function caGetSetItems($ca_set_id, array $caDirectConfig)
+	{
+		$return = array();
+		
+		if(!$this->preloadCaDirect($caDirectConfig["path"])) {
+			return new \Exception("Impossible d'accéder à CollectiveAccess.");
+		}
+		
+		include_once(__CA_MODELS_DIR__."/ca_sets.php");
+			
+		$t_set = new \ca_sets($ca_set_id);
+		
+		$type = $t_set->getSetContentTypeName();
+		
+		if($type != "object") {
+			return new \Exception("L'ensemble choisi contient d'autres enregistrements que des objets.");
+		}
+		
+		
+		if(sizeof($t_set->getItemRowIDs())) {
+			foreach($t_set->getItemRowIDs() as $ca_id=>$void) {
+				$ca_ids[]=$ca_id;
+			}
+			return $ca_ids;
+		} else {
+			return new \Exception("L'ensemble choisi ne contient aucun objet.");
+		}
+	}
+	
+	public function caDirectImportSet($ca_set_id, array $caDirectConfig)
+	{
+		$return = array();
+
+		if(!$this->preloadCaDirect($caDirectConfig["path"])) {
+			throw new \Exception("Impossible d'accéder à CollectiveAccess.");
+		}
+
+		include_once(__CA_MODELS_DIR__."/ca_sets.php");
+			
+		$t_set = new \ca_sets($ca_set_id);
+		
+		$type = $t_set->getSetContentTypeName();
+	
+		if($type != "object") {
+			return new \Exception("L'ensemble choisi contient d'autres enregistrements que des objets.");
+		}
+
+		$ca_ids = $t_set->getItemRowIDs();
+		if(sizeof($ca_ids)) {
+			foreach($ca_ids as $ca_id=>$void) {
+				$return[$ca_id] = $this->caDirectImportObject($ca_id, $caDirectConfig);
+			}
+		} else {
+			return new \Exception("L'ensemble choisi ne contient aucun objet.");
+		}
+		return $return;
+	}
+	
 }

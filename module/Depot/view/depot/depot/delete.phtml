@@ -1,14 +1,13 @@
 <?php
-// module/Inventaire/view/inventaire/depot/delete.phtml:
+// module/Depot/view/depot/depot/delete.phtml:
 
-$title = 'Supprimer un objet';
+$title = 'Retirer de la sélection un objet';
 $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
-
-<p>Etes vous sur de vouloir supprimer
-    <b><?php echo $this->escapeHtml($depot->designation); ?></b>, correspondant au numéro d'depot
-    <b><?php echo $this->escapeHtml($depot->numinv); ?></b> ?
+<p>Etes vous sur de vouloir retirer de la sélection
+    <b><?php echo $this->escapeHtml($depot->designation_display); ?></b>, correspondant au numéro d'depot
+    <b><?php echo $this->escapeHtml($depot->numinv_display); ?></b> ?
 </p>
 <p>Cette modification est définitive.</p>
 <?php
@@ -20,7 +19,7 @@ $url = $this->url('depot', array(
 <form action="<?php echo $url; ?>" method="post">
 <div>
     <input type="hidden" name="id" value="<?php echo (int) $depot->id; ?>" />
-    <input type="submit" name="del" value="Yes" />
-    <input type="submit" name="del" value="No" />
+    <button class="btn btn-warning" type="submit" name="del" value="Yes">Oui</button>
+    <button class="btn btn-info" type="submit" name="del" value="No">Non</button>
 </div>
 </form>

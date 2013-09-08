@@ -4,8 +4,9 @@ $this->plugin("currencyformat")->setCurrencyCode("EUR")->setLocale(__LOCALE__);
 
 // module/Depot/view/depot/depot/view.phtml:
 
-$title = 'Afficher un dépôt';
+$title = 'Afficher un objet';
 $this->headTitle($title);
+
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
 <div class="row">
@@ -13,18 +14,25 @@ $this->headTitle($title);
 		<table class="table">
 		<tr><td>
 		<?php if(isset($photo->file)) :?>
-			<span style="float:right;"><img style="width:300px;" src="/files/assets/<?php print $this->escapeHtml($photo->file); //1 ?>"></span>
+			<span style="float:right;">
+			<img style="width:300px;" src="/files/assets/<?php print $this->escapeHtml($photo->file); //1 ?>">
+			<p>
+			<?php print $photo->credits;?>
+			</p>
+			<p class="btn-group pull-right">
+			<a  class="btn btn-small btn-warning" href="<?php echo $this->url('photo',
+				array('action'=>'delete', 'id' => $photo->id));?>"><i class="icon-remove icon-white"></i> Retirer de la sélection</a>
+			</p>
+			</span>
 		<?php endif ?>
 		<?php foreach($fields as $field) {
-			print "<p><b>".$fieldsname[$field]."</b> : ";
-			if (!strtotime($depot->$field)) {
-				print $this->escapeHtml($depot->$field);
-			} else {
-				print $this->dateFormat(new DateTime($depot->$field), IntlDateFormatter::LONG, IntlDateFormatter::NONE, __LOCALE__); 
+				if ($depot->$field || in_array($field, $mandatoryfieldsname)) {
+					print "<p><b>".$fieldsname[$field]."</b> : </p><p><blockquote>".$depot->$field."</blockquote></p>\n";
+				} else {
+					print "<p style=\"color:lightgray;\"><b>".$fieldsname[$field]."</b> : </p><p><blockquote style=\"color:lightgray;\">Non renseigné</blockquote></p>\n";
+				}
 			}
-			print "</p>\n";
-		}
-		;?>
+		?>
 		</td></tr>
 		</table>
 	</div>
@@ -32,15 +40,18 @@ $this->headTitle($title);
 <div class="row">
 	<div class="span12">
 		<p class="btn-group">
-		    <a class="btn btn-info" href="<?php echo $this->url('depot', array());?>"><i class"icon-list-alt icon-white"></i> Revenir à la liste des objets</a>
-		    <?php if (!$depot->validated) { ?> 
-				<a  class="btn btn-success" href="<?php echo $this->url('depot',
-				array('action'=>'edit', 'id' => $depot->id));?>"><i class="icon-pencil icon-white"></i> Modifier</a>
-				<a  class="btn btn-success" href="<?php echo $this->url('depot',
+		    <a class="btn btn-info" href="<?php echo $this->url('depot', array());?>">Revenir à la liste des objets</a>
+		    <?php if (!$depot->validated && $auth["logged"]) : ?> 
+				<a  class="btn btn-warning" href="<?php echo $this->url('depot',
 				array('action'=>'delete', 'id' => $depot->id));?>"><i class="icon-remove icon-white"></i> Supprimer</a>
 				<a  class="btn btn-warning" href="<?php echo $this->url('depot',
-				array('action'=>'validate', 'id' => $depot->id));?>"><i class="icon-check icon-white"></i> Valider</a>
-			<?php } ?>
-		 </p>
+				array('action'=>'validate', 'id' => $depot->id));?>"><i class="icon-check icon-white"></i> Inscrire à l'depot</a>
+			<?php endif; ?>
+			<?php if ($depot->ca_id) : ?>
+			<a  class="btn btn-success" 
+							href="<?php echo $config_ca_direct["url"]."/index.php/editor/objects/ObjectEditor/Summary/object_id/".$depot->ca_id; ?>" 
+							title="Modifier dans CA"><i class="icon-share icon-white"></i> Modifier dans CA</a>
+			<?php endif; ?>
+		</p>
 	</div>
 </div>

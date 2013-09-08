@@ -10,7 +10,7 @@ use Zend\Db\TableGateway\AbstractTableGateway;
 
 class PhotoTable extends AbstractTableGateway
 {
-	protected $table ='inventaire_photo';
+	protected $table ='inventaire_inventaire_photo';
 
 	public function __construct(Adapter $adapter)
 	{

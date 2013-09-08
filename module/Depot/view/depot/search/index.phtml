@@ -1,10 +1,24 @@
 <?php
 // module/Depot/view/depot/depot/index.phtml:
 
-$title = 'Les dépôts';
+$title = 'Recherche';
+$this->headScript()->appendScript("
+	    function toggle_visibility(id) {
+	       var e = document.getElementById(id);
+	       if(e.style.display == 'block')
+	          e.style.display = 'none';
+	       else
+	          e.style.display = 'block';
+	    }
+		",
+		$type = 'text/javascript');
+
 $this->headTitle($title);
 
+
+
 ?>
+
 <div class="row">
 	<div class="span6">
 		<h1><?php echo $this->escapeHtml($title); ?></h1>
@@ -30,9 +44,36 @@ $this->headTitle($title);
 
 <div class="row">
 	<div class="span12">
+		<?php 
+		
+		$form = $this->form;
+		$form->setAttribute('action', $this->url(
+		    'search',
+		    array(
+		        'action' => 'index',
+				'annee' => $year
+		    )
+		));
+		$form->setAttribute('class', "form-inline");		
+		$form->prepare();
+		echo $this->form()->openTag($form)."\n";
+		echo $this->formElement($form->get('numinv'))."\n";
+		echo $this->formElement($form->get('designation'))."\n";
+		echo $this->formElement($form->get('auteur'))."\n";
+		echo $this->formSubmit($form->get('submit'))."\n";
+		echo $this->form()->closeTag()."\n";
+		?>
+		<?php 
+		?>
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="span12">
 		<table class="table bord-ronds-fond-blanc">
 		<tr>
-		    <th><?php print $fieldsname["numdep"]; ?></th>
+		    <th><?php print $fieldsname["numinv"]; ?></th>
 		    <th><?php print $fieldsname["designation"]; ?></th>
 		    <th><?php print $fieldsname["auteur"]; ?></th>
 		    <th><span class="pull-right">Actions</span></th>
@@ -40,17 +81,17 @@ $this->headTitle($title);
 		<?php foreach ($depots as $depot) : ?>
 		<tr>
 		    <td>
-			    <?php //if ($depot->file) : ?><!-- 
+			    <?php if ($depot->file) : ?>
 				    <span style="width:36px;height:36px;background:transparent;display:inline-block;text-align:center;">
 				    	<a href="<?php print "/depot/view/".$this->escapeHtml($depot->id);?>" alt="Afficher" title="Afficher">
 				    	<img style="height:30px;" src="/files/assets/<?php print $depot->file; ?>" align="absmiddle">
 				    	</a>
 				    </span>
-			    <?php //else : ?> -->
+			    <?php else : ?>
 			    	<span>
 			    		<a href="<?php print "/photo/add/".$this->escapeHtml($depot->id);?>" alt="Ajouter une photo" title="Ajouter une photo"><img src="/images/icone-image.png"  style="width:36px;" align="absmiddle"></a>
 			    	</span>
-			    <?php //endif; ?>
+			    <?php endif; ?>
 			    <a href="<?php print "/depot/view/".$this->escapeHtml($depot->id);?>" alt="Afficher" title="Afficher"> 
 			    <?php echo $this->escapeHtml($depot->numinv);?>
 			    </a>
@@ -68,46 +109,32 @@ $this->headTitle($title);
 					if($auth["logged"]) {
 						// Si l'enregistrement n'est pas validé, on peut le modifier ou le valider
 						if (!$depot->validated) { ?> 
-							<a  class="btn btn-success btn-small" href="<?php echo $this->url('depot',
-							array('action'=>'edit', 'id' => $depot->id));?>" title="Modifier"><i class="icon-pencil icon-white"></i></a>
 				        	<a  class="btn btn-success btn-small" href="<?php echo $this->url('depot',
-				            array('action'=>'delete', 'id' => $depot->id));?>" title="Supprimer"><i class="icon-remove icon-white"></i></a>
+				            array('action'=>'delete', 'id' => $depot->id));?>" title="Retirer de la sélection"><i class="icon-remove icon-white"></i></a>
 							<a  class="btn btn-warning btn-small" href="<?php echo $this->url('depot',
-							array('action'=>'validate', 'id' => $depot->id));?>" title="Valider"><i class="icon-check icon-white"></i></a>
+							array('action'=>'validate', 'id' => $depot->id));?>" title="Inscrire à l'depot"><i class="icon-check icon-white"></i></a>
 						<?php
 						// Si l'enregistrement est validé, aucune modification possible
 						} else { 
 						?>
-							<a  class="btn disabled btn-small" title="Modifier"><i class="icon-pencil icon-white"></i></a>
-							<a  class="btn disabled btn-small" title="Supprimer"><i class="icon-remove icon-white"></i></a>
-							<a  class="btn disabled btn-small" title="Valider"><i class="icon-check icon-white"></i></a>
+							<a  class="btn disabled btn-small" title="Retirer de la sélection"><i class="icon-remove icon-white"></i></a>
+							<a  class="btn disabled btn-small" title="Inscrire à l'depot"><i class="icon-check icon-white"></i></a>
 						<?php 
 						}
 					}
 					?>
 					</div>
 				</span>
-		    </td>
+			</td>
 		</tr>
 		<?php endforeach; ?>
 		<tr>
 			<td>
 			<?php echo $this->paginationControl($depots,
                                     'Sliding',
-                                    'depot/depot/my_pagination_control', array('route'=>'depot','action'=>'index'));?>
-            </td>
+                                    'depot/depot/my_pagination_control', array('route'=>'search','action'=>'index'));?>
+			</td>
             <td colspan="3">
-            <?php if (count($yearsOptions)>2) :?>
-            	<span class="pull-right">
-				 <div class="btn-group"><a class="btn btn-info btn-small" href="<?php print $this->url('depot');?>">Toutes les années</a>
-				<?php foreach($yearsOptions as $option) : ?>
-					<?php if((isset($option["disabled"]) && (!$option["disabled"]))) : ?> 
-						<a class="btn btn-info btn-small" href="<?php print $this->url('depot', array('action'=>'index', 'annee'=> $option["label"]));?>"><?php print $option["label"] ?></a> 
-					<?php endif ?>
-				<?php endforeach ?>
-				</div>
-				</span>
-            <?php endif ?>
 			</td>	
         </td></tr>
 		</table>

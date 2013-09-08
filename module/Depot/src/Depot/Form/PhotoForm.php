@@ -1,7 +1,7 @@
 <?php 
 
 // filename : module/Test/src/Test/Form/PhotoForm.php
-namespace Inventaire\Form;
+namespace Depot\Form;
 
 use Zend\Form\Form;
 

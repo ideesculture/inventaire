@@ -1,15 +1,15 @@
 <?php
-// module/Inventaire/src/Inventaire/Form/InventaireForm.php:
-namespace Inventaire\Form;
+// module/Depot/src/Depot/Form/DepotForm.php:
+namespace Depot\Form;
 
 use Zend\Form\Form;
 
-class InventaireForm extends Form
+class DepotForm extends Form
 {
 	public function __construct($name = null)
 	{
 		// we want to ignore the name passed
-		parent::__construct('inventaire');
+		parent::__construct('depot');
 		$this->setAttribute('method', 'post');
 		$this->add(array(
 				'name' => 'id',
@@ -23,7 +23,7 @@ class InventaireForm extends Form
 						'type'  => 'text',
 				),
 				'options' => array(
-						'label' => "Numéro d'inventaire",
+						'label' => "Numéro d'depot",
 				),
 		)); //1
 		$this->add(array(

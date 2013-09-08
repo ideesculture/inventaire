@@ -1,0 +1,33 @@
+<?php
+// module/Depot/view/depot/depot/export.phtml:
+
+$title = 'Insérer un objet dans la base CA';
+$this->headTitle($title);
+$inserted = ( isset($inserted) ? true : false );
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
+<?php if(!$inserted) : ?>
+	<p>Etes vous sur de vouloir insérer dans la base CollectiveAccess
+	    <b><?php echo $this->escapeHtml($depot->designation); ?></b>, correspondant au numéro d'depot
+	    <b><?php echo $this->escapeHtml($depot->numinv); ?></b> ?
+	</p>
+	<?php
+	$url = $this->url('depot', array(
+	    'action' => 'export',
+	    'id'     => $id,
+	));
+	?>
+	<form action="<?php echo $url; ?>" method="post">
+	<div>
+	    <input type="hidden" name="id" value="<?php echo (int) $id; ?>" />
+	    <input type="submit" name="insert" value="Yes" class="btn btn-info" />
+	    <input type="submit" name="insert" value="No" class="btn btn-error"  />
+	</div>
+<?php else : ?>
+	<p>
+		<b><?php echo $this->escapeHtml($depot->designation); ?></b>, correspondant au numéro d'depot
+	    <b><?php echo $this->escapeHtml($depot->numinv); ?></b>, a été inséré dans la base CA.
+    </p>
+<?php endif;?>
+</form>

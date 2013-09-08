@@ -1,6 +1,6 @@
 <?php
-// module/Inventaire/src/Inventaire/Model/Inventaire.php:
-namespace Inventaire\Model;
+// module/Depot/src/Depot/Model/Depot.php:
+namespace Depot\Model;
 
 use Zend\InputFilter\Factory as InputFactory;
 use Zend\InputFilter\InputFilter;

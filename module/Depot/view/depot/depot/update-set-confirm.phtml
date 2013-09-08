@@ -1,0 +1,21 @@
+<?php
+// module/Depot/view/depot/depot/update-set-confirm.phtml:
+
+$title = "Mettre à jour un ensemble d'objets";
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+<p>Etes vous sur de vouloir mettre à jour les objets contenus dans l'ensemble ?</p>
+<p>Cette modification est définitive ; seuls les objets dont l'inscription n'a pas été validée seront mis à jour.</p>
+<?php
+$url = $this->url('depot', array(
+    'action' => 'updateSet'
+));
+?>
+<form action="<?php echo $url; ?>" method="post">
+<div>
+    <input type="hidden" name="set_id" value="<?php echo (int) $set_id; ?>" />
+    <button class="btn btn-warning" type="submit" name="confirm" value="Yes">Oui</button>
+    <button class="btn btn-info" type="submit" name="confirm" value="No">Non</button>
+</div>
+</form>

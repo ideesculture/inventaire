@@ -2,11 +2,13 @@
 
 namespace Depot;
 
-// module/Inventaire/config/module.config.php:
+// module/Depot/config/module.config.php:
 return array(
     'controllers' => array(
         'invokables' => array(
-            'Depot\Controller\Depot' => 'Depot\Controller\DepotController'
+            'Depot\Controller\Depot' => 'Depot\Controller\DepotController',
+            'Depot\Controller\Photo' => 'Depot\Controller\PhotoController',
+        	'Depot\Controller\Search'=> 'Depot\Controller\SearchController',
         ),
     ),
 
@@ -15,7 +17,26 @@ return array(
             'depot' => array(
                 'type'    => 'segment',
                 'options' => array(
-                    'route'    => '/depot[/:action[/:id][/annee/:annee][/page/:page]]',
+                    'route'    => '/depot[/:action[/:id][/brouillon/:brouillon][/annee/:annee][/page/:page]]',
+                    'constraints'  => array(
+                        'action'   => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'       => '[0-9]+',
+                    	'page'     => '[0-9]+',
+                    	'annee'    => '[0-9]+',
+                    	'brouillon' => '[0-1]'
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Depot\Controller\Depot',
+                        'action'     => 'index',
+                        'page' 		 => 1,
+                        'brouillon'	 => 1
+                    ),
+                ),
+             ),
+            'search' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'    => '/search[/:action[/:id][/annee/:annee][/page/:page]]',
                     'constraints'  => array(
                         'action'   => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id'       => '[0-9]+',
@@ -23,12 +44,26 @@ return array(
                     	'annee'    => '[0-9]+'
                      ),
                     'defaults' => array(
-                        'controller' => 'Depot\Controller\Depot',
+                        'controller' => 'Depot\Controller\Search',
                         'action'     => 'index',
                         'page' 		 => 1
                     ),
                 ),
              ),
+             'photo' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'    => '/photo[/:action][/:depot_id]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'depot_id'     => '[0-9]+',
+                     ),
+                    'defaults' => array(
+                        'controller' => 'Depot\Controller\Photo',
+                        'action'     => 'add',
+                    ),
+                ),
+            ),
         ),
     ),
     

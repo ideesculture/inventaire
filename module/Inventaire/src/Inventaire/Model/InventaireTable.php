@@ -104,7 +104,7 @@ class InventaireTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('inventaire_photo', 'inventaire_inventaire.id = inventaire_id', array('credits','file'),'left');
+		->join('inventaire_inventaire_photo', 'inventaire_inventaire.id = inventaire_id', array('credits','file'),'left');
 		if ($year) {
 			$select->where("YEAR(date_inscription) = ".$year);
 		}
@@ -124,7 +124,7 @@ class InventaireTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('inventaire_photo', 'inventaire_inventaire.id = inventaire_id', array('credits','file'),'left');
+		->join('inventaire_inventaire_photo', 'inventaire_inventaire.id = inventaire_id', array('credits','file'),'left');
 		$select->order("numinv_sort ASC");
 		
 		//you can check your query by echo-ing :
@@ -145,7 +145,7 @@ class InventaireTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('inventaire_photo', 'inventaire_inventaire.id = inventaire_photo.inventaire_id', array('credits','file'),'left');
+		->join('inventaire_inventaire_photo', 'inventaire_inventaire.id = inventaire_photo.inventaire_id', array('credits','file'),'left');
 		$where = "";
 		if(is_array($inventaireSearchArray) && count($inventaireSearchArray)>0) {
 			foreach($inventaireSearchArray as $key => $value) {
@@ -333,6 +333,41 @@ class InventaireTable extends AbstractTableGateway
 		}
 		return true;
 	}	
+
+	/**
+	 * checkCaAllowedType() : vérifie si le type de l'objet dans CollectiveAccess correspond à un dépôt
+	 *
+	 * @param int $ca_id l'identifiant de l'objet dans CA
+	 * @param array $caDirectConfig la configuration de connexion à l'installation de CA
+	 * @throws \Exception si la connexion à CA n'est pas possible ou qu'aucune valeur n'est définie pour ca_id
+	 * @return boolean vrai si le type est autorisé pour les dépôt (dep...), faux sinon
+	 */
+	public function checkCaAllowedType($ca_id,$caDirectConfig=array())
+	{
+		$authorized_types = array("acq","acq_art","acq_other","acq_costume","acq_ethno","acq_archeo","acq_nat","acq_techno");
+	
+		if(!$caDirectConfig) {
+			throw new \Exception("Informations de connexions à CollectiveAccess manquantes");
+		}
+		if(!$ca_id) {
+			throw new \Exception("checkCaAllowedType() : Aucun identifiant défini");
+		}
+	
+		if(!$this->preloadCaDirect($caDirectConfig["path"])) {
+			throw new \Exception("Impossible d'accéder à CollectiveAccess.");
+		}
+	
+		include_once(__CA_MODELS_DIR__."/ca_objects.php");
+	
+		$t_object = new \ca_objects($ca_id);
+		$t_object->setMode(ACCESS_READ);
+	
+		if(in_array($t_object->getTypeCode(), $authorized_types)) {
+			return true;
+		}
+		return false;
+	}
+	
 	
 	public function getFieldsName()
 	{

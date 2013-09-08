@@ -1,0 +1,19 @@
+<?php 
+
+// filename : module/Test/view/test/photo/add.phtml
+$form = $this->form;
+$depot_id = $this->depot_id;
+$id = $this->id;
+$form->setAttribute('action', "/photo/add/$depot_id");
+$form->prepare();
+
+echo $this->form()->openTag($form);
+echo $this->formRow($form->get('id'));
+echo $this->formRow($form->get('depot_id'));
+echo $this->formRow($form->get('credits'));
+echo $this->formRow($form->get('file'));
+
+echo $this->formSubmit($form->get('submit'));
+echo $this->form()->closeTag();
+
+?>

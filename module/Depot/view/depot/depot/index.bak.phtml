@@ -1,7 +1,7 @@
 <?php
-// module/Inventaire/view/inventaire/inventaire/index.bak.phtml:
+// module/Depot/view/depot/depot/index.bak.phtml:
 
-$title = 'Mon inventaire';
+$title = 'Mon depot';
 $this->headTitle($title);
 
 ?>
@@ -38,39 +38,39 @@ $this->headTitle($title);
 		    <th><?php print $fieldsname["auteur"]; ?></th>
 		    <th>&nbsp;</th>
 		</tr>
-		<?php foreach ($inventaires as $inventaire) : ?>
+		<?php foreach ($depots as $depot) : ?>
 		<tr>
 		    <td>
-		    <?php if ($inventaire->file) : ?>
+		    <?php if ($depot->file) : ?>
 			    <span style="width:36px;height:36px;background:transparent;display:inline-block;text-align:center;">
-			    	<a href="<?php print "/inventaire/view/".$this->escapeHtml($inventaire->id);?>" alt="Afficher" title="Afficher">
-			    	<img style="height:30px;" src="/files/assets/<?php print $inventaire->file; ?>">
+			    	<a href="<?php print "/depot/view/".$this->escapeHtml($depot->id);?>" alt="Afficher" title="Afficher">
+			    	<img style="height:30px;" src="/files/assets/<?php print $depot->file; ?>">
 			    	</a>
 			    </span>
 		    <?php else : ?>
 		    	<span>
-		    		<a href="<?php print "/photo/add/".$this->escapeHtml($inventaire->id);?>" alt="Ajouter une photo" title="Ajouter une photo"><img src="/images/icone-image.png"  style="width:36px;"></a>
+		    		<a href="<?php print "/photo/add/".$this->escapeHtml($depot->id);?>" alt="Ajouter une photo" title="Ajouter une photo"><img src="/images/icone-image.png"  style="width:36px;"></a>
 		    	</span>
 		    <?php endif; ?> 
-		    <?php echo $this->escapeHtml($inventaire->numinv);?></td>
-			<td><?php echo $this->escapeHtml($inventaire->designation);?></td>
-			<td><?php echo $this->escapeHtml($inventaire->auteur);?></td>
+		    <?php echo $this->escapeHtml($depot->numinv);?></td>
+			<td><?php echo $this->escapeHtml($depot->designation);?></td>
+			<td><?php echo $this->escapeHtml($depot->auteur);?></td>
 			<td>
 				<span class="pull-right">
-					<a  class="btn btn-info btn-small" href="<?php echo $this->url('inventaire',
-						array('action'=>'view', 'id' => $inventaire->id));?>">Afficher</a>
+					<a  class="btn btn-info btn-small" href="<?php echo $this->url('depot',
+						array('action'=>'view', 'id' => $depot->id));?>">Afficher</a>
 						&nbsp;&nbsp;&nbsp;
 					<?php
 			
 					if($auth["logged"]) {
 						// Si l'enregistrement n'est pas validé, on peut le modifier ou le valider
-						if (!$inventaire->validated) { ?> 
-							<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'edit', 'id' => $inventaire->id));?>">Modifier</a>
-				        	<a  class="btn btn-success btn-small" href="<?php echo $this->url('inventaire',
-				            array('action'=>'delete', 'id' => $inventaire->id));?>">Supprimer</a>
-							<a  class="btn btn-warning btn-small" href="<?php echo $this->url('inventaire',
-							array('action'=>'validate', 'id' => $inventaire->id));?>">Valider</a>
+						if (!$depot->validated) { ?> 
+							<a  class="btn btn-success btn-small" href="<?php echo $this->url('depot',
+							array('action'=>'edit', 'id' => $depot->id));?>">Modifier</a>
+				        	<a  class="btn btn-success btn-small" href="<?php echo $this->url('depot',
+				            array('action'=>'delete', 'id' => $depot->id));?>">Supprimer</a>
+							<a  class="btn btn-warning btn-small" href="<?php echo $this->url('depot',
+							array('action'=>'validate', 'id' => $depot->id));?>">Valider</a>
 						<?php
 						// Si l'enregistrement est validé, aucune modification possible
 						} else { 
@@ -94,14 +94,14 @@ if($auth["logged"]) {
 ?>
 <div class="row">
 	<div class="span6">
-		<a class="btn btn-success btn-large" href="<?php echo $this->url('inventaire', array('action'=>'add'));?>">Ajouter un objet</a>
-		<a class="btn btn-success btn-large" href="<?php echo $this->url('inventaire', array('action'=>'listingExportPdf'));?>">Générer le PDF</a>
+		<a class="btn btn-success btn-large" href="<?php echo $this->url('depot', array('action'=>'add'));?>">Ajouter un objet</a>
+		<a class="btn btn-success btn-large" href="<?php echo $this->url('depot', array('action'=>'listingExportPdf'));?>">Générer le PDF</a>
 		<a class="btn btn-info btn-large" href="<?php echo $this->url('photo', array('action'=>'index.bak'));?>">Afficher les photos</a>
 	</div>
 	<div class="span6">
 		<span class="pull-right">
-			<a class="btn btn-success btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listingExportCSV'));?>">Export tableur CSV</a>
-			<a class="btn btn-info btn-small" href="<?php echo $this->url('inventaire', array('action'=>'listing'));?>">Afficher toutes les colonnes</a>
+			<a class="btn btn-success btn-small" href="<?php echo $this->url('depot', array('action'=>'listingExportCSV'));?>">Export tableur CSV</a>
+			<a class="btn btn-info btn-small" href="<?php echo $this->url('depot', array('action'=>'listing'));?>">Afficher toutes les colonnes</a>
 		</span>
 	</div>
 </div>

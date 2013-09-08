@@ -1,9 +1,11 @@
 <?php 
-// module/Inventaire/Module.php
+// module/Depot/Module.php
 namespace Depot;
 
 // Add this import statement:
 use Depot\Model\DepotTable;
+use Depot\Model\PhotoTable;
+
 
 class Module
 {
@@ -35,7 +37,12 @@ class Module
     						$dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
     						$table     = new DepotTable($dbAdapter);
     						return $table;
-    					}
+    					},
+    					'Depot\Model\PhotoTable' =>  function($sm) {
+    						$dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+    						$table     = new PhotoTable($dbAdapter);
+    						return $table;
+    					},
     			),
     	);
     }

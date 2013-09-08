@@ -465,6 +465,11 @@ class InventaireController extends AbstractActionController
 			$id = $this->getInventaireTable()->checkInventaireByCaId($ca_id)->id;
 			$inventaire = $this->getInventaireTable()->getInventaire($id);
 
+			if(!$this->getInventaireTable()->checkCaAllowedType($ca_id,$config["ca_direct"])) {
+				// si le type de l'objet ne fait pas partie des types d'objets autorisés
+				throw new \Exception("Type non autorisé");
+			}
+			
 			if ($inventaire->validated) {
 				// si validé on ne touche à rien
 				//var_dump($inventaire);die();
@@ -511,47 +516,6 @@ class InventaireController extends AbstractActionController
 	}
 	
 	/**
-	 * importSetAction : importe le contenu d'un set de CA dans la base inventaire
-	 * 
-	 * @return multitype:|\Zend\View\Model\ViewModel
-	 */
-	public function importSetAction()
-	{
-		$request = $this->getRequest();
-		if ($request->isPost()) {
-			$ca_set_id = $request->getPost('set_id', '0');
-		} else {
-			$ca_set_id = (int) $this->params()->fromRoute('id', 0);
-		}
-	
-		if (!$ca_set_id) {
-			return array();
-		}
-	
-		$result_photos_imports = array();
-		
-		$config = $this->getServiceLocator()->get('Config');
-		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
-	
-		$result_imports=$this->getInventaireTable()->caDirectImportSet($ca_set_id, $config_import);
-
-		foreach($result_imports as $ca_id=>$result_import) {
-			if(isset($result_import["id"])) {
-				$result_photos_imports[$ca_id]=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_import["id"], $config_import);
-			} else {
-				$result_photos_imports[$ca_id]="not imported";
-			}
-		}
-				
-		$return = new ViewModel();
-		$return->setVariable('ca_set_id', $ca_set_id);
-		$return->setVariable('result_imports', $result_imports);
-		$return->setVariable('result_imports_photos', $result_photos_imports);
-		
-		return $return;
-	}
-
-	/**
 	 * updateSetAction : importe ou met à jour le contenu d'un set de CA dans la base inventaire
 	 *
 	 * @return multitype:|\Zend\View\Model\ViewModel
@@ -589,11 +553,16 @@ class InventaireController extends AbstractActionController
 				// si l'objet est déjà dans la base inventaire
 				$id = $this->getInventaireTable()->checkInventaireByCaId($ca_id)->id;
 				$inventaire = $this->getInventaireTable()->getInventaire($id);
-				if ($inventaire->validated) {
+
+				$result_imports[$ca_id]["id"]=$inventaire->id;
+				$result_imports[$ca_id]["numinv_display"]=$inventaire->numinv_display;
+				$result_imports[$ca_id]["designation_display"]=$inventaire->designation_display;
+				
+				if(!$this->getInventaireTable()->checkCaAllowedType($ca_id,$config["ca_direct"])) {
+					// si le type de l'objet ne fait pas partie des types d'objets autorisés
+					$result_imports[$ca_id]["error"]="l'objet n'est pas un bien acquis, objet ignoré";
+				} elseif ($inventaire->validated) {
 					// si validé on ne touche à rien
-					$result_imports[$ca_id]["id"]=$inventaire->id;
-					$result_imports[$ca_id]["numinv_display"]=$inventaire->numinv_display;
-					$result_imports[$ca_id]["designation_display"]=$inventaire->designation_display;
 					$result_imports[$ca_id]["error"]="objet inscrit à l'inventaire, modification impossible";
 				} else {
 					// sinon pas validé, on met à jour

@@ -2,6 +2,6 @@
 	// module/Depot/view/depot/depot/listingExportExcel2007.phtml
 
 	header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-	header('Content-Disposition:inline;filename=Fichier.xlsx ');
+	header('Content-Disposition:inline;filename=Fichier.xlsx');
 	$writer = new \PHPExcel_Writer_Excel2007($workbook);
-	$this->writer->save('php://output');
+	$writer->save('php://output');

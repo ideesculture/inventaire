@@ -1,7 +1,7 @@
 <?php
 // module/Depot/view/depot/depot/index.phtml:
 
-$title = 'Les dépôts';
+$title = 'Inventaire des biens déposés';
 $this->headTitle($title);
 
 ?>
@@ -30,11 +30,18 @@ $this->headTitle($title);
 
 <div class="row">
 	<div class="span12">
+		<form method="post" action="<?php print $this->url('depot', array('action'=>'index', 'page'=>$page));?>">
+			<input name="brouillon" type="checkbox" <?php print ($brouillon) ? " checked=\"checked\"": null; ?> value="1" /> Afficher les brouillons
+			<button type="submit">go</button>
+		</form>
+	</div>
+	<div class="span12">
 		<table class="table  table-striped  bord-ronds-fond-blanc">
 		<tr>
-		    <th><?php print $fieldsname["numdep"]; ?></th>
-		    <th><?php print $fieldsname["designation"]; ?></th>
-		    <th><?php print $fieldsname["auteur"]; ?></th>
+		    <th>Numéro de dépôt</th>
+		    <th>Désignation</th>
+		    <th>Auteur</th>
+		    <th>Inscription parmi<br/>les biens déposés</th>
 		    <th><span class="pull-right">Actions</span></th>
 		</tr>
 		<?php foreach ($depots as $depot) : ?>
@@ -52,33 +59,38 @@ $this->headTitle($title);
 			    	</span>
 			    <?php endif; ?>
 			    <a href="<?php print "/depot/view/".$this->escapeHtml($depot->id);?>" alt="Afficher" title="Afficher"> 
-			    <?php echo $this->escapeHtml($depot->numdep);?>
+			    <?php echo $depot->numinv_display;?>
 			    </a>
 		    </td>
 			<td>
-				<?php echo $this->escapeHtml($depot->designation);?>
+				<?php echo $depot->designation_display; ?>
 			</td>
 			<td>
-				<?php echo $this->escapeHtml($depot->auteur);?>
+				<?php echo $depot->auteur_display;?>
+			</td>
+			<td>
+				<?php echo $depot->date_inscription_display;?>
 			</td>
 			<td>
 				<span class="pull-right">
 					<div class="btn-group">
 					<?php if($auth["logged"]) : ?>
 						<?php if (!$depot->validated) : // Si l'enregistrement n'est pas validé, on peut le modifier ou le valider ?> 
-							<a  class="btn btn-success btn-small" href="<?php echo $this->url('depot',
-							array('action'=>'edit', 'id' => $depot->id));?>" title="Modifier"><i class="icon-pencil icon-white"></i></a>
 				        	<a  class="btn btn-success btn-small" href="<?php echo $this->url('depot',
-				            array('action'=>'delete', 'id' => $depot->id));?>" title="Supprimer"><i class="icon-remove icon-white"></i></a>
+				            array('action'=>'delete', 'id' => $depot->id));?>" title="Retirer de la sélection"><i class="icon-remove icon-white"></i></a>
 							<a  class="btn btn-warning btn-small" href="<?php echo $this->url('depot',
-							array('action'=>'validate', 'id' => $depot->id));?>" title="Valider"><i class="icon-ok icon-white"></i></a>
+							array('action'=>'validate', 'id' => $depot->id));?>" title="Inscrire à l'depot"><i class="icon-ok icon-white"></i></a>
 						<?php else :?> 
-							<a  class="btn disabled btn-small" title="Modifier"><i class="icon-pencil icon-white"></i></a>
 							<a  class="btn disabled btn-small" title="Supprimer"><i class="icon-remove icon-white"></i></a>
-							<a  class="btn disabled btn-small" title="Valider"><i class="icon-ok icon-white"></i></a>
+							<a  class="btn disabled btn-small" title="Inscrire à l'depot"><i class="icon-ok icon-white"></i></a>
 						<?php endif; ?>
-						<a  class="btn btn-success btn-small" href="<?php echo $this->url('depot',
-							array('action'=>'export', 'id' => $depot->id));?>" title="Exporter vers CA"><i class="icon-share icon-white"></i></a>
+						<?php if (($config_ca_direct["url"]) && ($depot->ca_id)) :?>
+							<a  class="btn btn-success btn-small" 
+							href="<?php echo $config_ca_direct["url"]."/index.php/editor/objects/ObjectEditor/Summary/object_id/".$depot->ca_id; ?>" 
+							title="Modifier dans CA"><i class="icon-share icon-white"></i></a>
+						<?php else : ?>
+							<a  class="btn disabled btn-small" title="Modifier dans CA"><i class="icon-ok icon-white"></i></a>
+						<?php endif ;?>
 					<?php endif; ?>
 				</div>
 			</span>
@@ -114,19 +126,24 @@ if($auth["logged"]) {
 <div class="row">
 	<div class="span6">
 		<div class="btn-group">
-		<a class="btn btn-success" href="<?php echo $this->url('depot', array('action'=>'add'));?>"><i class="icon-plus icon-white icon-large"></i> Ajouter un objet</a>
-		<a class="btn btn-success" href="<?php echo $this->url('depot', array('action'=>'import'));?>"><i class="icon-circle-arrow-down icon-white icon-large"></i> Importer depuis CA</a>
+		<a class="btn btn-success" href="<?php echo $this->url('depot',array('action'=>'afficherObjet'));?>">
+			<i class="icon-circle-arrow-down icon-white icon-large"></i> Importer/mettre à jour un objet</a>
+		<a class="btn btn-success" href="<?php echo $this->url('depot',array('action'=>'updateSet'));?>">
+			<i class="icon-circle-arrow-down icon-white icon-large"></i> Importer/mettre à jour un ensemble</a>
 		<a class="btn btn-success" href="<?php echo $this->url('depot', array('action'=>'listingExportPdf'));?>"><i class="icon-book icon-white icon-large"></i> Générer le PDF</a>
+		<a class="btn btn-info" href="<?php echo $this->url('photo', array('action'=>'index'));?>"><i class="icon-camera icon-white icon-large"></i> Afficher les photos</a>
 		</div>
-	</div>
+	</div><!--
 	<div class="span6">
 		<span class="pull-right">
 			<div class="btn-group">
-			<a class="btn btn-success btn-small" href="<?php echo $this->url('depot', array('action'=>'listingExportCSV'));?>"><i class="icon-th icon-white"></i> Export tableur CSV</a>
+			<a class="btn btn-success btn-small" href="<?php echo $this->url('depot', array('action'=>'listingExportCSV'));?>"><i class="icon-th icon-white"></i> CSV</a>
+			<a class="btn btn-success btn-small" href="<?php echo $this->url('depot', array('action'=>'listingExportExcel5'));?>"><i class="icon-th icon-white"></i> Excel 5</a>
+			<a class="btn btn-success btn-small" href="<?php echo $this->url('depot', array('action'=>'listingExportExcel2007'));?>"><i class="icon-th icon-white"></i> Excel 2007</a>
 			<a class="btn btn-info btn-small" href="<?php echo $this->url('depot', array('action'=>'listing'));?>"><i class="icon-th-list icon-white"></i> Afficher toutes les colonnes</a>
 			</div>
 		</span>
-	</div>
+	</div>-->
 </div>
 <p>&nbsp;</p>
 <?php 

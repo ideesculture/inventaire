@@ -6,6 +6,7 @@ return array(
     	'ZfcUser',
     	'Application',
         'Inventaire',
+    	'Depot',
         'Editions',
     	'DOMPDFModule',
     	'DluTwBootstrap'

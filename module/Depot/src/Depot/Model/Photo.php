@@ -1,7 +1,7 @@
 <?php 
 
 // filename : module/Test/src/Test/Model/Photo.php
-namespace Inventaire\Model;
+namespace Depot\Model;
 
 use Zend\InputFilter\Factory as InputFactory;
 use Zend\InputFilter\InputFilter;
@@ -12,8 +12,8 @@ class Photo implements InputFilterAwareInterface
 {
 	//identifiant photo
 	public $id;
-	//identifiant inventaire lié
-	public $inventaire_id;
+	//identifiant depot lié
+	public $depot_id;
 	//crédits photo
 	public $credits;
 	//fichier photo
@@ -24,7 +24,7 @@ class Photo implements InputFilterAwareInterface
 	public function exchangeArray($data)
 	{
 		$this->id  = (isset($data['id']))  ? $data['id']     : null;
-		$this->inventaire_id  = (isset($data['id']))  ? $data['inventaire_id']     : null;
+		$this->depot_id  = (isset($data['id']))  ? $data['depot_id']     : null;
 		$this->credits  = (isset($data['credits']))  ? $data['credits']     : null;
 		$this->file  = (isset($data['file']))  ? $data['file']     : null;
 	}
@@ -54,7 +54,7 @@ class Photo implements InputFilterAwareInterface
 			)));
 	
 			$inputFilter->add($factory->createInput(array(
-					'name'     => 'inventaire_id',
+					'name'     => 'depot_id',
 					'required' => true,
 					'filters'  => array(
 							array('name' => 'Int'),

@@ -13,31 +13,30 @@ class DepotForm extends Form
         $this->setName('depot');
         $this->setAttribute('method', 'post');
  
-        //Caché
+        //Hidden
         $this->add(array(
                        'name'       => 'id',
                        'type'       => 'Zend\Form\Element\Hidden',
                        'attributes' => array(),
                    ));
  
-        //Caché
+        //Hidden
         $this->add(array(
-                       'name'       => 'idinv',
+                       'name'       => 'ca_id',
                        'type'       => 'Zend\Form\Element\Hidden',
                        'attributes' => array(),
                    ));
  
-		//Rubrique 1
+        //Fieldset One
         $this->add(array(
             'name'          => 'fsOne',
             'type'          => 'Zend\Form\Fieldset',
             'options'       => array(
-                'legend'        => 'Rubriques relatives au statut juridique des biens et aux conditions de son dépôt',
+                'legend'        => 'Rubriques relatives au statut juridique des biens et aux conditions de leur acquisition',
             ),
             'elements'      => array()
         	));
-
-        
+                //Text
         $this->add(
         	array(
 	        	'name'          => 'numinv',
@@ -46,97 +45,97 @@ class DepotForm extends Form
 	            'placeholder'        => 'numéro',
             ),
             'options'       => array(
-	            'label'              => "Numéro d'inventaire du déposant",
+	            'label'              => "Numéro d'depot",
 	            'hint'               => '2008.8.5',
-	            'description'        => "Le numéro, unique, attribué par le musée propriétaire, et marqué sur l'objet a valeur juridique.",
+	            'description'        => "Le numéro, unique, attribué par le musée propriétaire, et marqué sur l'objet a valeur juridique. Une fois porté à l'depot, ce numéro ne doit plus être modifié.",
 	        ))
          );
-        
-        $this->add(
-        		array(
-        				'name'          => 'numdep',
-        				'type'          => 'Zend\Form\Element\Text',
-        				'attributes'    => array(
-        						'placeholder'        => 'numéro',
-        				),
-        				'options'       => array(
-        						'label'              => "Numéro du dépôt",
-        						'hint'               => 'D2012.3.8',
-        						'description'        => "<p>Le rôle du numéro de dépôt est de distinguer, au sein du même musée, les biens reçus en dépôt des biens affectés aux collections permanentes. 
-En aucun cas, le numéro de dépôt ne peut faire office de numéro d'inventaire. Seul le numéro d'inventaire attribué par l'institution propriétaire ayant consenti le dépôt a une valeur juridique.
-L'arrêté du 25 mai 2004 indique que <i>\"lorsque le bien déposé est issu de la collection d'un musée de France, le numéro servant de référence à tous les actes de mouvement, restauration, prêt ou sortie temporaire du territoire national dudit bien est le numéro d'inventaire donné par le déposant\"</i>.</p>
-<p>L'arrêté du 25 mai 2004 précise que le numéro de dépôt (donné par le dépositaire) est <i>\"attribué au bien déposé selon des règles identiques à celles utilisées pour l'enregistrement des collections permanentes.\"</i> Par conséquent, pour éviter toute confusion entre numéro d'inventaire et numéro de dépôt, ...\" le numéro de dépôt est précédé de la lettre \"D\".</p>
-<p>Le numéro de dépôt devra donc être indiqué dans une rubrique spécifique.</p>",
-        				))
-        );
-
-        $this->add(array(
-			'name'          => 'date_ref_acte_depot',
+                //Textarea
+         $this->add(array(
+			'name'          => 'mode_acquisition',
             'type'          => 'Zend\Form\Element\Textarea',
             'attributes'    => array(
-            	'placeholder'       => "date et références de l'acte unilatéral ou contractuel autorisant la mise en dépôt du bien.",
+            	'placeholder'       => "achat, donation, don",
                 ),
 			'options'       => array(
-            	'label'             => "Références de l'acte de dépôt",
-                'hint'              => '1885 déposé ; Ref : arrêté du 25 novembre 1885',
-                'description'       => "Date et références de l'acte unilatéral ou contractuel autorisant la mise en dépôt du bien.",
+            	'label'             => "Mode d'acquisition",
+                'hint'              => 'achat avec participation ; cession à titre gratuit',
+                'description'       => "Indiquez ici comment l'objet est entré dans les collections.",
 			)));
-
-        $this->add(//Date
+                //Textarea
+         $this->add(array(
+			'name'          => 'donateur',
+            'type'          => 'Zend\Form\Element\Textarea',
+            'attributes'    => array(
+            	'placeholder'       => "nom du donateur, testateur, vendeur",
+                ),
+            'options'       => array(
+            	'label'             => "Nom donateur, testateur, vendeur",
+                'hint'              => "Henri Crocq (donateur) ; vente Dupille de Saint-Séverin, Paris, 1785/02/21-26, n° 37",
+                'description'       => "Dans le cas des ventes publiques, on indique les références de la vacation ou de la prisée. NB : Les noms des donateurs, testateurs ou vendeurs ne sont communicables au public que dans les conditions prévues par la réglementation relative aux archives.",
+             )));
+                
+         $this->add(//Date
         		array(
-        				'name'          => 'date_entree',
-        				'type'          => 'Zend\Form\Element\Date',
+        				'name'          => 'date_acquisition',
+        				'type'          => 'Zend\Form\Element\Textarea',
         				'attributes'    => array(
-        						'value'       => "",
+        						'value'       => "Date d'acquisition",
         				),
         				'options'       => array(
-        						'label'             => "Date d'entrée",
-        						'hint'              => '',
-        						'description'       => "Date de prise en charge du bien (date d'entrée matérielle).",
+        						'label'             => "Date d'acquisition",
+        						'hint'              => 'achat, donation, don...',
+        						'description'       => "Indiquez ici comment l'objet est entré dans les collections.",
         				),
         		)
         );
-                        
-         $this->add(array(
-			'name'          => 'proprietaire',
-            'type'          => 'Zend\Form\Element\Textarea',
-            'attributes'    => array(
-            	'placeholder'       => "nom de la personne morale ou physique propriétaire du bien déposé",
-                ),
-            'options'       => array(
-            	'label'             => "Propriétaire",
-                'hint'              => "Ville de Bordeaux",
-                'description'       => "Nom de la personne morale ou physique propriétaire du bien déposé.",
-             )));
-
-         $this->add(array(
-         		'name'          => 'date_ref_acte_fin',
-         		'type'          => 'Zend\Form\Element\Textarea',
-         		'attributes'    => array(
-         				'placeholder'       => "date et références de l'acte unilatéral ou contractuel décidant de mettre fin au dépôt",
-         		),
-         		'options'       => array(
-         				'label'             => "Références de l'acte de fin de dépôt",
-         				'hint'              => '',
-         				'description'       => "Date et références de l'acte unilatéral ou contractuel décidant de mettre fin au dépôt.",
-         		)));
          
-          
-         $this->add(//Date
+        $this->add(//Textarea
+			array(
+            	'name'          => 'avis',
+				'type'          => 'Zend\Form\Element\Textarea',
+                'attributes'    => array(
+                	'placeholder'       => "avis des instances scientifiques compétentes en matière d'acquisition",
+                ),
+                'options'       => array(
+                	'label'             => "Avis",
+                	'hint'              => "CSN 25/05/2004 F
+pour un avis favorable rendu le 25 mai 2004 par la commission scientifique nationale.",
+                	'description'       => "On fournit, sous forme de sigle, le nom des instances saisies, la date d'émission de leur avis et le sens de celui-ci.
+(F pour favorable ou D pour défavorable).",
+                	),
+                )
+        );
+        
+        $this->add(
+        		array(
+        				'name'          => 'prix',
+        				'type'          => 'Zend\Form\Element\Textarea',
+        				'attributes'    => array(
+        						'placeholder'        => 'prix en euros',
+        						
+        				),
+        				'options'       => array(
+        						'label'              => "Prix",
+        						'description'        => "Le prix n'est mentionné que pour les achats. Il est exclusivement indiqué en euros.",
+        						'hint'    => '€',
+        				)
+        		)
+        );
+        $this->add(//Date
         		array(
         				'name'          => 'date_inscription',
-        				'type'          => 'Zend\Form\Element\Date',
+        				'type'          => 'Zend\Form\Element\Textarea',
         				'attributes'    => array(
         						'value'       => "",
         				),
         				'options'       => array(
         						'label'             => "Date d'inscription",
-        						'hint'              => '',
-        						'description'       => "Date d'inscription au registre des biens reçus en dépôt par le musée.",
+        						'description'       => "Il est rappelé que conformément à l'article 2 de l'arrêté du 25 mai 2004, l'inscription à l'depot d'un bien affecté aux collections d'un musée de France doit intervenir au plus tard le 31 décembre de l'année suivant l'année de l'acquisition.",
         				),
         		)
         );
-         
+        
         //Fieldset Two
         $this->add(array(
             'name'          => 'fsTwo',
@@ -163,7 +162,7 @@ suivie de son nom, sujet, titre ou décor.",
         );
         $this->add(//Textarea
         		array(
-        				'name'          => 'inscriptions',
+        				'name'          => 'inscription',
         				'type'          => 'Zend\Form\Element\Textarea',
         				'attributes'    => array(
         						'placeholder'       => "marques et inscriptions portées sur le bien",
@@ -210,7 +209,7 @@ manufacturée, industrielle, série, prototype,...) pour les collections scienti
         $this->add(//Textarea
         		array(
         				'name'          => 'mesures',
-        				'type'          => 'Zend\Form\Element\Text',
+        				'type'          => 'Zend\Form\Element\Textarea',
         				'attributes'    => array(
         						'placeholder'       => "mesures (avec précision des unités de mesure)",
         				),

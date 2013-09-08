@@ -1,6 +1,8 @@
 <?php
-// module/Depots/src/Depots/Controller/DepotController.php:
+// module/Depot/src/Depot/Controller/DepotController.php:
 namespace Depot\Controller;
+
+use Zend\View\View;
 
 // définition contrôleur, vue
 use Zend\Mvc\Controller\AbstractActionController;
@@ -10,8 +12,12 @@ use Zend\View\Model\ViewModel;
 use Depot\Model\Depot;
 use Depot\Form\DepotForm; 
 
+// définition du modèle pour le traitement des médias attachés
+use Depot\Model\Photo;
+
 // définition de la classe pour la génération PDF
 use DOMPDFModule\View\Model\PdfModel;
+use Zend\View\Variables;
 
 class DepotController extends AbstractActionController
 {
@@ -20,7 +26,7 @@ class DepotController extends AbstractActionController
 	
 	private function listingPHPExcel()
 	{
-		$year = (int) $this->params()->fromRoute('annee', 1);
+		$year = (int) $this->params()->fromRoute('annee');
 		
 		// Inclusion PHPExcel
 		require_once __DIR__.'/../../../../../vendor/os/php-excel/PHPExcel/PHPExcel.php';
@@ -65,8 +71,20 @@ class DepotController extends AbstractActionController
 	{
 		$page = (int) $this->params()->fromRoute('page', 1);
 		$year = (int) $this->params()->fromRoute('annee', "");
-
-		$iteratorAdapter = new \Zend\Paginator\Adapter\Iterator($this->getDepotTable()->fetchAllFullInfosPaginator($year));
+		$config = $this->getServiceLocator()->get('Config');
+		$request = $this->getRequest();
+		if ($request->isPost()) {
+			$brouillon= (bool) $request->getPost('brouillon');
+		} else {
+			$brouillon = (bool) $this->params()->fromRoute('brouillon', 1);	
+		}
+		
+		
+		$iteratorAdapter = new \Zend\Paginator\Adapter\Iterator(
+			$this->getDepotTable()->fetchAllFullInfosPaginator(
+				array("year"=>$year,"validated"=>!$brouillon)
+			)
+		);
 		$paginator = new \Zend\Paginator\Paginator($iteratorAdapter);
 		$paginator->setCurrentPageNumber($page);
 		$paginator->setItemCountPerPage(10);
@@ -75,26 +93,32 @@ class DepotController extends AbstractActionController
 						'logged' => $this::isLogged(),
 						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
 						),
+				//'depots' => $this->getDepotTable()->fetchAllFullInfos(), //$paginator,
 				'depots' => $paginator, //$paginator,
 				'yearsOptions' => $this->getDepotTable()->getDepotYearsAsOptions(),
+				'brouillon' => $brouillon,
 				'fields' => $this->getDepotTable()->getFieldsName(),
 				'fieldsname' => $this->getDepotTable()->getFieldsHumanName(),
-				'page'=>$page
+				'page'=>$page,
+				'config_ca_direct'=>$config["ca_direct"]
 		));
-		
 		return $view;
 	}
 
 	public function listingAction()
 	{
-		return new ViewModel(array(
+		$year = (int) $this->params()->fromRoute('annee');
+		$view = new ViewModel(array(
 				'auth' => array(
 						'logged' => $this::isLogged(),
 						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
 						),
-				'depots' => $this->getDepotTable()->fetchAll(),
+				// TODO : corriger, reprendre depuis la route ou un post
+				'depots' => $this->getDepotTable()->fetchAll($year),
 				'page' => $this->params()->fromRoute('page'),
 		));
+		//$view->setTerminal(true);
+		return $view;
 	}
 	
 	public function listAction()
@@ -129,6 +153,18 @@ class DepotController extends AbstractActionController
     	$result->setTerminal(true);
 		$result->setVariables(array('workbook' => $workbook));
 		
+		return $result;
+	}
+
+	public function listingExportExcel5Action()
+	{
+		$workbook = $this::listingPHPExcel();
+	
+		// Désactivation du layout
+		$result = new ViewModel();
+		$result->setTerminal(true);
+		$result->setVariables(array('workbook' => $workbook));
+	
 		return $result;
 	}
 	
@@ -180,7 +216,7 @@ class DepotController extends AbstractActionController
 
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $depot = new Depots();
+            $depot = new Depot();
             $form->setInputFilter($depot->getInputFilter());
             $form->setData($request->getPost());
 
@@ -259,12 +295,19 @@ class DepotController extends AbstractActionController
     	if (!$id) {
     		return $this->redirect()->toRoute('depot', array());
     	}
+    	$config = $this->getServiceLocator()->get('Config');
+    	$config_ca_direct = $config["ca_direct"];
     	return new ViewModel(array(
+				'auth' => array(
+						'logged' => $this::isLogged(),
+						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
+						),
     			'depot' => $this->getDepotTable()->getDepot($id),
+    			'photo'  => $this->getPhotoTable()->getPhotoByDepotId($id),
     			'fields' => $this->getDepotTable()->getFieldsName(),
     			'fieldsname' => $this->getDepotTable()->getFieldsHumanName(),
-    			 
-    			//	'photo'  => $this->getPhotoTable()->getPhotoByDepotId($id),
+    			'mandatoryfieldsname' => $this->getDepotTable()->getMandatoryFieldsName(),
+    			'config_ca_direct' => $config_ca_direct
     	));
     }
     
@@ -281,7 +324,7 @@ class DepotController extends AbstractActionController
 
             if ($del == 'Yes') {
                 $id = (int) $request->getPost('id');
-                $this->getDepotTable()->deleteDepots($id);
+                $this->getDepotTable()->deleteDepot($id);
             }
 
             // Redirect to list of depots
@@ -300,14 +343,19 @@ class DepotController extends AbstractActionController
         if (!$id) {
             return $this->redirect()->toRoute('depot');
         }
-
+        
         $request = $this->getRequest();
         if ($request->isPost()) {
             $validate = $request->getPost('validate', 'No');
 
             if ($validate == 'Yes') {
                 $id = (int) $request->getPost('id');
-                $this->getDepotTable()->validateDepots($id);
+                
+                $config = $this->getServiceLocator()->get('Config');
+                $config_ca = $config["ca_direct"];
+                                
+				$depot = $this->getDepotTable()->getDepot($id);
+                $this->getDepotTable()->validateDepot($depot, $config_ca, array("updateCaDate"=>true));
             }
 
             // Redirect to list of depots
@@ -320,6 +368,21 @@ class DepotController extends AbstractActionController
         );
     }
 
+    public function unvalidateAction()
+    {
+    	$id = (int) $this->params()->fromRoute('id', 0);
+    	if (!$id) {
+    		return $this->redirect()->toRoute('depot');
+    	}
+    
+		$depot = $this->getDepotTable()->getDepot($id);
+		 $config = $this->getServiceLocator()->get('Config');
+    	$this->getDepotTable()->unvalidateDepot($depot, array("updateCaDate" => true,"path"=> $config["ca_direct"]["path"]));
+    	
+    	// Redirect to list of depots
+		return $this->redirect()->toRoute('depot');
+    }
+        
     public function getDepotTable()
 	{
 		if (!$this->depotTable) {
@@ -337,6 +400,196 @@ class DepotController extends AbstractActionController
 		}
 		return $this->photoTable;
 	}
+
+	public function exportAction()
+	{
+        $id = (int) $this->params()->fromRoute('id', 0);
+        if (!$id) {
+            return $this->redirect()->toRoute('depot', array(
+                'action' => 'index'
+            ));
+        }
+        
+        // Traitement de la requête
+        $request = $this->getRequest();
+        if (!$request->isPost()) {
+        	return array(
+        			'id' => $id, 
+        			'depot'=>$this->getDepotTable()->getDepot($id)
+        			);
+        }
+        $insert = $request->getPost('insert', 'No');
+        
+		if ($insert == 'Yes') {
+        	$id = (int) $request->getPost('id');
+        	$config = $this->getServiceLocator()->get('Config');
+        	$config_export = array_merge($config["ca_direct"],$config["ca_export_mapping"]);
+        	$this->getDepotTable()->caDirectExport($id,$config_export);
+        	return array(
+        			'id'    => $id,
+        			'depot'=>$this->getDepotTable()->getDepot($id),
+        			'inserted' => true
+        			);
+		}
+        
+        // Redirect to list of depots
+        $this->redirect()->toRoute('depot', array(
+                'action' => 'index'
+            ));
+	}
+
+
+	/**
+	 * afficherObjetAction : La méthode afficherObjetAction réalise un import ou une mise à jour et redirige vers l'affichage de l'objet
+	 *  
+	 * @return multitype:|\Zend\View\Model\ViewModel
+	 */
+	public function afficherObjetAction()
+	{
+		$request = $this->getRequest();
+		if ($request->isPost()) {
+			$ca_id = $request->getPost('ca_id', '0');
+		} else {
+			$ca_id = (int) $this->params()->fromRoute('id', 0);
+		}
+		
+		if (!$ca_id) {
+			return array();
+		}
+
+		$config = $this->getServiceLocator()->get('Config');
+		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
+			
+		if ($this->getDepotTable()->checkDepotByCaId($ca_id)) {
+			// si l'objet est déjà dans la base depot
+			$id = $this->getDepotTable()->checkDepotByCaId($ca_id)->id;
+			$depot = $this->getDepotTable()->getDepot($id);
+			
+			if(!$this->getDepotTable()->checkCaAllowedType($ca_id,$config["ca_direct"])) {
+				// si le type de l'objet ne fait pas partie des types d'objets autorisés
+				throw new \Exception("Type non autorisé");
+			}
+
+			if ($depot->validated) {
+				// si validé on ne touche à rien
+				//var_dump($depot);die();
+				return $this->redirect()->toRoute('depot', array('action' => "view", 'id'=> $id ) );
+			} else {
+				// sinon pas validé, on met à jour
+				$result_import=$this->getDepotTable()->caDirectImportObject($ca_id, $config_import, $id);
+			}
+		} else {
+			//sinon pas présent, on importe
+			$result_import=$this->getDepotTable()->caDirectImportObject($ca_id, $config_import);
+			
+			if(isset($result_import["id"])) {
+				$id = $result_import["id"];
+				$depot = $this->getDepotTable()->getDepot($id);
+				$result_photo_import=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_import["id"], $config_import);
+			} else {
+				$result_photo_import="not imported";
+				$return = new ViewModel();
+				$return->setVariable('ca_id', $ca_id);
+				$return->setVariable('results', array($ca_id => $result_import));
+				$return->setTemplate("depot/depot/import-objet.phtml");
+				return $return;
+			}
+		}
+		
+    	$config_ca_direct = $config["ca_direct"];
+    	
+    	$return = new ViewModel(array(
+				'auth' => array(
+						'logged' => $this::isLogged(),
+						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
+						),
+    			'depot' => $depot,
+    			'photo'  => $this->getPhotoTable()->getPhotoByDepotId($id),
+    			'fields' => $this->getDepotTable()->getFieldsName(),
+    			'fieldsname' => $this->getDepotTable()->getFieldsHumanName(),
+    			'mandatoryfieldsname' => $this->getDepotTable()->getMandatoryFieldsName(),
+    			'config_ca_direct' => $config_ca_direct
+    	));
+    	$return->setTemplate("depot/depot/view.phtml");
+    	
+    	return $return;
+    	 
+	}
+	
+	/**
+	 * updateSetAction : importe ou met à jour le contenu d'un set de CA dans la base depot
+	 *
+	 * @return multitype:|\Zend\View\Model\ViewModel
+	 */
+	public function updateSetAction()
+	{
+		$request = $this->getRequest();
+		if ($request->isPost()) {
+			$ca_set_id = $request->getPost('set_id', '0');
+			$confirm = $request->getPost('confirm', 'No');
+		} else {
+			$ca_set_id = (int) $this->params()->fromRoute('id', 0);
+		}
+	
+		if (!$ca_set_id) {
+			return array();
+		}
+		
+		if ($confirm == 'No') {
+			$return = new ViewModel();
+			$return->setVariable('set_id', $ca_set_id);
+			$return->setTemplate("depot/depot/update-set-confirm.phtml");
+			return $return;
+		}
+		
+		$result_photos_imports = array();
+	
+		$config = $this->getServiceLocator()->get('Config');
+		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
+	
+		$ca_ids=$this->getDepotTable()->caGetSetItems($ca_set_id, $config_import);
+		foreach($ca_ids as $ca_id) {
+			
+			if ($this->getDepotTable()->checkDepotByCaId($ca_id)) {
+				// si l'objet est déjà dans la base depot
+				$id = $this->getDepotTable()->checkDepotByCaId($ca_id)->id;
+				$depot = $this->getDepotTable()->getDepot($id);
+
+				$result_imports[$ca_id]["id"]=$depot->id;
+				$result_imports[$ca_id]["numinv_display"]=$depot->numinv_display;
+				$result_imports[$ca_id]["designation_display"]=$depot->designation_display;
+				
+				if(!$this->getDepotTable()->checkCaAllowedType($ca_id,$config["ca_direct"])) {
+					// si le type de l'objet ne fait pas partie des types d'objets autorisés
+					$result_imports[$ca_id]["error"]="l'objet n'est pas un bien déposé, objet ignoré";
+				} elseif ($depot->validated) {
+					// si validé on ne touche à rien
+					$result_imports[$ca_id]["error"]="objet inscrit à l'depot, modification impossible";
+				} else {
+					// sinon pas validé, on met à jour
+					$result_imports[$ca_id]=$this->getDepotTable()->caDirectImportObject($ca_id, $config_import, $id);
+					$result_photo_imports[$ca_id]["error"]="ignoré, objet déjà présent dans l'depot";
+				}
+			} else {
+				//sinon pas présent, on importe
+				$result_imports[$ca_id]=$this->getDepotTable()->caDirectImportObject($ca_id, $config_import);
+				
+				if(isset($result_imports[$ca_id]["id"])) {
+					$id = $result_imports[$ca_id]["id"];
+					$result_photo_imports[$ca_id]=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_imports[$ca_id]["id"], $config_import);
+				} else {
+					$result_photo_imports[$ca_id]["error"]="problème d'import";
+				}
+			}
+		}
+		$return = new ViewModel();
+		$return->setVariable('ca_set_id', $ca_set_id);
+		$return->setVariable('result_imports', $result_imports);
+		$return->setVariable('result_photos_imports', $result_photos_imports);
+	
+		return $return;
+	}
+	
 	
 }
 ?>
