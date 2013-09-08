@@ -12,11 +12,11 @@ use Zend\View\Model\ViewModel;
 use Inventaire\Model\Inventaire;
 use Inventaire\Form\InventaireForm; 
 
+// définition du modèle pour le traitement des médias attachés
+use Inventaire\Model\Photo;
+
 // définition de la classe pour la génération PDF
 use DOMPDFModule\View\Model\PdfModel;
-
-//require dirname(__FILE__).'/cawrapper/ItemService.php';
-//require dirname(__FILE__).'/restlib/rest_client.php';
 
 class InventaireController extends AbstractActionController
 {
@@ -450,11 +450,18 @@ class InventaireController extends AbstractActionController
         $config = $this->getServiceLocator()->get('Config');
 		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
 		
-		$result=$this->getInventaireTable()->caDirectImportObject($ca_id,$config_import);
-
+		$result_import=$this->getInventaireTable()->caDirectImportObject($ca_id, $config_import);
+		
+		if(isset($result_import["id"])) {
+			$result_photo_import=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_import["id"], $config_import);
+		} else {
+			$result_photo_import="not imported";
+		}
+		
 		$return = new ViewModel();
 		$return->setVariable('ca_id', $ca_id);
-		$return->setVariable('results', array($ca_id => $result));
+		$return->setVariable('results', array($ca_id => $result_import));
+		$return->setVariable('results_photos', array($ca_id => $result_photo_import));
 		return $return;
 	}
 	
@@ -490,6 +497,14 @@ class InventaireController extends AbstractActionController
 		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
 		
 		$result=$this->getInventaireTable()->caDirectImportObject($ca_id,$config_import);
+
+		if(isset($result_import["id"])) {
+			$result_photo_import=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_import["id"], $config_import);
+		} else {
+			$result_photo_import="not imported";
+		}
+		
+		
 		$id = $this->getInventaireTable()->checkInventaireByCaId($ca_id)->id;
 		// Redirect to list of inventaires
 		$this->redirect()->toRoute('inventaire', array(
@@ -532,5 +547,41 @@ class InventaireController extends AbstractActionController
 		));
 	}
 
+	public function importSetAction()
+	{
+		$request = $this->getRequest();
+		if ($request->isPost()) {
+			$ca_set_id = $request->getPost('set_id', '0');
+		} else {
+			$ca_set_id = (int) $this->params()->fromRoute('id', 0);
+		}
+	
+		if (!$ca_set_id) {
+			return array();
+		}
+	
+		$result_photos_imports = array();
+		
+		$config = $this->getServiceLocator()->get('Config');
+		$config_import = array_merge($config["ca_direct"],$config["ca_import_mapping"]);
+	
+		$result_imports=$this->getInventaireTable()->caDirectImportSet($ca_set_id, $config_import);
+
+		foreach($result_imports as $ca_id=>$result_import) {
+			if(isset($result_import["id"])) {
+				$result_photos_imports[$ca_id]=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_import["id"], $config_import);
+			} else {
+				$result_photos_imports[$ca_id]="not imported";
+			}
+		}
+				
+		$return = new ViewModel();
+		$return->setVariable('ca_set_id', $ca_set_id);
+		$return->setVariable('results', $result_imports);
+		$return->setVariable('results_photos', $result_photos_imports);
+		
+		return $return;
+	}
+	
 }
 ?>
