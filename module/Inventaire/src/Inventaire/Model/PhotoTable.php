@@ -22,6 +22,21 @@ class PhotoTable extends AbstractTableGateway
 		$this->initialize();
 	}
 
+	private function preloadCaDirect($setup_path) {
+		$path = getcwd();
+	
+		// AUTHENTIFICATION
+		chdir($setup_path);
+		$result = include($setup_path."/setup.php");
+		chdir($path);
+		if ($result) {
+			require_once(__CA_LIB_DIR__.'/core/Db.php');
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public function fetchAll()
 	{
 		$resultSet = $this->select();
@@ -183,6 +198,51 @@ class PhotoTable extends AbstractTableGateway
 		$this->delete(array(
 				'inventaire_id' => $inventaire_id,
 		));
+	}
+
+	
+	public function caDirectImportPhoto($ca_id, $inventaire_id, array $caDirectConfig)
+	{
+		$return = array();
+		
+		if(!$this->preloadCaDirect($caDirectConfig["path"])) {
+			throw new \Exception("Impossible d'accéder à CollectiveAccess.");
+		}
+		
+		include_once(__CA_MODELS_DIR__."/ca_locales.php");
+		include_once(__CA_MODELS_DIR__."/ca_objects.php");
+		
+		$t_object = new \ca_objects($ca_id);
+		$t_object->setMode(ACCESS_READ);
+
+		$return["ca_id"]=$ca_id;
+		$return["inventaire_id"]=$inventaire_id;
+		
+		// Fetching primary media info
+		$media = $t_object->getPrimaryRepresentation(array('large'));
+		if ($media) {
+			// if we've a media, copy it
+			if (!copy(
+					$media["paths"]["large"],
+					dirname(__DIR__).'/../../../../public/files/assets/'.basename($media["paths"]["large"])
+			)) {
+				// copy has crashed
+				throw new \Exception("Impossible de recopier le fichier image dans public/files/assets.");
+			}
+		} else {
+			// no media defined
+			$return["error"]="Pas de représentation primaire";
+			return $return;
+		}
+
+		$file = basename($media["paths"]["large"]);
+		$return["file"] = $file;
+		
+		$photo = new Photo();
+		$photo->exchangeArray(array("id" => 0, "inventaire_id" => $inventaire_id,  "credits" => "", "file" => $file));
+		// saving photo info into database
+		$return["saved"] = $this->savePhoto($photo);
+		return $return;
 	}
 	
 }
