@@ -119,12 +119,18 @@ class InventaireTable extends AbstractTableGateway
 		return $resultSet;
 	}
 		
-	public function fetchAllFullInfosPaginator($year)
+	public function fetchAllFullInfosPaginator($year = null, $validated_only = false)
 	{
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
 		->join('inventaire_inventaire_photo', 'inventaire_inventaire.id = inventaire_id', array('credits','file'),'left');
+		if($validated_only) {
+			$select->where("validated = 1");
+		} 
+		if ($year) {
+			$select->where("YEAR(date_inscription) = ".$year);
+		}
 		$select->order("numinv_sort ASC");
 		
 		//you can check your query by echo-ing :
