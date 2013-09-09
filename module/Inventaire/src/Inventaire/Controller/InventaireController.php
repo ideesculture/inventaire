@@ -75,15 +75,14 @@ class InventaireController extends AbstractActionController
 		$request = $this->getRequest();
 		if ($request->isPost()) {
 			$brouillon= (bool) $request->getPost('brouillon');
+			$year = (int) $request->getPost('year');
+			//die("info posted ".!$brouillon);
 		} else {
 			$brouillon = (bool) $this->params()->fromRoute('brouillon', 1);	
 		}
 		
-		
 		$iteratorAdapter = new \Zend\Paginator\Adapter\Iterator(
-			$this->getInventaireTable()->fetchAllFullInfosPaginator(
-				array("year"=>$year,"validated"=>!$brouillon)
-			)
+			$this->getInventaireTable()->fetchAllFullInfosPaginator($year,!$brouillon)
 		);
 		$paginator = new \Zend\Paginator\Paginator($iteratorAdapter);
 		$paginator->setCurrentPageNumber($page);
@@ -95,6 +94,7 @@ class InventaireController extends AbstractActionController
 						),
 				//'inventaires' => $this->getInventaireTable()->fetchAllFullInfos(), //$paginator,
 				'inventaires' => $paginator, //$paginator,
+				'year' => $year,
 				'yearsOptions' => $this->getInventaireTable()->getInventaireYearsAsOptions(),
 				'brouillon' => $brouillon,
 				'fields' => $this->getInventaireTable()->getFieldsName(),
