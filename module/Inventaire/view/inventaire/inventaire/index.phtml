@@ -4,6 +4,19 @@
 $title = 'Inventaire des biens acquis';
 $this->headTitle($title);
 
+if ($year) {
+	$updatedYearsOptions = array();
+	foreach($yearsOptions as $rank=>$option) {
+		if(isset($option["selected"])) {
+			unset($option["selected"]);
+		}
+		if($option["value"] == $year) {
+			$option["selected"]=true;
+		}
+		$updatedYearsOptions[$rank] = $option;
+	}
+	$yearsOptions=$updatedYearsOptions;
+}
 ?>
 <div class="row">
 	<div class="span6">
@@ -29,20 +42,6 @@ $this->headTitle($title);
 </div>
 
 <div class="row">
-	<?php if ($year) {
-		$updatedYearsOptions = array();
-		foreach($yearsOptions as $rank=>$option) {
-			if(isset($option["selected"])) {
-				unset($option["selected"]);
-			}
-			if($option["value"] == $year) {
-				$option["selected"]=true;
-			}
-			$updatedYearsOptions[$rank] = $option;
-		}
-		$yearsOptions=$updatedYearsOptions;	 
-	}
-	?>
 	<div class="span12">
 		<form method="post" action="<?php print $this->url('inventaire', array('action'=>'index', 'page'=>$page));?>">
 			<span style="background-color:#f5f3ea;border-radius:12px;margin-right:25px;padding:2px 15px;display:inline-block;line-height:48px;">
