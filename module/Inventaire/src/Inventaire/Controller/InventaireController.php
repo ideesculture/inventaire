@@ -375,14 +375,28 @@ class InventaireController extends AbstractActionController
     		return $this->redirect()->toRoute('inventaire');
     	}
     
-		$inventaire = $this->getInventaireTable()->getInventaire($id);
-		 $config = $this->getServiceLocator()->get('Config');
-    	$this->getInventaireTable()->unvalidateInventaire($inventaire, array("updateCaDate" => true,"path"=> $config["ca_direct"]["path"]));
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $unvalidation_code = $request->getPost('unvalidation_code');
+            
+            $inventaire = $this->getInventaireTable()->getInventaire($id);
+			
+            if ($unvalidation_code === md5($inventaire->numinv_display)) {
+    			$inventaire = $this->getInventaireTable()->getInventaire($id);
+		 		$config = $this->getServiceLocator()->get('Config');
+    			$this->getInventaireTable()->unvalidateInventaire($inventaire, array("updateCaDate" => true,"path"=> $config["ca_direct"]["path"]));
+            }
+            
+            // Redirect to list of inventaires
+            return $this->redirect()->toRoute('inventaire');
+        }
     	
-    	// Redirect to list of inventaires
-		return $this->redirect()->toRoute('inventaire');
+        return array(
+        		'id'    => $id,
+        		'inventaire' => $this->getInventaireTable()->getInventaire($id)
+        );
     }
-        
+    
     public function getInventaireTable()
 	{
 		if (!$this->inventaireTable) {

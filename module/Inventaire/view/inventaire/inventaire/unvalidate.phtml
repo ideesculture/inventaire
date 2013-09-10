@@ -1,0 +1,47 @@
+<?php
+// module/Inventaire/view/inventaire/inventaire/unvalidate.phtml:
+
+$title = "Désinscrire de l'inventaire";
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
+<p>Etes vous sur de vouloir désinscrire de l'inventaire des biens acquis l'objet suivant ?</p>
+<p>
+	Numéro d'inventaire : <b><?php echo $this->escapeHtml($inventaire->numinv_display); ?></b>
+</p>
+<p>
+	<?php echo $inventaire->designation_display; ?>
+</p>
+
+<div class="alert alert-info">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p><b>Date d'inscription</b> La valeur de la date d'inscription à l'inventaire définie dans la base CollectiveAccess va être effacée.</p>
+</div>
+<div class="alert">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p><b>Réindexation nécessaire</b> Après invalidation d'un objet, vous devez réindexer la base CollectiveAccess.</p>
+</div>
+
+<?php
+$url = $this->url('inventaire', array(
+    'action' => 'unvalidate',
+    'id'     => $this->id,
+));
+?>
+<form action="<?php echo $url; ?>" method="post">
+<div>
+    <input type="hidden" name="id" value="<?php echo (int) $inventaire->id; ?>" />
+    <div class="alert alert-error">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p><b>Code nécessaire</b> 
+    Une vérification par code est nécessaire pour autoriser l'annulation d'une ligne de l'inventaire et sa transformation en brouillon.<br/>
+    Si vous ne possédez pas ce code, merci de vous rapprocher de la société <b>idéesculture</b> au +33 2 85 52 60 79 ou par email à <a href="mailto:contact@ideesculture.com">contact@ideesculture.com</a>.
+    </p>
+	</div>
+    <p>
+    	<input type="text" name="unvalidation_code" value=""/>
+    </p>
+    <button class="btn btn-warning" type="submit">Retransformer en brouillon la ligne de l'inventaire</button>
+</div>
+</form>
