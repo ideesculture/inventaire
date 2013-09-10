@@ -527,7 +527,6 @@ class DepotTable extends AbstractTableGateway
 				$response = "";
 				$field = $attribute["field"];
 				$data = explode(".",$field);
-				var_dump($field);
 				switch($data[0]) {
 					case "ca_entities" :
 						$entities = $t_object->getRelatedItems("ca_entities",array("restrictToRelationshipTypes"=>$attribute["relationshipTypeId"]));
@@ -549,7 +548,6 @@ class DepotTable extends AbstractTableGateway
 						// RECUPERATION DU CHAMP POUR L'AFFICHAGE
 						
 						$response = $t_object->get($field, $options);
-						var_dump($response);
 						// POST-TRAITEMENT
 						if (($attribute["post-treatment"]) && ($response)) {
 							switch($attribute["post-treatment"]) {
@@ -582,7 +580,6 @@ class DepotTable extends AbstractTableGateway
 						}
 						break;
 				}
-				var_dump($response);
 				$response_global .= ($response ? $attribute["prefixe"].$response.$attribute["suffixe"] : "");
 			} 
 			// DEFINITION DE L'ATTRIBUT
