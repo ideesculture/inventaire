@@ -69,7 +69,6 @@ class Inventaire implements InputFilterAwareInterface
 	public $observations;//18
 	
 	public $validated; // est-ce que l'enregistrement est validé (plus de modif) ? 0/1
-	public $pic; // chemin vers la vignette sur le serveur
 	
 	
 	protected $inputFilter;
@@ -103,7 +102,6 @@ class Inventaire implements InputFilterAwareInterface
 		$this->provenance = (isset($data['provenance'])) ? $data['provenance'] : null;//17
 		$this->observations = (isset($data['observations'])) ? $data['observations'] : null;//18
 		$this->validated = (isset($data['validated'])) ? $data['validated'] : false;//19
-		$this->pic = (isset($data['pic'])) ? $data['pic'] : null;//19
 	}
 
 	public function getArrayCopy()
