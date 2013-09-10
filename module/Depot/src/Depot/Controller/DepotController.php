@@ -75,15 +75,13 @@ class DepotController extends AbstractActionController
 		$request = $this->getRequest();
 		if ($request->isPost()) {
 			$brouillon= (bool) $request->getPost('brouillon');
+			$year = (int) $request->getPost('year');
 		} else {
 			$brouillon = (bool) $this->params()->fromRoute('brouillon', 1);	
 		}
 		
-		
 		$iteratorAdapter = new \Zend\Paginator\Adapter\Iterator(
-			$this->getDepotTable()->fetchAllFullInfosPaginator(
-				array("year"=>$year,"validated"=>!$brouillon)
-			)
+			$this->getDepotTable()->fetchAllFullInfosPaginator($year,!$brouillon)
 		);
 		$paginator = new \Zend\Paginator\Paginator($iteratorAdapter);
 		$paginator->setCurrentPageNumber($page);
@@ -93,8 +91,8 @@ class DepotController extends AbstractActionController
 						'logged' => $this::isLogged(),
 						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
 						),
-				//'depots' => $this->getDepotTable()->fetchAllFullInfos(), //$paginator,
 				'depots' => $paginator, //$paginator,
+				'year' => $year,
 				'yearsOptions' => $this->getDepotTable()->getDepotYearsAsOptions(),
 				'brouillon' => $brouillon,
 				'fields' => $this->getDepotTable()->getFieldsName(),
@@ -378,10 +376,10 @@ class DepotController extends AbstractActionController
         $request = $this->getRequest();
         if ($request->isPost()) {
             $unvalidation_code = $request->getPost('unvalidation_code');
-			
+            
             $depot = $this->getDepotTable()->getDepot($id);
 			
-            if ($unvalidation_code === md5($depot->numdepot)) {
+            if ($unvalidation_code === md5($depot->numdepot_display)) {
     			$depot = $this->getDepotTable()->getDepot($id);
 		 		$config = $this->getServiceLocator()->get('Config');
     			$this->getDepotTable()->unvalidateDepot($depot, array("updateCaDate" => true,"path"=> $config["ca_direct"]["path"]));
@@ -396,8 +394,8 @@ class DepotController extends AbstractActionController
         		'depot' => $this->getDepotTable()->getDepot($id)
         );
     }
-        
-    public function getDepotTable()
+
+	public function getDepotTable()
 	{
 		if (!$this->depotTable) {
 			$sm = $this->getServiceLocator();
