@@ -1,0 +1,40 @@
+<?php
+// module/Depot/view/depot/depot/validate.phtml:
+
+$title = "Inscrire à l'depot";
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+
+<p>Etes vous sur de vouloir désinscrire de l'inventaire des biens déposés l'objet suivant ?</p>
+<p>
+	Numéro de dépôt : <b><?php echo $this->escapeHtml($depot->numdepot_display); ?></b>
+</p>
+<p>
+	<?php echo $depot->designation; ?>
+</p>
+
+<div class="alert alert-info">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p><b>Date d'inscription</b> La valeur de la date d'inscription à l'inventaire définie dans la base CollectiveAccess va être effacée.</p>
+</div>
+<div class="alert">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p><b>Réindexation nécessaire</b> Après invalidation d'un objet, vous devez réindexer la base CollectiveAccess.</p>
+</div>
+
+<?php
+$url = $this->url('depot', array(
+    'action' => 'unvalidate',
+    'id'     => $this->id,
+));
+?>
+<form action="<?php echo $url; ?>" method="post">
+<div>
+    <input type="hidden" name="id" value="<?php echo (int) $depot->id; ?>" />
+    <p>Une vérification par code est nécessaire pour autoriser l'annulation d'une ligne de l'inventaire et sa transformation en brouillon.</p>
+    <p>Si vous ne possédez pas ce code, merci de vous rapprocher de la société <b>idéesculture</b> au +33 2 85 52 60 79 ou par email à <a href="mailto:contact@ideesculture.com">contact@ideesculture.com</a>.</p>
+    <input type="text" name="unvalidation_code" value=""/>
+    <button class="btn btn-warning" type="submit">Retransformer en brouillon la ligne de l'inventaire</button>
+</div>
+</form>
