@@ -76,7 +76,6 @@ class InventaireController extends AbstractActionController
 		if ($request->isPost()) {
 			$brouillon= (bool) $request->getPost('brouillon');
 			$year = (int) $request->getPost('year');
-			//die("info posted ".!$brouillon);
 		} else {
 			$brouillon = (bool) $this->params()->fromRoute('brouillon', 1);	
 		}
@@ -92,7 +91,6 @@ class InventaireController extends AbstractActionController
 						'logged' => $this::isLogged(),
 						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
 						),
-				//'inventaires' => $this->getInventaireTable()->fetchAllFullInfos(), //$paginator,
 				'inventaires' => $paginator, //$paginator,
 				'year' => $year,
 				'yearsOptions' => $this->getInventaireTable()->getInventaireYearsAsOptions(),
