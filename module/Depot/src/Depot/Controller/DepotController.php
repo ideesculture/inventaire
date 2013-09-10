@@ -375,12 +375,26 @@ class DepotController extends AbstractActionController
     		return $this->redirect()->toRoute('depot');
     	}
     
-		$depot = $this->getDepotTable()->getDepot($id);
-		 $config = $this->getServiceLocator()->get('Config');
-    	$this->getDepotTable()->unvalidateDepot($depot, array("updateCaDate" => true,"path"=> $config["ca_direct"]["path"]));
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $unvalidation_code = $request->getPost('unvalidation_code');
+			
+            $depot = $this->getDepotTable()->getDepot($id);
+			
+            if ($unvalidation_code === md5($depot->ca_id)) {
+    			$depot = $this->getDepotTable()->getDepot($id);
+		 		$config = $this->getServiceLocator()->get('Config');
+    			$this->getDepotTable()->unvalidateDepot($depot, array("updateCaDate" => true,"path"=> $config["ca_direct"]["path"]));
+            }
+            
+            // Redirect to list of depots
+            return $this->redirect()->toRoute('depot');
+        }
     	
-    	// Redirect to list of depots
-		return $this->redirect()->toRoute('depot');
+        return array(
+        		'id'    => $id,
+        		'depot' => $this->getDepotTable()->getDepot($id)
+        );
     }
         
     public function getDepotTable()
