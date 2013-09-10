@@ -1,7 +1,7 @@
 <?php
 // module/Depot/view/depot/depot/validate.phtml:
 
-$title = "Inscrire à l'depot";
+$title = "Désinscrire de l'inventaire";
 $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
@@ -11,7 +11,7 @@ $this->headTitle($title);
 	Numéro de dépôt : <b><?php echo $this->escapeHtml($depot->numdepot_display); ?></b>
 </p>
 <p>
-	<?php echo $depot->designation; ?>
+	<?php echo $depot->designation_display; ?>
 </p>
 
 <div class="alert alert-info">
@@ -32,9 +32,16 @@ $url = $this->url('depot', array(
 <form action="<?php echo $url; ?>" method="post">
 <div>
     <input type="hidden" name="id" value="<?php echo (int) $depot->id; ?>" />
-    <p>Une vérification par code est nécessaire pour autoriser l'annulation d'une ligne de l'inventaire et sa transformation en brouillon.</p>
-    <p>Si vous ne possédez pas ce code, merci de vous rapprocher de la société <b>idéesculture</b> au +33 2 85 52 60 79 ou par email à <a href="mailto:contact@ideesculture.com">contact@ideesculture.com</a>.</p>
-    <input type="text" name="unvalidation_code" value=""/>
+    <div class="alert alert-error">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p><b>Code nécessaire</b> 
+    Une vérification par code est nécessaire pour autoriser l'annulation d'une ligne de l'inventaire et sa transformation en brouillon.<br/>
+    Si vous ne possédez pas ce code, merci de vous rapprocher de la société <b>idéesculture</b> au +33 2 85 52 60 79 ou par email à <a href="mailto:contact@ideesculture.com">contact@ideesculture.com</a>.
+    </p>
+	</div>
+    <p>
+    	<input type="text" name="unvalidation_code" value=""/>
+    </p>
     <button class="btn btn-warning" type="submit">Retransformer en brouillon la ligne de l'inventaire</button>
 </div>
 </form>
