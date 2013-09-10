@@ -372,24 +372,19 @@ class DepotTable extends AbstractTableGateway
 	{
 		return array(
 			"numdepot", //1
-			"numdepot_sort", 
-			"numdepot_display",
 			"numinv",//2
 			"actedepot",//3
 			"date_priseencharge",//4
 			"proprietaire",//5
 			"actefindepot",//6
 			"date_inscription",//7
-			"date_inscription_display",
 			"designation",//8
-			"designation_display",
 			"inscription",//9
 			"materiaux",//10
 			"techniques",//11
 			"mesures",//12
 			"etat",//13
 			"auteur",//14
-			"auteur_display",
 			"epoque",//15
 			"usage",//16
 			"provenance",//17
