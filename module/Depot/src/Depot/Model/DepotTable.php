@@ -524,8 +524,6 @@ class DepotTable extends AbstractTableGateway
 		
 		$t_object = new \ca_objects($ca_id);
 		$t_object->setMode(ACCESS_WRITE);
-		var_dump($t_object);
-		var_dump($t_object->get('idno'));
 		$response_global = "";
 		// ATTRIBUTS
 		foreach ($mappings as $target => $fields) {
@@ -604,7 +602,7 @@ class DepotTable extends AbstractTableGateway
 			return new \Exception("Objet $ca_id sans titre");
 			}
 		$return["designation"]=$depot->designation;
-		var_dump($depot);die();
+		
 		$result = $this->saveDepot($depot);
 		
 		$depot_id = $this->checkDepotByCaId($ca_id)->id;
