@@ -73,28 +73,33 @@ class InventaireController extends AbstractActionController
 		$year = (int) $this->params()->fromRoute('annee', "");
 		$config = $this->getServiceLocator()->get('Config');
 		$request = $this->getRequest();
+		
+		$filtre=array();		
 		if ($request->isPost()) {
-			$brouillon= (bool) $request->getPost('brouillon');
-			$year = (int) $request->getPost('year');
+			if((bool) $request->getPost('brouillon')) $filtre["brouillon"]=true; else $filtre["brouillon"]=false;
+			$filtre["year"] = (int) $request->getPost('year');
+			$filtre["designation"] = $request->getPost('filtre_designation');
+			$filtre["numinv"] = $request->getPost('filtre_numinv');
 		} else {
-			$brouillon = (bool) $this->params()->fromRoute('brouillon', 1);	
+			if ($year) $filtre["year"] = $year;
+			$filtre["brouillon"]= true;
 		}
 		
 		$iteratorAdapter = new \Zend\Paginator\Adapter\Iterator(
-			$this->getInventaireTable()->fetchAllFullInfosPaginator($year,!$brouillon)
+			$this->getInventaireTable()->fetchAllFullInfosPaginator($filtre)
 		);
 		$paginator = new \Zend\Paginator\Paginator($iteratorAdapter);
 		$paginator->setCurrentPageNumber($page);
 		$paginator->setItemCountPerPage(10);
+		
 		$view = new ViewModel(array(
 				'auth' => array(
 						'logged' => $this::isLogged(),
 						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
 						),
 				'inventaires' => $paginator, //$paginator,
-				'year' => $year,
+				'filtre' => $filtre,
 				'yearsOptions' => $this->getInventaireTable()->getInventaireYearsAsOptions(),
-				'brouillon' => $brouillon,
 				'fields' => $this->getInventaireTable()->getFieldsName(),
 				'fieldsname' => $this->getInventaireTable()->getFieldsHumanName(),
 				'page'=>$page,

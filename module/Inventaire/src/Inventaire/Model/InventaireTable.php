@@ -119,21 +119,31 @@ class InventaireTable extends AbstractTableGateway
 		return $resultSet;
 	}
 		
-	public function fetchAllFullInfosPaginator($year = null, $validated_only = false)
+	public function fetchAllFullInfosPaginator($filtre=array())
 	{
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
 		->join('inventaire_inventaire_photo', 'inventaire_inventaire.id = inventaire_id', array('credits','file'),'left');
-		if($validated_only) {
+		if (isset($filtre["brouillon"]) && ($filtre["brouillon"]==0)) {
 			$select->where("validated = 1");
 		} 
-		if ($year) {
-			$select->where("YEAR(date_inscription) = ".$year);
+		if (isset($filtre["year"]) && $filtre["year"]>0) {
+			$select->where("YEAR(date_inscription) = ".$filtre["year"]);
+		}
+		if (isset($filtre["numinv"]) && $filtre["numinv"]) {
+			$select->where->like('numinv_display', $filtre["numinv"]."%");
+		}
+		if (isset($filtre["designation"])  && $filtre["designation"]) {
+			$designation_words = explode(" ",$filtre["designation"]);
+			foreach($designation_words as $designation_word) {
+				$designation_word = "%".$designation_word."%";
+				$select->where->like('designation_display', $designation_word);
+			}
 		}
 		$select->order("numinv_sort ASC");
 		
-		//you can check your query by echo-ing :
+		//Vérification de la requête en décommentant la ligne ci-dessous
 		//echo $select->getSqlString();
 		$statement = $sql->prepareStatementForSqlObject($select);
 	

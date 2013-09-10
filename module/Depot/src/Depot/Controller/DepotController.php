@@ -73,15 +73,20 @@ class DepotController extends AbstractActionController
 		$year = (int) $this->params()->fromRoute('annee', "");
 		$config = $this->getServiceLocator()->get('Config');
 		$request = $this->getRequest();
+		
+		$filtre=array();
 		if ($request->isPost()) {
-			$brouillon= (bool) $request->getPost('brouillon');
-			$year = (int) $request->getPost('year');
+			if((bool) $request->getPost('brouillon')) $filtre["brouillon"]=true; else $filtre["brouillon"]=false;
+			$filtre["year"] = (int) $request->getPost('year');
+			$filtre["designation"] = $request->getPost('filtre_designation');
+			$filtre["numdepot"] = $request->getPost('filtre_numdepot');
 		} else {
-			$brouillon = (bool) $this->params()->fromRoute('brouillon', 1);	
+			if ($year) $filtre["year"] = $year; else $filtre["year"]="";
+			$filtre["brouillon"]= true;
 		}
 		
 		$iteratorAdapter = new \Zend\Paginator\Adapter\Iterator(
-			$this->getDepotTable()->fetchAllFullInfosPaginator($year,!$brouillon)
+			$this->getDepotTable()->fetchAllFullInfosPaginator($filtre)
 		);
 		$paginator = new \Zend\Paginator\Paginator($iteratorAdapter);
 		$paginator->setCurrentPageNumber($page);
@@ -92,9 +97,8 @@ class DepotController extends AbstractActionController
 						'login' => ($this::isLogged() ? $this->zfcUserAuthentication()->getIdentity()->getEmail() : false)
 						),
 				'depots' => $paginator, //$paginator,
-				'year' => $year,
+				'filtre' => $filtre,
 				'yearsOptions' => $this->getDepotTable()->getDepotYearsAsOptions(),
-				'brouillon' => $brouillon,
 				'fields' => $this->getDepotTable()->getFieldsName(),
 				'fieldsname' => $this->getDepotTable()->getFieldsHumanName(),
 				'page'=>$page,

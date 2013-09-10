@@ -4,18 +4,25 @@
 $title = 'Inventaire des biens déposés';
 $this->headTitle($title);
 
-if ($year) {
+$showfilters = false;
+
+if ((isset($filtre["year"])) && ($filtre["year"])) {
+	$showfilters = true;
 	$updatedYearsOptions = array();
 	foreach($yearsOptions as $rank=>$option) {
 		if(isset($option["selected"])) {
 			unset($option["selected"]);
 		}
-		if($option["value"] == $year) {
+		if($option["value"] == $filter["year"]) {
 			$option["selected"]=true;
 		}
 		$updatedYearsOptions[$rank] = $option;
 	}
 	$yearsOptions=$updatedYearsOptions;
+}
+
+if (isset($filtre["designation"]) || isset($filtre["numdepot"])) {
+	$showfilters = true;
 }
 ?>
 <div class="row">
@@ -43,25 +50,32 @@ if ($year) {
 
 <div class="row">
 	<div class="span12">
-		<form method="post" action="<?php print $this->url('depot', array('action'=>'index', 'page'=>$page));?>">
-			<span style="background-color:#f5f3ea;border-radius:12px;margin-right:25px;padding:2px 15px;display:inline-block;line-height:48px;">
-				<input name="brouillon" type="checkbox" <?php print ($brouillon) ? " checked=\"checked\"": null; ?> value="1" /> Afficher les brouillons 
-			</span>
-			<span style="background-color:#f5f3ea;border-radius:12px;margin-right:25px;padding:2px 15px;display:inline-block;line-height:48px;">
-				Filtrer par année 
-				<select name="year">
-				<?php  foreach($yearsOptions as $option) : ?>
-					<option value="<?php print $option["value"];?>" <?php print (isset($option["selected"]) && ($option["selected"])) ? "SELECTED" : "" ;?>>
-					<?php print $option["label"];?>
-					</option>
-				<?php endforeach; ?> 
-				</select>
-			</span> 
-			<span style="background-color:#f5f3ea;border-radius:12px;margin-right:25px;padding:2px 15px;display:inline-block;line-height:48px;">
-				<button type="submit">go</button>
-			</span>
-		</form>
+	    <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#filtres">Filtrer la liste</button>
+	    <div id="filtres" class="collapse <?php print ($showfilters) ? "in" : "";?>" style="margin:10px 0;">
+			<form method="post" action="<?php print $this->url('depot', array('action'=>'index', 'page'=>$page));?>">
+				<span style="background-color:#f5f3ea;border-radius:12px;margin-right:25px;padding:2px 15px;display:inline-block;line-height:48px;">
+					<input name="brouillon" type="checkbox" <?php print (isset($filtre["brouillon"]) && $filtre["brouillon"]) ? " checked=\"checked\"": null; ?> value="1" /> Afficher les brouillons 
+				</span>
+				<span style="background-color:#f5f3ea;border-radius:12px;margin-right:25px;padding:2px 15px;display:inline-block;line-height:48px;">
+					Filtrer par année 
+					<select name="year" class="input-small">
+					<?php  foreach($yearsOptions as $option) : ?>
+						<option value="<?php print $option["value"];?>" <?php print (isset($option["selected"]) && ($option["selected"])) ? "SELECTED" : "" ;?>>
+						<?php print $option["label"];?>
+						</option>
+					<?php endforeach; ?> 
+					</select>
+					par numéro de dépôt
+					<input type="text" name="filtre_numdepot" class="input-small" value="<?php print isset($filtre["numdepot"]) ? $filtre["numdepot"] :"" ; ?>" />
+					par désignation
+					<input type="text" name="filtre_designation" value="<?php print isset($filtre["designation"]) ? $filtre["designation"] : ""; ?>" />
+				</span> 
+				<span style="background-color:#f5f3ea;border-radius:12px;margin-right:25px;padding:2px 15px;display:inline-block;line-height:48px;">
+					<button type="submit">go</button>
+				</span>
+			</form>
 		</div>
+	</div>
 	<div class="span12">
 		<table class="table  table-striped  bord-ronds-fond-blanc">
 		<tr>
