@@ -381,7 +381,7 @@ class DepotController extends AbstractActionController
 			
             $depot = $this->getDepotTable()->getDepot($id);
 			
-            if ($unvalidation_code === md5($depot->ca_id)) {
+            if ($unvalidation_code === md5($depot->numdepot)) {
     			$depot = $this->getDepotTable()->getDepot($id);
 		 		$config = $this->getServiceLocator()->get('Config');
     			$this->getDepotTable()->unvalidateDepot($depot, array("updateCaDate" => true,"path"=> $config["ca_direct"]["path"]));
