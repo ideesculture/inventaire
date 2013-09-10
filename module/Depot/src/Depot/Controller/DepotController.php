@@ -536,7 +536,7 @@ class DepotController extends AbstractActionController
 			return array();
 		}
 		
-		if ($confirm == 'No') {
+		if ((!isset($confirm)) || ($confirm == 'No')) {
 			$return = new ViewModel();
 			$return->setVariable('set_id', $ca_set_id);
 			$return->setTemplate("depot/depot/update-set-confirm.phtml");
