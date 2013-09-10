@@ -327,6 +327,9 @@ class InventaireController extends AbstractActionController
 
             if ($del == 'Yes') {
                 $id = (int) $request->getPost('id');
+                
+                // Si le dépôt a une photo définie, supprimer la photo avant de supprimer le dépôt de l'inventaire
+                $this->getPhotoTable()->deletePhotoByInventaireId($id);
                 $this->getInventaireTable()->deleteInventaire($id);
             }
 
@@ -494,6 +497,7 @@ class InventaireController extends AbstractActionController
 			} else {
 				// sinon pas validé, on met à jour
 				$result_import=$this->getInventaireTable()->caDirectImportObject($ca_id, $config_import, $id);
+				$result_photo_import=$this->getPhotoTable()->caDirectUpdatePhoto($ca_id, $result_import["id"], $config_import);
 			}
 		} else {
 			//sinon pas présent, on importe
@@ -501,7 +505,7 @@ class InventaireController extends AbstractActionController
 			
 			if(isset($result_import["id"])) {
 				$id = $result_import["id"];
-				$result_photo_import=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_import["id"], $config_import);
+				$result_photo_import=$this->getPhotoTable()->caDirectUpdatePhoto($ca_id, $result_import["id"], $config_import);
 			} else {
 				$result_photo_import="not imported";
 				$return = new ViewModel();
@@ -581,10 +585,11 @@ class InventaireController extends AbstractActionController
 				} elseif ($inventaire->validated) {
 					// si validé on ne touche à rien
 					$result_imports[$ca_id]["error"]="objet inscrit à l'inventaire, modification impossible";
+					$result_photo_imports[$ca_id]["error"]="objet inscrit à l'inventaire, modification impossible";
 				} else {
 					// sinon pas validé, on met à jour
 					$result_imports[$ca_id]=$this->getInventaireTable()->caDirectImportObject($ca_id, $config_import, $id);
-					$result_photo_imports[$ca_id]["error"]="ignoré, objet déjà présent dans l'inventaire";
+					$result_photo_imports[$ca_id]=$this->getPhotoTable()->caDirectUpdatePhoto($ca_id, $result_imports[$ca_id]["id"], $config_import);
 				}
 			} else {
 				//sinon pas présent, on importe
@@ -592,7 +597,7 @@ class InventaireController extends AbstractActionController
 				
 				if(isset($result_imports[$ca_id]["id"])) {
 					$id = $result_imports[$ca_id]["id"];
-					$result_photo_imports[$ca_id]=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_imports[$ca_id]["id"], $config_import);
+					$result_photo_imports[$ca_id]=$this->getPhotoTable()->caDirectUpdatePhoto($ca_id, $result_imports[$ca_id]["id"], $config_import);
 				} else {
 					$result_photo_imports[$ca_id]["error"]="not imported";
 				}

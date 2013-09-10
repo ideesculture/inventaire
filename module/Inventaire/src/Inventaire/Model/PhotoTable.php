@@ -201,7 +201,7 @@ class PhotoTable extends AbstractTableGateway
 	}
 
 	
-	public function caDirectImportPhoto($ca_id, $inventaire_id, array $caDirectConfig)
+	public function caDirectUpdatePhoto($ca_id, $inventaire_id, array $caDirectConfig)
 	{
 		$return = array();
 		
@@ -231,15 +231,20 @@ class PhotoTable extends AbstractTableGateway
 			}
 		} else {
 			// no media defined
-			$return["error"]="Pas de représentation primaire";
+			$return["error"]="Pas de représentation définie par défaut";
 			return $return;
 		}
-
+		
 		$file = basename($media["paths"]["large"]);
 		$return["file"] = $file;
 		
-		$photo = new Photo();
-		$photo->exchangeArray(array("id" => 0, "inventaire_id" => $inventaire_id,  "credits" => "", "file" => $file));
+		if ($photo = $this->getPhotoByInventaireId($inventaire_id)) {
+			$photo->credits="";
+			$photo->file=$file;
+		} else {
+			$photo = new Photo();
+			$photo->exchangeArray(array("id" => 0, "inventaire_id" => $inventaire_id,  "credits" => "", "file" => $file));
+		}
 		// saving photo info into database
 		$return["saved"] = $this->savePhoto($photo);
 		return $return;

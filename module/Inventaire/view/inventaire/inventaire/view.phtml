@@ -19,10 +19,6 @@ $this->headTitle($title);
 			<p>
 			<?php print $photo->credits;?>
 			</p>
-			<p class="btn-group pull-right">
-			<a  class="btn btn-small btn-warning" href="<?php echo $this->url('photo',
-				array('action'=>'delete', 'id' => $photo->id));?>"><i class="icon-remove icon-white"></i> Retirer de la sélection</a>
-			</p>
 			</span>
 		<?php endif ?>
 		<?php foreach($fields as $field) {
