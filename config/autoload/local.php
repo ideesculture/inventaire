@@ -34,7 +34,7 @@ return array(
 		
 	'ca_import_mapping' => array(
 		// Correspondance des champs pour l'import dans les BIENS DEPOSES
-		'inventaire' => array(
+		'depot' => array(
 			"numdepot" => array(
 				array(
 					"field" => 'ca_objects.idno',
@@ -367,8 +367,8 @@ return array(
 				)
 			),
 		), 
-		// Correspondance des champs pour l'import dans les BIENS DEPOSES 
-		'depot' => array(
+		// Correspondance des champs pour l'import dans les BIENS ACQUIS 
+		'inventaire' => array(
 			"numinv" => array(
 				array(
 					"field" => 'ca_objects.idno',
