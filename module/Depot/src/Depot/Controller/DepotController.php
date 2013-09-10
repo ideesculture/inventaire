@@ -481,6 +481,7 @@ class DepotController extends AbstractActionController
 		} else {
 			//sinon pas présent, on importe
 			$result_import=$this->getDepotTable()->caDirectImportObject($ca_id, $config_import);
+			//var_dump($result_import);die();
 			
 			if(isset($result_import["id"])) {
 				$id = $result_import["id"];
@@ -556,7 +557,7 @@ class DepotController extends AbstractActionController
 				$depot = $this->getDepotTable()->getDepot($id);
 
 				$result_imports[$ca_id]["id"]=$depot->id;
-				$result_imports[$ca_id]["numinv_display"]=$depot->numinv_display;
+				$result_imports[$ca_id]["numdepot_display"]=$depot->numdepot_display;
 				$result_imports[$ca_id]["designation_display"]=$depot->designation_display;
 				
 				if(!$this->getDepotTable()->checkCaAllowedType($ca_id,$config["ca_direct"])) {

@@ -6,9 +6,9 @@ $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
 
-<p>Etes vous sur de vouloir inscrire l'objet à l'depot l'objet suivant ?</p>
+<p>Etes vous sur de vouloir inscrire à l'inventaire des biens déposés l'objet suivant ?</p>
 <p>
-	Numéro d'depot : <b><?php echo $this->escapeHtml($depot->numinv_display); ?></b>
+	Numéro de dépôt : <b><?php echo $this->escapeHtml($depot->numdepot_display); ?></b>
 </p>
 <p>
 	<?php echo $depot->designation; ?>
@@ -16,7 +16,7 @@ $this->headTitle($title);
 
 <div class="alert alert-info">
     <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <p><b>Date d'inscription</b> La date d'inscription à l'depot définie dans la base CollectiveAccess va être redéfinie à la date du jour de validation (<?php print date("d/m/Y"); ?>).</p>
+    <p><b>Date d'inscription</b> La date d'inscription à l'inventaire définie dans la base CollectiveAccess va être redéfinie à la date du jour de validation (<?php print date("d/m/Y"); ?>).</p>
 </div>
 <div class="alert">
     <button type="button" class="close" data-dismiss="alert">&times;</button>

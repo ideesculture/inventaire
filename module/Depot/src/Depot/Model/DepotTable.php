@@ -108,7 +108,7 @@ class DepotTable extends AbstractTableGateway
 		if ($year) {
 			$select->where("YEAR(date_inscription) = ".$year);
 		}
-		$select->order("numinv_sort ASC");
+		$select->order("numdepot_sort ASC");
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();
 		$statement = $sql->prepareStatementForSqlObject($select);
@@ -125,7 +125,7 @@ class DepotTable extends AbstractTableGateway
 		$select = $sql->select();
 		$select->from($this->table)
 		->join('inventaire_depot_photo', 'inventaire_depot.id = depot_id', array('credits','file'),'left');
-		$select->order("numinv_sort ASC");
+		$select->order("numdepot_sort ASC");
 		
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();
@@ -238,11 +238,11 @@ class DepotTable extends AbstractTableGateway
 		return $row;
 	}
 	
-	public function checkDepotByNuminv($numinv)
+	public function checkDepotByNumdepot($numdepot)
 	{
 
 		$rowset = $this->select(array(
-				'numinv' => $numinv,
+				'numdepot' => $numdepot,
 		));
 
 		$row = $rowset->current();
@@ -279,18 +279,18 @@ class DepotTable extends AbstractTableGateway
 	{
 		$data = array(
 				'ca_id' => $depot->ca_id,
+				'numdepot' => $depot->numdepot,
+				'numdepot_sort' => $depot->numdepot_sort,
+				'numdepot_display' => $depot->numdepot_display,
 				'numinv' => $depot->numinv,
-				'numinv_sort' => $depot->numinv_sort,
-				'numinv_display' => $depot->numinv_display,
-				'designation' => $depot->designation,//8
-				'designation_display' => $depot->designation_display,//8
-				'mode_acquisition' => $depot->mode_acquisition,//2
-				'donateur' => $depot->donateur,//3
-				'date_acquisition' => $depot->date_acquisition,//4
-				'avis' => $depot->avis,//5
-				'prix' => $depot->prix,//6
+				'actedepot' => $depot->actedepot,//3
+				'date_priseencharge' => $depot->date_priseencharge,//4
+				'proprietaire' => $depot->proprietaire,//5
+				'actefindepot' => $depot->actefindepot,//6
 				'date_inscription' => $depot->date_inscription,//7
 				'date_inscription_display' => $depot->date_inscription_display,//7
+				'designation' => $depot->designation,//8
+				'designation_display' => $depot->designation_display,//8
 				'inscription' => $depot->inscription,//9
 				'materiaux' => $depot->materiaux,//10
 				'techniques' => $depot->techniques,//11
@@ -309,12 +309,12 @@ class DepotTable extends AbstractTableGateway
 		
 		if ($id == 0) {
 			if (($depot->ca_id) && ($conflit=$this->checkDepotByCaId($depot->ca_id))) {
-				throw new \Exception("L'enregistrement ".$conflit->numinv." ".$conflit->designation." est déjà lié à cet objet de CollectiveAccess : <small>id = ".$depot->ca_id."</small>");
+				throw new \Exception("L'enregistrement ".$conflit->numdepot." ".$conflit->designation." est déjà lié à cet objet de CollectiveAccess : <small>id = ".$depot->ca_id."</small>");
 			}
-			if (!$this->checkDepotByNuminv($depot->numinv)) {
+			if (!$this->checkDepotByNumdepot($depot->numdepot)) {
 				$this->insert($data);
 			} else {
-				throw new \Exception("Un autre enregistrement est déjà présent dans la base avec le même numéro d'depot.");
+				throw new \Exception("Un autre enregistrement est déjà présent dans la base avec le même numéro de dépôt.");
 			}
 		} elseif ($this->getDepot($id)) {
 			if(!$this->getDepot($id)->validated) {
@@ -371,43 +371,52 @@ class DepotTable extends AbstractTableGateway
 	public function getFieldsName()
 	{
 		return array(
-				"numinv", //1
-				"mode_acquisition",     //2
-				"donateur",     //3
-				"date_acquisition",     //4
-				"avis",     //5
-				"prix",     //6
-				"date_inscription",     //7
-				"designation",     //8
-				"inscription",     //9
-				"materiaux",     //10
-				"techniques",     //11
-				"mesures",     //12
-				"etat",     //13
-				"auteur",     //14
-				"epoque",     //15
-				"usage",     //16
-				"provenance",     //17
-				"observations"   //18
+			"numdepot", //1
+			"numdepot_sort", 
+			"numdepot_display",
+			"numinv",//2
+			"actedepot",//3
+			"date_priseencharge",//4
+			"proprietaire",//5
+			"actefindepot",//6
+			"date_inscription",//7
+			"date_inscription_display",
+			"designation",//8
+			"designation_display",
+			"inscription",//9
+			"materiaux",//10
+			"techniques",//11
+			"mesures",//12
+			"etat",//13
+			"auteur",//14
+			"auteur_display",
+			"epoque",//15
+			"usage",//16
+			"provenance",//17
+			"observations" //18
 		);
 	}
 	
 	public function getMandatoryFieldsName()
 	{
 		return array(
-				"numinv", //1
-				"mode_acquisition",     //2
-				"donateur",     //3
-				"date_acquisition",     //4
-				"avis",     //5
-				"prix",     //6
-				"date_inscription",     //7
-				"designation",     //8
-				"inscription",     //9
-				"materiaux",     //10
-				"techniques",     //11
-				"mesures",     //12
-				"etat"     //13
+			"numdepot", //1
+			"numdepot_sort", 
+			"numdepot_display",
+			"numinv",//2
+			"actedepot",//3
+			"date_priseencharge",//4
+			"proprietaire",//5
+			"actefindepot",//6
+			"date_inscription",//7
+			"date_inscription_display",
+			"designation",//8
+			"designation_display",
+			"inscription",//9
+			"materiaux",//10
+			"techniques",//11
+			"mesures",//12
+			"etat" //13
 		);
 	}
 	
@@ -422,24 +431,24 @@ class DepotTable extends AbstractTableGateway
 	public function getFieldsHumanName()
 	{
 		return array(
-				"numinv" => "Numéro d'depot", //1
-				"mode_acquisition" => "Mode d'acquisition",     //2
-				"donateur" => "Donateur",     //3
-				"date_acquisition" => "Date d'acquisition",     //4
-				"avis" => "Avis",     //5
-				"prix" => "Prix",     //6
-				"date_inscription" => "Date d'inscription",     //7
-				"designation" => "Désignation",     //8
-				"inscription" => "Inscription",     //9
-				"materiaux" => "Matériaux",     //10
-				"techniques" => "Techniques",     //11
-				"mesures" => "Mesures",     //12
-				"etat" => "Etat",     //13
-				"auteur" => "Auteur",     //14
-				"epoque" => "Epoque",     //15
-				"usage" => "Usage",     //16
-				"provenance" => "Provenance",     //17
-				"observations" => "Observations"   //18
+			"numdepot" => "Numéro de dépôt", //1
+			"numinv" => "Numéro d'inventaire",//2
+			"actedepot" => "Acte de dépôt",//3
+			"date_priseencharge" => "Date de prise en charge",//4
+			"proprietaire" => "Propriétaire",//5
+			"actefindepot" => "Acte de fin de dépôt",//6
+			"date_inscription" => "Date d'inscription",//7
+			"designation" => "Désignation",     //8
+			"inscription" => "Inscription",     //9
+			"materiaux" => "Matériaux",     //10
+			"techniques" => "Techniques",     //11
+			"mesures" => "Mesures",     //12
+			"etat" => "Etat",     //13
+			"auteur" => "Auteur",     //14
+			"epoque" => "Epoque",     //15
+			"usage" => "Usage",     //16
+			"provenance" => "Provenance",     //17
+			"observations" => "Observations"   //18
 		);
 	}
 	
@@ -459,9 +468,6 @@ class DepotTable extends AbstractTableGateway
 			
 			$t_locale = new \ca_locales();
 			$locale_id = $t_locale->loadLocaleByCode('fr_FR'); // Stockage explicite en français
-			$t_list = new \ca_lists();
-			$object_type = $t_list->getItemIDFromList('object_types', 'art');
-			$t_attribute = new \ca_attributes();
 			
 			$t_object = new \ca_objects($depot->ca_id);
 			$t_object->setMode(ACCESS_WRITE);
@@ -503,7 +509,6 @@ class DepotTable extends AbstractTableGateway
 		if(!$this->preloadCaDirect($caDirectConfig["path"])) {
 			throw new \Exception("Impossible d'accéder à CollectiveAccess.");
 		}
-		
 		$depot = new Depot();
 		$depot->id = $depot_id;
 		$depot->ca_id = $ca_id;
@@ -516,11 +521,11 @@ class DepotTable extends AbstractTableGateway
 		
 		$t_locale = new \ca_locales();
 		$locale_id = $t_locale->loadLocaleByCode('fr_FR'); // Stockage explicite en français
-		$t_list = new \ca_lists();
-		$object_type = $t_list->getItemIDFromList('object_types', 'art');
 		
 		$t_object = new \ca_objects($ca_id);
 		$t_object->setMode(ACCESS_WRITE);
+		var_dump($t_object);
+		var_dump($t_object->get('idno'));
 		$response_global = "";
 		// ATTRIBUTS
 		foreach ($mappings as $target => $fields) {
@@ -529,7 +534,7 @@ class DepotTable extends AbstractTableGateway
 				$response = "";
 				$field = $attribute["field"];
 				$data = explode(".",$field);
-				
+				var_dump($field);
 				switch($data[0]) {
 					case "ca_entities" :
 						$entities = $t_object->getRelatedItems("ca_entities",array("restrictToRelationshipTypes"=>$attribute["relationshipTypeId"]));
@@ -551,7 +556,7 @@ class DepotTable extends AbstractTableGateway
 						// RECUPERATION DU CHAMP POUR L'AFFICHAGE
 						
 						$response = $t_object->get($field, $options);
-
+						var_dump($response);
 						// POST-TRAITEMENT
 						if (($attribute["post-treatment"]) && ($response)) {
 							switch($attribute["post-treatment"]) {
@@ -584,21 +589,22 @@ class DepotTable extends AbstractTableGateway
 						}
 						break;
 				}
+				var_dump($response);
 				$response_global .= ($response ? $attribute["prefixe"].$response.$attribute["suffixe"] : "");
 			} 
 			// DEFINITION DE L'ATTRIBUT
 			$depot->$target = !$response_global ? "non renseigné" : $response_global;
 		}
-		if (!$depot->numinv) {
-			return new \Exception("Objet $ca_id sans numéro d'depot");
+		if (!$depot->numdepot) {
+			return new \Exception("Objet $ca_id sans numéro de depot");
 		}
-		$return["numinv"]=$depot->numinv;
+		$return["numdepot"]=$depot->numdepot;
 		
 		if (!$depot->designation) {
 			return new \Exception("Objet $ca_id sans titre");
 			}
 		$return["designation"]=$depot->designation;
-		//var_dump($depot);die();
+		var_dump($depot);die();
 		$result = $this->saveDepot($depot);
 		
 		$depot_id = $this->checkDepotByCaId($ca_id)->id;

@@ -12,31 +12,31 @@ class Depot implements InputFilterAwareInterface
 	public $id;
 	public $ca_id;
 	
-/* a) Rubriques relatives au statut juridique des biens et aux conditions de leur acquisition
+/* a) Rubriques relatives au statut juridique des biens et aux conditions de son dépôt
  * 
-	N° colonne	Rubrique
-	1	N° depot
-	2	Mode d'acquisition
-	3	Nom du donateur, testateur ou vendeur
-	4	Date de l'acte d'acquisition et d'affectation au musée
-	5	Avis des instances scientifiques
-	6	Prix d'achat - subvention publique
-	7	Date d'inscription au registre d'depot
+	N° 	Rubrique
+	1 	Numéro de dépôt attribué au bien déposé
+	2 	Numéro d'inventaire du bien dans les collections du déposant
+	3 	Date et références de l'acte unilatéral ou contractuel autorisant la mise en dépôt du bien
+	4 	Date de prise en charge du bien (date d'entrée matérielle)
+	5 	Nom de la personne morale ou physique propriétaire du bien déposé
+	6 	Date et références de l'acte unilatéral ou contractuel décidant de mettre fin au dépôt
+	7 	Date d'inscription au registre des biens reçus en dépôt par le musée
  */
-	public $numinv; //1
-	public $numinv_sort; 
-	public $numinv_display;
-	public $mode_acquisition;//2
-	public $donateur;//3
-	public $date_acquisition;//4
-	public $avis;//5
-	public $prix;//6
+	public $numdepot; //1
+	public $numdepot_sort; 
+	public $numdepot_display;
+	public $numinv;//2
+	public $actedepot;//3
+	public $date_priseencharge;//4
+	public $proprietaire;//5
+	public $actefindepot;//6
 	public $date_inscription;//7
 	public $date_inscription_display;
 	
 /* b) Rubriques portant description des biens
  * 
-	N° colonne	Rubrique
+	N°	Rubrique
 	8	Désignation du bien
 	9	Marques et inscriptions
 	10	Matières ou matériaux
@@ -54,7 +54,7 @@ class Depot implements InputFilterAwareInterface
 	
 /* c) Rubriques complémentaires
  * 
-	N° colonne	Rubrique
+	N°	Rubrique
 	14	Auteur, collecteur, fabricant, commanditaire...
 	15	Epoque, datation ou date de récolte (voire d'utilisation ou de découverte)
 	16	Fonction d'usage
@@ -68,9 +68,7 @@ class Depot implements InputFilterAwareInterface
 	public $provenance;//17
 	public $observations;//18
 	
-	public $validated; // est-ce que l'enregistrement est validé (plus de modif) ? 0/1
-	public $pic; // chemin vers la vignette sur le serveur
-	
+	public $validated; // est-ce que l'enregistrement est validé (plus de modif) ? 0/1	
 	
 	protected $inputFilter;
 	protected $searchInputFilter;
@@ -79,14 +77,14 @@ class Depot implements InputFilterAwareInterface
 	{
 		$this->id     = (isset($data['id'])) ? $data['id'] : null;
 		$this->ca_id     = (isset($data['ca_id'])) ? $data['ca_id'] : null;
+		$this->numdepot = (isset($data['numdepot'])) ? $data['numdepot'] : null;//1
+		$this->numdepot_sort = (isset($data['numdepot_sort'])) ? $data['numdepot_sort'] : null;
+		$this->numdepot_display = (isset($data['numdepot_display'])) ? $data['numdepot_display'] : null;
 		$this->numinv = (isset($data['numinv'])) ? $data['numinv'] : null;//1
-		$this->numinv_sort = (isset($data['numinv_sort'])) ? $data['numinv_sort'] : null;
-		$this->numinv_display = (isset($data['numinv_display'])) ? $data['numinv_display'] : null;
-		$this->mode_acquisition = (isset($data['mode_acquisition'])) ? $data['mode_acquisition'] : null;//2
-		$this->donateur = (isset($data['donateur'])) ? $data['donateur'] : null;//3
-		$this->date_acquisition = (isset($data['date_acquisition'])) ? $data['date_acquisition'] : null;//4
-		$this->avis = (isset($data['avis'])) ? $data['avis'] : null;//5
-		$this->prix = (isset($data['prix'])) ? $data['prix'] : null;//6
+		$this->actedepot = (isset($data['actedepot'])) ? $data['actedepot'] : null;//2
+		$this->date_priseencharge= (isset($data['date_priseencharge'])) ? $data['date_priseencharge'] : null;//3
+		$this->proprietaire = (isset($data['proprietaire'])) ? $data['proprietaire'] : null;//4
+		$this->actefindepot = (isset($data['actefindepot'])) ? $data['actefindepot'] : null;//5
 		$this->date_inscription = (isset($data['date_inscription'])) ? $data['date_inscription'] : null;//7
 		$this->date_inscription_display = (isset($data['date_inscription_display'])) ? $data['date_inscription_display'] : null;
 		$this->designation  = (isset($data['designation'])) ? $data['designation'] : null;//8
@@ -103,7 +101,6 @@ class Depot implements InputFilterAwareInterface
 		$this->provenance = (isset($data['provenance'])) ? $data['provenance'] : null;//17
 		$this->observations = (isset($data['observations'])) ? $data['observations'] : null;//18
 		$this->validated = (isset($data['validated'])) ? $data['validated'] : false;//19
-		$this->pic = (isset($data['pic'])) ? $data['pic'] : null;//19
 	}
 
 	public function getArrayCopy()
@@ -131,7 +128,7 @@ class Depot implements InputFilterAwareInterface
 			)));
 	
 			$inputFilter->add($factory->createInput(array(
-					'name'     => 'numinv',
+					'name'     => 'numdepot',
 					'required' => true,
 					'filters'  => array(
 							array('name' => 'StripTags'),
@@ -180,7 +177,7 @@ class Depot implements InputFilterAwareInterface
 			)));
 
 			$inputFilter->add($factory->createInput(array(
-					'name'     => 'date_validation',
+					'name'     => 'date_priseencharge',
 					'required' => false,
 					'filters'  => array(),
 					'validators' => array(
@@ -190,19 +187,6 @@ class Depot implements InputFilterAwareInterface
 					),
 			)));
 				
-			$inputFilter->add($factory->createInput(array(
-					'name'     => 'prix',
-					'required' => false,
-					'filters'  => array(
-							array('name' => 'StripTags'),
-							array('name' => 'StringTrim'),
-					),
-					'validators' => array(
-							array(
-									'name'    => 'Float'
-									),
-							),
-					)));
 			$this->inputFilter = $inputFilter;
 		}
 		

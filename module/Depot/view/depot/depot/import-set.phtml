@@ -31,7 +31,7 @@ if(!$ca_set_id) :
 		<?php  foreach($result_imports as $key=>$result) : ?>
 			<div class="row">
 			<?php print ( $result_imports_photos[$key]["file"] ? "<img src=\"/files/assets/".$results_photos[$key]["file"]."\" style=\"max-height:40px;max-width:40px;float:left;margin:4px 10px 4px 32px;\">" : "[".$result_imports_photos[$key]["error"]."]" );?>
-			<?php print "<p><b><a href=\"/depot/view/".$result["id"]."\">".$result["designation"]."</a></b> ".$result["numinv_display"]." (objet ".$key.")</p>";?>
+			<?php print "<p><b><a href=\"/depot/view/".$result["id"]."\">".$result["designation"]."</a></b> ".$result["numdepot_display"]." (objet ".$key.")</p>";?>
 			</div>
 			<?php if(!isset($result["error"])) : ?>
 				<div class="alert alert-success">

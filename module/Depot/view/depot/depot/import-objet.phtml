@@ -28,7 +28,7 @@ if(!$ca_id) :
 <div class="row">
 	<div class="span12">
 		<?php  foreach($results as $key=>$result) : ?>
-			<?php print "<h2><a href=\"/depot/view/".$result["id"]."\">".$result["designation"]."</a> <small>".$result["numinv_display"]."</small></h2><p>(objet ".$key.")</p>";?>
+			<?php print "<h2><a href=\"/depot/view/".$result["id"]."\">".$result["designation"]."</a> <small>".$result["numdepot_display"]."</small></h2><p>(objet ".$key.")</p>";?>
 			<?php print ( $results_photos[$key]["file"] ? "<img src=\"/files/assets/".$results_photos[$key]["file"]."\" style=\"max-height:80px;max-width:80px;\">" : "[".$results_photos[$key]["error"]."]" );?>
 			<?php if(!isset($result["error"])) : ?>
 				<div class="alert alert-success">

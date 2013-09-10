@@ -31,52 +31,42 @@ return array(
 		'path' => '/path-to-ca-install',
 		'url' => 'http://url.domain/path'
 	),*/
-	// Paramétrage des accès aux webservices de CollectiveAccess
+		
 	'ca_import_mapping' => array(
+		// Correspondance des champs pour l'import dans les BIENS DEPOSES
 		'inventaire' => array(
-			"numinv" => array(
+			"numdepot" => array(
 				array(
 					"field" => 'ca_objects.idno',
-					"prefixe" => "Numéro d'inventaire : <b>",
+					"prefixe" => "Numéro de dépôt : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
-			"numinv_sort" => array(
+			"numdepot_sort" => array(
 				array(
 					"field" => 'ca_objects.idno_sort'
 				)
 			),
-			"numinv_display" => array(
+			"numdepot_display" => array(
 				array(
 					"field" => 'ca_objects.idno'
 				)
 			),
-			"mode_acquisition" => array(
+			"numinv" => array(
 				array(
-					"field" => 'ca_objects.AcquisitionMode',
-					"prefixe" => "Mode d'acquisition : <b>",
+					"field" => 'ca_objects.otherNumber',
+					"prefixe" => "Numéro d'inventaire dans les collections du déposant : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
-			'donateur'=>array(
+			"actedepot" => array(
 				array(
-					"field" => 'ca_entities.displayname',
-					"relationshipTypeId" => "116", // donateur
-					"prefixe" => "Donateur : <b>",
-					"suffixe" => "</b><br/>"
-				), array(
-					"field" => 'ca_entities.displayname',
-					"relationshipTypeId" => "117", // testateur
-					"prefixe" => "Testateur : <b>",
-					"suffixe" => "</b><br/>"
-				), array(
-					"field" => 'ca_entities.displayname',
-					"relationshipTypeId" => "118", // vendeur
-					"prefixe" => "Vendeur : <b>",
+					"field" => 'ca_objects.date_ref_acteDepot',
+					"prefixe" => "Date et référence de l'acte de dépôt : <b>",
 					"suffixe" => "</b><br/>"
 				)
-			), 
-			'date_acquisition'=>array( //date_acteAcquisition 
+			),
+			'date_priseencharge'=>array(  
 				array(
 					"field" => 'ca_objects.date_ref_acteAcquisition.date_acteAcquisition',
 					"post-treatment" => 'caDateToUnixTimestamp',
@@ -95,39 +85,28 @@ return array(
 					"suffixe" => "</b><br/>"
 				)
 			),
-			'avis'=>array( 
+			'proprietaire'=>array(
 				array(
-					"field" => 'ca_objects.avisScientifiques.instance',
-					"prefixe" => "Instance : <b>",
+					"field" => 'ca_entities.displayname',
+					"relationshipTypeId" => "116", // donateur
+					"prefixe" => "Donateur : <b>",
 					"suffixe" => "</b><br/>"
-				),
-				array(
-					"field" => 'ca_objects.avisScientifiques.avis_sens',
-					"prefixe" => "Sens de l'avis : <b>",
+				), array(
+					"field" => 'ca_entities.displayname',
+					"relationshipTypeId" => "117", // testateur
+					"prefixe" => "Testateur : <b>",
 					"suffixe" => "</b><br/>"
-				),
-				array(
-					"field" => 'ca_objects.avisScientifiques.date_avis',
-					"post-treatment" => 'caDateToUnixTimestamp',
-					"prefixe" => "Date de l'avis : <b>",
-					"suffixe" => "</b><br/>"
-				),
-				array(
-					"field" => 'ca_objects.avisScientifiques.commentaire_avis',
-					"prefixe" => "Commentaire sur l'avis : <b>",
+				), array(
+					"field" => 'ca_entities.displayname',
+					"relationshipTypeId" => "118", // vendeur
+					"prefixe" => "Vendeur : <b>",
 					"suffixe" => "</b><br/>"
 				)
-			),
-			'prix'=>array( 
+			), 
+			"actefindepot" => array(
 				array(
-					"field" => 'ca_objects.prix',
-					"post-treatment" => 'convertcurrencytoeuros',
-					"prefixe" => "Prix : <b>",
-					"suffixe" => "</b><br/>"
-				), //OK
-				array(
-					"field" => 'ca_objects.mentionConcours',
-					"prefixe" => "Mention des concours publics : <b>",
+					"field" => 'ca_objects.date_ref_actefinDepot',
+					"prefixe" => "Date et référence de l'acte de fin du dépôt : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
@@ -387,12 +366,13 @@ return array(
 						"suffixe" => "</b><br/>"
 				)
 			),
-		),
+		), 
+		// Correspondance des champs pour l'import dans les BIENS DEPOSES 
 		'depot' => array(
 			"numinv" => array(
 				array(
 					"field" => 'ca_objects.idno',
-					"prefixe" => "Numéro d'inventaire : <b>",
+					"prefixe" => "Numéro de dépôt : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
