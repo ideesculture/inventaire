@@ -549,13 +549,13 @@ class InventaireTable extends AbstractTableGateway
 				
 				switch($data[0]) {
 					case "ca_entities" :
-						$entities = $t_object->getRelatedItems("ca_entities",array("restrictToRelationshipTypes"=>$attribute["relationshipTypeId"]));
+						$entities = $t_object->getRelatedItems("ca_entities",array("restrictToRelationshipTypes"=>$attribute["relationshipTypes"]));
 						foreach($entities as $entity) {
 							$response = ($response ? $response.", " : "").$entity["displayname"];
 						}
 						break;
 					case "ca_places" :
-						$places = $t_object->getRelatedItems("ca_places",array("restrictToRelationshipTypes"=>$attribute["relationshipTypeId"]));
+						$places = $t_object->getRelatedItems("ca_places",array("restrictToRelationshipTypes"=>$attribute["relationshipTypes"]));
 						foreach($places as $place) {
 							$response = ($response ? $response.", " : "").$place["displayname"];
 						}
