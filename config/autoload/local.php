@@ -54,59 +54,50 @@ return array(
 			),
 			"numinv" => array(
 				array(
-					"field" => 'ca_objects.otherNumber',
+					"field" => 'ca_objects.otherNumber.objectNo',
 					"prefixe" => "Numéro d'inventaire dans les collections du déposant : <b>",
-					"suffixe" => "</b><br/>"
+					"suffixe" => "</b><br/>",
 				)
 			),
 			"actedepot" => array(
 				array(
-					"field" => 'ca_objects.date_ref_acteDepot',
-					"prefixe" => "Date et référence de l'acte de dépôt : <b>",
+					"field" => 'ca_objects.date_ref_acteDepot.date_acteDepot',
+					"post-treatment" => 'caDateToUnixTimestamp',
+					"prefixe" => "Date de l'acte de dépôt : <b>",
+					"suffixe" => "</b><br/>"
+				),
+				array(
+					"field" => 'ca_objects.date_ref_acteDepot.ref_acteDepot',
+					"prefixe" => "Référence de l'acte de dépôt : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
 			'date_priseencharge'=>array(  
 				array(
-					"field" => 'ca_objects.date_ref_acteAcquisition.date_acteAcquisition',
+					"field" => 'ca_objects.date_priseencharge_bien',
 					"post-treatment" => 'caDateToUnixTimestamp',
-					"prefixe" => "Date de l'acte d'acquisition : <b>",
-					"suffixe" => "</b><br/>"
-				),
-				array(
-					"field" => 'ca_objects.date_ref_acteAcquisition.ref_acteAcquisition',
-					"prefixe" => "Référence de l'acte d'acquisition : <b>",
-					"suffixe" => "</b><br/>"
-				),
-				array(
-					"field" => 'date_affectation',
-					"prefixe" => "Date d'affectation au musée : <b>",
-					"post-treatment" => 'caDateToUnixTimestamp',
+					"prefixe" => "Date de prise en charge du bien : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
 			'proprietaire'=>array(
 				array(
 					"field" => 'ca_entities.displayname',
-					"relationshipTypeId" => "116", // donateur
-					"prefixe" => "Donateur : <b>",
-					"suffixe" => "</b><br/>"
-				), array(
-					"field" => 'ca_entities.displayname',
-					"relationshipTypeId" => "117", // testateur
-					"prefixe" => "Testateur : <b>",
-					"suffixe" => "</b><br/>"
-				), array(
-					"field" => 'ca_entities.displayname',
-					"relationshipTypeId" => "118", // vendeur
-					"prefixe" => "Vendeur : <b>",
+					"relationshipTypes" => "origine_proprietaire", // propriétaire
+					"prefixe" => "Propriétaire : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			), 
 			"actefindepot" => array(
 				array(
-					"field" => 'ca_objects.date_ref_actefinDepot',
-					"prefixe" => "Date et référence de l'acte de fin du dépôt : <b>",
+					"field" => 'ca_objects.date_ref_actefinDepot.date_actefinDepot',
+					"post-treatment" => 'caDateToUnixTimestamp',
+					"prefixe" => "Date de l'acte de fin de dépôt : <b>",
+					"suffixe" => "</b><br/>"
+				),
+				array(
+					"field" => 'ca_objects.date_ref_actefinDepot.ref_actefinDepot',
+					"prefixe" => "Référence de l'acte de fin de dépôt : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
@@ -166,27 +157,27 @@ return array(
 			),				
 			'inscription'=>array( //A TESTER
 				array(
-						"field" => 'ca_objects.inscription_type',
+						"field" => 'ca_objects.inscription_c.inscription_type',
 						"prefixe" => "Type d'inscriptions ou de marque : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
-						"field" => 'ca_objects.inscription_c.inscription_info_c.inscription_txt_c.inscription_txt',
+						"field" => 'ca_objects.inscription_c.inscription_txt',
 						"prefixe" => "Transcription de l'inscription : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
-						"field" => 'ca_objects.inscription_c.inscription_info_c.inscription_langue_c.inscription_langue',
+						"field" => 'ca_objects.inscription_c.inscription_langue',
 						"prefixe" => "Langue : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
-						"field" => 'ca_objects.inscription_c.inscription_info_c.inscription_alphabet_c.inscription_alphabet',
+						"field" => 'ca_objects.inscription_c.inscription_alphabet',
 						"prefixe" => "Alphabet : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
-						"field" => 'ca_objects.inscription_c.inscription_info_c.inscription_emplacement_c.inscription_emplacement',
+						"field" => 'ca_objects.inscription_c.inscription_emplacement',
 						"prefixe" => "Emplacement de l'inscription : <b>",
 						"suffixe" => "</b><br/>"
 				),
@@ -233,19 +224,19 @@ return array(
 				// COLONNE 14
 				array(
 						"field" => 'ca_entities.preferred_labels',
-						"relationshipTypeId" => "115", // auteur
+						"relationshipTypes" => "creation_auteur", // auteur
 						"prefixe" => "Auteur : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_entities.preferred_labels',
-						"relationshipTypeId" => "215", // auteur
+						"relationshipTypes" => "executant", 
 						"prefixe" => "Exécutant : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_entities.preferred_labels',
-						"relationshipTypeId" => "96", // auteur
+						"relationshipTypes" => "origine_collector", 
 						"prefixe" => "Collecteur : <b>",
 						"suffixe" => "</b><br/>"
 				),				
@@ -258,7 +249,7 @@ return array(
 			'auteur_display'=>array(
 				array(
 						"field" => 'ca_entities.preferred_labels',
-						"relationshipTypeId" => "115" // auteur
+						"relationshipTypes" => "creation_auteur"
 				)
 			),
 			'epoque'=>array(
@@ -302,9 +293,9 @@ return array(
 			'provenance'=>array( 
 				// COLONNE 17
 				array(
-						"field" => 'ca_places.preferred_labels',
-						"relationshipTypeId" => "122", // auteur
-						"prefixe" => "Lieux de création ou d'éxécution : <b>",
+						"field" => 'ca_places.name',
+						"relationshipTypes" => "created",
+						"prefixe" => "Lieux de création ou d'exécution : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
@@ -313,14 +304,14 @@ return array(
 						"suffixe" => "</b><br/>"
 				),
 				array(
-						"field" => 'ca_places.preferred_labels',
-						"relationshipTypeId" => "133", // auteur
+						"field" => 'ca_places.name',
+						"relationshipTypes" => "utilisation",
 						"prefixe" => "Lieux d'utilisation ou de destination : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
-						"field" => 'ca_places.preferred_labels',
-						"relationshipTypeId" => "132", // auteur
+						"field" => 'ca_places.name',
+						"relationshipTypes" => "decouverte",
 						"prefixe" => "Lieu de découverte, collecte, récolte : <b>",
 						"suffixe" => "</b><br/>"
 				)
@@ -336,11 +327,6 @@ return array(
 				array(
 						"field" => 'ca_objects.anciennes_appartenances',
 						"prefixe" => "Utilisateur illustre, premier et dernier propriétaire : <b>",
-						"suffixe" => "</b><br/>"
-				),
-				array(
-						"field" => 'ca_objects.otherNumber',
-						"prefixe" => "Ancien ou autre numéro d'inventaire : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
@@ -396,17 +382,17 @@ return array(
 			'donateur'=>array(
 				array(
 					"field" => 'ca_entities.displayname',
-					"relationshipTypeId" => "116", // donateur
+					"relationshipTypes" => "origine_donateur", // donateur
 					"prefixe" => "Donateur : <b>",
 					"suffixe" => "</b><br/>"
 				), array(
 					"field" => 'ca_entities.displayname',
-					"relationshipTypeId" => "117", // testateur
+					"relationshipTypes" => "origine_testateur", // testateur
 					"prefixe" => "Testateur : <b>",
 					"suffixe" => "</b><br/>"
 				), array(
 					"field" => 'ca_entities.displayname',
-					"relationshipTypeId" => "118", // vendeur
+					"relationshipTypes" => "origine_vendeur", // vendeur
 					"prefixe" => "Vendeur : <b>",
 					"suffixe" => "</b><br/>"
 				)
@@ -589,19 +575,19 @@ return array(
 				// COLONNE 14
 				array(
 						"field" => 'ca_entities.preferred_labels',
-						"relationshipTypeId" => "115", // auteur
+						"relationshipTypes" => "creation_auteur", // auteur
 						"prefixe" => "Auteur : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_entities.preferred_labels',
-						"relationshipTypeId" => "215", // auteur
+						"relationshipTypes" => "executant", 
 						"prefixe" => "Exécutant : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_entities.preferred_labels',
-						"relationshipTypeId" => "96", // auteur
+						"relationshipTypes" => "origine_collector",
 						"prefixe" => "Collecteur : <b>",
 						"suffixe" => "</b><br/>"
 				),				
@@ -614,7 +600,7 @@ return array(
 			'auteur_display'=>array(
 				array(
 						"field" => 'ca_entities.preferred_labels',
-						"relationshipTypeId" => "115" // auteur
+						"relationshipTypes" => "creation_auteur" // auteur
 				)
 			),
 			'epoque'=>array(
@@ -659,7 +645,7 @@ return array(
 				// COLONNE 17
 				array(
 						"field" => 'ca_places.preferred_labels',
-						"relationshipTypeId" => "122", // auteur
+						"relationshipTypes" => "created",
 						"prefixe" => "Lieux de création ou d'éxécution : <b>",
 						"suffixe" => "</b><br/>"
 				),
@@ -670,13 +656,13 @@ return array(
 				),
 				array(
 						"field" => 'ca_places.preferred_labels',
-						"relationshipTypeId" => "133", // auteur
+						"relationshipTypes" => "utilisation",
 						"prefixe" => "Lieux d'utilisation ou de destination : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_places.preferred_labels',
-						"relationshipTypeId" => "132", // auteur
+						"relationshipTypes" => "decouverte",
 						"prefixe" => "Lieu de découverte, collecte, récolte : <b>",
 						"suffixe" => "</b><br/>"
 				)

@@ -305,8 +305,8 @@ class InventaireTable extends AbstractTableGateway
 				'date_acquisition' => $inventaire->date_acquisition,//4
 				'avis' => $inventaire->avis,//5
 				'prix' => $inventaire->prix,//6
-				'date_inscription' => $inventaire->date_inscription,//7
-				'date_inscription_display' => $inventaire->date_inscription_display,//7
+				'date_inscription' => "",
+				'date_inscription_display' => "",//7
 				'inscription' => $inventaire->inscription,//9
 				'materiaux' => $inventaire->materiaux,//10
 				'techniques' => $inventaire->techniques,//11
@@ -494,6 +494,16 @@ class InventaireTable extends AbstractTableGateway
 			array("validated" => 1),
 			// where
 			"id = $id");
+		$this->update(
+			// set
+			array("date_inscription" => date("Y/m/d")),
+			// where
+			"id = $id");
+		$this->update(
+			// set
+			array("date_inscription_display" => date("Y/m/d")),
+			// where
+			"id = $id");
 	}	
 	
 	public function unvalidateInventaire(Inventaire $inventaire)
@@ -504,6 +514,17 @@ class InventaireTable extends AbstractTableGateway
 			array("validated" => 0),
 			// where
 			"id = $id");
+		$this->update(
+			// set
+			array("date_inscription" => null),
+			// where
+			"id = $id");
+		$this->update(
+			// set
+			array("date_inscription_display" => null),
+			// where
+			"id = $id");
+			
 	}	
 	
 	public function deleteInventaire($id)
@@ -557,7 +578,7 @@ class InventaireTable extends AbstractTableGateway
 					case "ca_places" :
 						$places = $t_object->getRelatedItems("ca_places",array("restrictToRelationshipTypes"=>$attribute["relationshipTypes"]));
 						foreach($places as $place) {
-							$response = ($response ? $response.", " : "").$place["displayname"];
+							$response = ($response ? $response.", " : "").$place["name"];
 						}
 						break;
 					case "ca_objects" :
