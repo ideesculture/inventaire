@@ -32,6 +32,7 @@ return array(
 		'url' => 'http://url.domain/path'
 	),*/
 		
+		
 	'ca_import_mapping' => array(
 		// Correspondance des champs pour l'import dans les BIENS DEPOSES
 		'depot' => array(
@@ -57,6 +58,7 @@ return array(
 					"field" => 'ca_objects.otherNumber.objectNo',
 					"prefixe" => "Numéro d'inventaire dans les collections du déposant : <b>",
 					"suffixe" => "</b><br/>",
+					"options" => array("template" => '^objectNo')
 				)
 			),
 			"actedepot" => array(
@@ -133,13 +135,13 @@ return array(
 				),
 				array(
 						"field" => 'ca_objects.nonpreferred_labels',
-						"otherLabelTypeId" => "25589", // donateur
+						"otherLabelTypeId" => "53", 
 						"prefixe" => "Appellation : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.nonpreferred_labels',
-						"otherLabelTypeId" => "25663", // donateur
+						"otherLabelTypeId" => "54", 
 						"prefixe" => "Dénomination : <b>",
 						"suffixe" => "</b><br/>"
 				)
@@ -190,19 +192,10 @@ return array(
 			'materiaux'=>array( 
 				// COLONNE 10
 				array(
-						"field" => 'ca_objects.materiaux_tech_c.materiaux',
-						"prefixe" => "Matériaux : <b>",
+						"field" => 'ca_objects.materiaux_tech_c',
+						"prefixe" => "Matériaux/techniques : <b>",
 						"suffixe" => "</b><br/>"
 				)
-			),
-			'techniques'=>array( 
-				// COLONNE 11
-				array(
-						"field" => 'ca_objects.materiaux_tech_c.techniques',
-						"prefixe" => "Techniques : <b>",
-						"suffixe" => "</b><br/>"
-				)
-
 			),
 			'mesures'=>array(
 				// COLONNE 12
@@ -484,13 +477,13 @@ return array(
 				),
 				array(
 						"field" => 'ca_objects.nonpreferred_labels',
-						"otherLabelTypeId" => "25589", // donateur
+						"otherLabelTypeId" => "53", 
 						"prefixe" => "Appellation : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.nonpreferred_labels',
-						"otherLabelTypeId" => "25663", // donateur
+						"otherLabelTypeId" => "54", 
 						"prefixe" => "Dénomination : <b>",
 						"suffixe" => "</b><br/>"
 				)
@@ -506,29 +499,29 @@ return array(
 						"field" => 'ca_objects.preferred_labels'
 				)
 			),				
-			'inscription'=>array( //A TESTER
+			'inscription'=>array(
 				array(
-						"field" => 'ca_objects.inscription_type',
+						"field" => 'ca_objects.inscription_c.inscription_type',
 						"prefixe" => "Type d'inscriptions ou de marque : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
-						"field" => 'ca_objects.inscription_c.inscription_info_c.inscription_txt_c.inscription_txt',
+						"field" => 'ca_objects.inscription_c.inscription_txt',
 						"prefixe" => "Transcription de l'inscription : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
-						"field" => 'ca_objects.inscription_c.inscription_info_c.inscription_langue_c.inscription_langue',
+						"field" => 'ca_objects.inscription_c.inscription_langue',
 						"prefixe" => "Langue : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
-						"field" => 'ca_objects.inscription_c.inscription_info_c.inscription_alphabet_c.inscription_alphabet',
+						"field" => 'ca_objects.inscription_c.inscription_alphabet',
 						"prefixe" => "Alphabet : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
-						"field" => 'ca_objects.inscription_c.inscription_info_c.inscription_emplacement_c.inscription_emplacement',
+						"field" => 'ca_objects.inscription_c.inscription_emplacement',
 						"prefixe" => "Emplacement de l'inscription : <b>",
 						"suffixe" => "</b><br/>"
 				),
@@ -541,19 +534,10 @@ return array(
 			'materiaux'=>array( 
 				// COLONNE 10
 				array(
-						"field" => 'ca_objects.materiaux_tech_c.materiaux',
-						"prefixe" => "Matériaux : <b>",
+						"field" => 'ca_objects.materiaux_tech_c',
+						"prefixe" => "Matériaux/techniques : <b>",
 						"suffixe" => "</b><br/>"
 				)
-			),
-			'techniques'=>array( 
-				// COLONNE 11
-				array(
-						"field" => 'ca_objects.materiaux_tech_c.techniques',
-						"prefixe" => "Techniques : <b>",
-						"suffixe" => "</b><br/>"
-				)
-
 			),
 			'mesures'=>array(
 				// COLONNE 12

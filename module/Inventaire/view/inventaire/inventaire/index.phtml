@@ -127,7 +127,7 @@ if (isset($filtre["designation"]) || isset($filtre["numinv"])) {
 						<?php endif; ?>
 						<?php if (($config_ca_direct["url"]) && ($inventaire->ca_id)) :?>
 							<a  class="btn btn-success btn-small" 
-							href="<?php echo $config_ca_direct["url"]."/index.php/editor/objects/ObjectEditor/Summary/object_id/".$inventaire->ca_id; ?>" 
+							href="<?php echo $config_ca_direct["url"]; ?>/index.php/editor/objects/ObjectEditor/Summary/object_id/<?php print $inventaire->ca_id; ?>" 
 							title="Modifier dans CA"><i class="icon-share icon-white"></i></a>
 						<?php else : ?>
 							<a  class="btn disabled btn-small" title="Modifier dans CA"><i class="icon-ok icon-white"></i></a>
@@ -172,7 +172,7 @@ if($auth["logged"]) {
 		<a class="btn btn-success" href="<?php echo $this->url('inventaire',array('action'=>'updateSet'));?>">
 			<i class="icon-circle-arrow-down icon-white icon-large"></i> Importer/mettre à jour un ensemble</a>
 		<a class="btn btn-success" href="<?php echo $this->url('inventaire', array('action'=>'listingExportPdf'));?>"><i class="icon-book icon-white icon-large"></i> Générer le PDF</a>
-		<a class="btn btn-info" href="<?php echo $this->url('photo', array('action'=>'index'));?>"><i class="icon-camera icon-white icon-large"></i> Afficher les photos</a>
+		<a class="btn btn-info" href="<?php echo $this->url('inventaire_photo', array('action'=>'index'));?>"><i class="icon-camera icon-white icon-large"></i> Afficher les photos</a>
 		</div>
 	</div><!--
 	<div class="span6">

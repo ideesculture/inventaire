@@ -326,9 +326,6 @@ class DepotController extends AbstractActionController
 
             if ($del == 'Yes') {
                 $id = (int) $request->getPost('id');
-                
-                // Si le dépôt a une photo définie, supprimer la photo avant de supprimer le dépôt de l'inventaire
-                $this->getPhotoTable()->deletePhotoByDepotId($id);
                 $this->getDepotTable()->deleteDepot($id);
             }
 
@@ -496,7 +493,6 @@ class DepotController extends AbstractActionController
 			} else {
 				// sinon pas validé, on met à jour
 				$result_import=$this->getDepotTable()->caDirectImportObject($ca_id, $config_import, $id);
-				$result_photo_import=$this->getPhotoTable()->caDirectUpdatePhoto($ca_id, $result_import["id"], $config_import);
 			}
 		} else {
 			//sinon pas présent, on importe
@@ -506,7 +502,7 @@ class DepotController extends AbstractActionController
 			if(isset($result_import["id"])) {
 				$id = $result_import["id"];
 				$depot = $this->getDepotTable()->getDepot($id);
-				$result_photo_import=$this->getPhotoTable()->caDirectUpdatePhoto($ca_id, $result_import["id"], $config_import);
+				$result_photo_import=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_import["id"], $config_import);
 			} else {
 				$result_photo_import="not imported";
 				$return = new ViewModel();
@@ -589,7 +585,7 @@ class DepotController extends AbstractActionController
 				} else {
 					// sinon pas validé, on met à jour
 					$result_imports[$ca_id]=$this->getDepotTable()->caDirectImportObject($ca_id, $config_import, $id);
-					$result_photo_imports[$ca_id]=$this->getPhotoTable()->caDirectUpdatePhoto($ca_id, $result_imports[$ca_id]["id"], $config_import);
+					$result_photo_imports[$ca_id]["error"]="ignoré, objet déjà présent dans l'depot";
 				}
 			} else {
 				//sinon pas présent, on importe
@@ -597,7 +593,7 @@ class DepotController extends AbstractActionController
 				
 				if(isset($result_imports[$ca_id]["id"])) {
 					$id = $result_imports[$ca_id]["id"];
-					$result_photo_imports[$ca_id]=$this->getPhotoTable()->caDirectUpdatePhoto($ca_id, $result_imports[$ca_id]["id"], $config_import);
+					$result_photo_imports[$ca_id]=$this->getPhotoTable()->caDirectImportPhoto($ca_id, $result_imports[$ca_id]["id"], $config_import);
 				} else {
 					$result_photo_imports[$ca_id]["error"]="problème d'import";
 				}

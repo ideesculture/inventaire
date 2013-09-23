@@ -64,6 +64,20 @@ return array(
                     ),
                 ),
             ),
+             'depot_photo' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'    => '/depot_photo[/:action][/:inventaire_id]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'inventaire_id'     => '[0-9]+',
+                     ),
+                    'defaults' => array(
+                        'controller' => 'Depot\Controller\Photo',
+                        'action'     => 'add',
+                    ),
+                ),
+            ),            
         ),
     ),
     

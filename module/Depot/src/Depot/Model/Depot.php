@@ -47,8 +47,7 @@ class Depot implements InputFilterAwareInterface
 	public $designation;//8
 	public $designation_display;
 	public $inscription;//9
-	public $materiaux;//10
-	public $techniques;//11
+	public $materiaux;//10 et 11 (matériaux et techniques)
 	public $mesures;//12
 	public $etat;//13
 	
@@ -91,7 +90,6 @@ class Depot implements InputFilterAwareInterface
 		$this->designation_display  = (isset($data['designation_display'])) ? $data['designation_display'] : null;//8
 		$this->inscription = (isset($data['inscription'])) ? $data['inscription'] : null;//9
 		$this->materiaux = (isset($data['materiaux'])) ? $data['materiaux'] : null;//10
-		$this->techniques = (isset($data['techniques'])) ? $data['techniques'] : null;//11
 		$this->mesures = (isset($data['mesures'])) ? $data['mesures'] : null;//12
 		$this->etat = (isset($data['etat'])) ? $data['etat'] : null;//13
 		$this->auteur = (isset($data['auteur'])) ? $data['auteur'] : null;//14 

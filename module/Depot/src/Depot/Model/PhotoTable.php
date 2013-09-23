@@ -48,7 +48,7 @@ class PhotoTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('depot_depot', 'depot_photo.depot_id = depot_depot.id');
+		->join('inventaire_depot', 'inventaire_depot_photo.depot_id = inventaire_depot.id');
 				
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();
@@ -66,7 +66,7 @@ class PhotoTable extends AbstractTableGateway
 		$sql = new Sql($this->adapter);
 		$select = $sql->select();
 		$select->from($this->table)
-		->join('depot_depot', 'depot_photo.depot_id = depot_depot.id');
+		->join('inventaire_depot', 'inventaire_depot_photo.depot_id = inventaire_depot.id');
 				
 		//you can check your query by echo-ing :
 		//echo $select->getSqlString();
@@ -104,7 +104,7 @@ class PhotoTable extends AbstractTableGateway
         $sql = new Sql($this->adapter);
         $select = $sql->select();
         $select->from($this->table)
-              ->join('depot_depot', 'depot_photo.depot_id = depot_depot.id');
+		->join('inventaire_depot', 'inventaire_depot_photo.depot_id = inventaire_depot.id');
 
         $where = new  Where();
         $where->equalTo('depot_id', $id) ;
@@ -201,7 +201,7 @@ class PhotoTable extends AbstractTableGateway
 	}
 
 	
-	public function caDirectUpdatePhoto($ca_id, $depot_id, array $caDirectConfig)
+	public function caDirectImportPhoto($ca_id, $depot_id, array $caDirectConfig)
 	{
 		$return = array();
 		
@@ -231,20 +231,15 @@ class PhotoTable extends AbstractTableGateway
 			}
 		} else {
 			// no media defined
-			$return["error"]="Pas de représentation définie par défaut";
+			$return["error"]="Pas de représentation primaire";
 			return $return;
 		}
-		
+
 		$file = basename($media["paths"]["large"]);
 		$return["file"] = $file;
 		
-		if ($photo = $this->getPhotoByInventaireId($inventaire_id)) {
-			$photo->credits="";
-			$photo->file=$file;
-		} else {
-			$photo = new Photo();
-			$photo->exchangeArray(array("id" => 0, "inventaire_id" => $inventaire_id,  "credits" => "", "file" => $file));
-		}
+		$photo = new Photo();
+		$photo->exchangeArray(array("id" => 0, "depot_id" => $depot_id,  "credits" => "", "file" => $file));
 		// saving photo info into database
 		$return["saved"] = $this->savePhoto($photo);
 		return $return;

@@ -309,7 +309,6 @@ class InventaireTable extends AbstractTableGateway
 				'date_inscription_display' => "",//7
 				'inscription' => $inventaire->inscription,//9
 				'materiaux' => $inventaire->materiaux,//10
-				'techniques' => $inventaire->techniques,//11
 				'mesures' => $inventaire->mesures,//12
 				'etat' => $inventaire->etat,//13
 				'auteur'  => $inventaire->auteur,//14
@@ -397,8 +396,7 @@ class InventaireTable extends AbstractTableGateway
 				"date_inscription",     //7
 				"designation",     //8
 				"inscription",     //9
-				"materiaux",     //10
-				"techniques",     //11
+				"materiaux",     //10 et 11
 				"mesures",     //12
 				"etat",     //13
 				"auteur",     //14
@@ -421,8 +419,7 @@ class InventaireTable extends AbstractTableGateway
 				"date_inscription",     //7
 				"designation",     //8
 				"inscription",     //9
-				"materiaux",     //10
-				"techniques",     //11
+				"materiaux",     //10 et 11
 				"mesures",     //12
 				"etat"     //13
 		);
@@ -448,8 +445,7 @@ class InventaireTable extends AbstractTableGateway
 				"date_inscription" => "Date d'inscription",     //7
 				"designation" => "Désignation",     //8
 				"inscription" => "Inscription",     //9
-				"materiaux" => "Matériaux",     //10
-				"techniques" => "Techniques",     //11
+				"materiaux" => "Matériaux",     //10 et 11
 				"mesures" => "Mesures",     //12
 				"etat" => "Etat",     //13
 				"auteur" => "Auteur",     //14
@@ -583,41 +579,57 @@ class InventaireTable extends AbstractTableGateway
 						break;
 					case "ca_objects" :
 					default:
-						// GESTION DES OPTIONS POUR LE get()
-						$options = array("convertCodesToDisplayText"=>"true", "locale"=>$locale_id);
-						if ($attribute["options"]) $options = array_merge($options,$attribute["options"]);
-						// RECUPERATION DU CHAMP POUR L'AFFICHAGE
-						
-						$response = $t_object->get($field, $options);
-
-						// POST-TRAITEMENT
-						if (($attribute["post-treatment"]) && ($response)) {
-							switch($attribute["post-treatment"]) {
-								// Conversion monétaire
-								case 'convertcurrencytoeuros' :
-									if ($response) {
-										preg_match('/([[:graph:]]*) ([[:graph:]]*)/i',$response, $matches);
-										if ($matches[1] != "EUR") {
-											$conversionresult = $this->convertcurrency($matches[1], "EUR", $matches[2]);
-											if($conversionresult) {
-												$response=$conversionresult;
+						if ($field != "ca_objects.nonpreferred_labels") {
+							// GESTION DES OPTIONS POUR LE get()
+							$options = array("convertCodesToDisplayText"=>"true", "locale"=>$locale_id);
+							if ($attribute["options"]) $options = array_merge($options,$attribute["options"]);
+							// RECUPERATION DU CHAMP POUR L'AFFICHAGE
+							
+							$response = $t_object->get($field, $options);
+	
+							// POST-TRAITEMENT
+							if (($attribute["post-treatment"]) && ($response)) {
+								switch($attribute["post-treatment"]) {
+									// Conversion monétaire
+									case 'convertcurrencytoeuros' :
+										if ($response) {
+											preg_match('/([[:graph:]]*) ([[:graph:]]*)/i',$response, $matches);
+											if ($matches[1] != "EUR") {
+												$conversionresult = $this->convertcurrency($matches[1], "EUR", $matches[2]);
+												if($conversionresult) {
+													$response=$conversionresult;
+												} else {
+													throw new \Exception("Erreur dans la conversion de devise de ".$response." en euros ($response).");
+												}
 											} else {
-												throw new \Exception("Erreur dans la conversion de devise de ".$response." en euros ($response).");
+												$response = $matches[2];
 											}
-										} else {
-											$response = $matches[2];
+											// Remplacement du point par la virgule
+											$response = str_replace(".", ",",$response)." €";
 										}
-										// Remplacement du point par la virgule
-										$response = str_replace(".", ",",$response)." €";
+										break;
+										// Conversion vers une date au format JJ/MM/AAAA
+									case 'caDateToUnixTimestamp' :
+										$response = date('Y/m/d',caDateToUnixTimestamp($response));
+										break;
+										// Post-traitement non reconnu
+									default :
+										throw new \Exception("Post-traitement non reconnu : ".$attribute["post-treatment"]);
+								}
+							}
+						} else {
+							// non preferred_labels
+							$nonpreferred_labels = $t_object->get('ca_objects.nonpreferred_labels', array('returnAsArray' => true));
+							if (sizeof($nonpreferred_labels)>0) { $nonpreferred_labels = reset($nonpreferred_labels); }
+							//var_dump($attribute["otherLabelTypeId"]);
+							//var_dump($nonpreferred_labels);
+							//die();
+							if (sizeof($nonpreferred_labels)>0) {
+								foreach($nonpreferred_labels as $nonpreferred_label) {
+									if ($nonpreferred_label["type_id"] == $attribute["otherLabelTypeId"]) {
+										$response .= ($response ? ", ": "").$nonpreferred_label["name"];
 									}
-									break;
-									// Conversion vers une date au format JJ/MM/AAAA
-								case 'caDateToUnixTimestamp' :
-									$response = date('Y/m/d',caDateToUnixTimestamp($response));
-									break;
-									// Post-traitement non reconnu
-								default :
-									throw new \Exception("Post-traitement non reconnu : ".$attribute["post-treatment"]);
+								}
 							}
 						}
 						break;
@@ -627,6 +639,7 @@ class InventaireTable extends AbstractTableGateway
 			// DEFINITION DE L'ATTRIBUT
 			$inventaire->$target = !$response_global ? "non renseigné" : $response_global;
 		}
+		//var_dump($inventaire);die();
 		if (!$inventaire->numinv) {
 			return new \Exception("Objet $ca_id sans numéro d'inventaire");
 		}

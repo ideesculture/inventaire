@@ -64,6 +64,20 @@ return array(
                     ),
                 ),
             ),
+             'inventaire_photo' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'    => '/inventaire_photo[/:action][/:inventaire_id]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'inventaire_id'     => '[0-9]+',
+                     ),
+                    'defaults' => array(
+                        'controller' => 'Inventaire\Controller\Photo',
+                        'action'     => 'add',
+                    ),
+                ),
+            ),
         ),
     ),
     
