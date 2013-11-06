@@ -359,7 +359,7 @@ class DepotTable extends AbstractTableGateway
 	 */
 	public function checkCaAllowedType($ca_id,$caDirectConfig=array())
 	{
-		$authorized_types = array("dep","dep_art","dep_other","dep_costume","dep_ethno","dep_archeo","dep_nat","dep_techno");
+		$authorized_types = array("dep","dep_art","dep_other","dep_costume","dep_ethno","dep_archeo","dep_nat","dep_techno","dep_peinture");
 		
 		if(!$caDirectConfig) {
 			throw new \Exception("Informations de connexions à CollectiveAccess manquantes");
@@ -447,7 +447,7 @@ class DepotTable extends AbstractTableGateway
 			"actefindepot" => "Acte de fin de dépôt",//6
 			"date_inscription" => "Date d'inscription",//7
 			"designation" => "Désignation",     //8
-			"inscription" => "Inscription",     //9
+			"inscription" => "Marques et inscriptions",     //9
 			"materiaux" => "Matériaux/Techniques",     //10
 			"mesures" => "Mesures",     //12
 			"etat" => "Etat",     //13

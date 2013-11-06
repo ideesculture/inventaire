@@ -14,12 +14,18 @@ if (!isset($titre)) $titre = 'Mon inventaire';
 body {font:10pt helvetica;}
 h1, h2, h3, h4 {font-family:helvetica;}
 p {margin:0 0 3 0;}
-.photo {display:block;float:left;}
-.label {background:#f0f0f0;color:#555555;font-size: 7pt;width:85pt;}
 table.table-content {
 	width:100%;
 }
-.content {font-size: 8pt;}
+thead, th {
+	font-weight: normal;
+	text-align: left;
+}
+td.photo {vertical-align: top;text-align: right;font-size: 8pt;width:130pt;}
+td.label {background:#f0f0f0;color:#555555;font-size: 7pt;width:85pt;text-align:right;text-transform:lowercase;padding:1pt 3pt 1pt 3pt;}
+td.content {font-size: 7pt; }
+td.content b {font-size: 8pt;font-weight: bold;}
+td.vrsp {background-color:blue;}
 .hero-unit{display:block;padding:3pt;margin:2pt;margin-bottom:10pt;border-bottom:1pt solid gray;}
 .hero-unit h1, .hero-unit h2, .hero-unit h3, .hero-unit h4 {margin:0px;line-height:0.8;letter-spacing:-1pt;}
 .hero-unit h1 {margin-bottom:6pt;font-size:25pt;}
@@ -44,6 +50,8 @@ table.table-content {
 .center {text-align:center;}
 .fin-impression {background:gray;text-align:right;color:white;font-size:7pt;}
 .page-break {page-break-before: always;}
+#footer {position: fixed; bottom:0;left:0;width:100%;height:2.2cm;padding: 0;margin-bottom:-3.5cm; margin-left: -1cm;margin-right: -1cm;background-color:#ffffff;z-index:10;} 
+#paraphe {position: fixed; bottom:0;left:0;border:1px solid gray;width:4.3cm;margin-bottom:-2cm;z-index:11;font:7pt helvetica;height:1.7cm;}
 </style>
 </head>
 <body>
@@ -53,35 +61,6 @@ table.table-content {
         $font = Font_Metrics::get_font("JosefinSans");
 		$mm2coords = 2.835;
         $pdf->page_text(194 * $mm2coords, 282 * $mm2coords, "{PAGE_NUM}/{PAGE_COUNT}", $font, 8, array(0,0,0));
-
-		$x = 28;
-		$y = 20;
-		$size = 8;
-		$font = Font_Metrics::get_font("JosefinSans");
-		$color = array(0,0,0);
-		$line_height = $pdf->get_font_height($font, $size) + 3;
-
-		$longtext = utf8_encode("L'application Inventaire est actuellement en cours de développement et vise à offrir un programme complémentaire à CollectiveAccess pour gérer l'inventaire des collections. Les recommandations du Service des Musées de France sont en cours d'implémentation dans ce programme. Pour toute information, merci de nous contacter par email à contact@ideesculture.com.");
-		$lines = array(
-			'Application Inventaire - <?php print $titre; ?>' 
-		);
-
-		$linetext = '';
-		while (strlen($longtext) > 0) {
-			while ($pdf->get_text_width($linetext, $font, $size) < (520-($x*2)) && strlen($longtext) > 0) {
-				if ($pdf->get_text_width($linetext . substr($longtext, 0, strpos($longtext, ' ')+1), $font, $size) > (520-($x*2))) { break; }
-				$linetext .= substr($longtext, 0, strpos($longtext, ' ')+1);
-				$longtext = substr($longtext, strpos($longtext, ' ')+1);
-			}
-			$lines[] = $linetext;
-			$linetext = '';
-		}
-
-		while ($line = array_shift($lines)) {
-			$line_y = 815 - $y - ( $line_height * count($lines));
-			// Note : $pdf->page_text envoie le texte sur toutes les pages, $pdf->text envoie le texte sur la page en cours
-			$pdf->page_text($x, $line_y, $line, $font, $size, $color);
-		}
 	}
 </script>
 <?php 
@@ -142,31 +121,43 @@ foreach ($inventaires as $inventaire) { ?>
 	<div class="hero-unit">
     	<div style="clear:both; position:relative;">
 				<table class="table-content">
-				<tr><td class="label">Numéro d'inventaire</td><td></td>
-				<?php if($inventaire->file != "") : ?>
-					<td class="label" rowspan="10">
-					<img src="<?php print $imagepath; ?>/files/assets/<?php print $inventaire->file; //1 ?>" style="width:120pt;">
-					</td></tr>
-				<?php $csimg = "colspan=\"2\""; 
-				endif; ?>
-				<tr><td colspan="2"><h4><?php print $inventaire->numinv_display; //1 ?></h4></td></tr>
-				<tr><td class="label">Désignation</td><td class="content"><?php print $inventaire->designation; //8?></td></tr>
+				<thead>
+					<tr>
+						<th>
+							<small>N° inventaire</small><br/><b><?php print $inventaire->numinv_display; //1 ?></b>
+						</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td class="label">Désignation</td>
+					<td class="content"><?php print $inventaire->designation; //8?></td>
+					<td class="photo" rowspan="6">
+						<?php print $inventaire->numinv_display; //1 ?><br/>
+						<?php if($inventaire->file) : ?>
+							<img src="<?php print $imagepath; ?>/files/assets/<?php print $inventaire->file; //1 ?>" style="width:120pt;">
+						<?php else : ?>
+							<img src="<?php print $imagepath; ?>/images/pas-de-vignette.jpg" style="width:120pt;">
+						<?php endif; ?>
+					</td>
+				</tr>
 				<tr><td class="label">Mode d'acquisition</td><td class="content"><?php print $inventaire->mode_acquisition; //2?></td></tr>
-				<tr><td class="label">Date d'acquisition</td><td class="content"><?php print $inventaire->date_acquisition; ?></td></tr>    		
-				<tr><td class="label">Donateur</td><td class="content"><?php print $inventaire->donateur; //3?></td></tr>
-				<tr><td class="label">Prix</td><td class="content"><?php print $inventaire->prix; //6 ?></td></tr>
-				<tr><td class="label">Avis</td><td class="content"><?php print $inventaire->avis; //5?></td></tr>
-				<tr><td class="label">Inscription</td><td class="content"><?php print $inventaire->inscription; //9?></td></tr>
-				<tr><td class="label">Date d'inscription</td><td class="content"><?php print $inventaire->date_inscription; //7 ?></td></tr> 
-				<tr><td class="label">Matériaux</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->materiaux; //10?></td></tr>
-				<tr><td class="label">Techniques</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->techniques; //11?></td></tr>
-				<tr><td class="label">Mesures</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->mesures; //12?></td></tr>
-				<tr><td class="label">Etat</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->etat; //13?></td></tr>
-				<tr><td class="label">Auteur</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->auteur; //14 ?></td></tr>
-				<tr><td class="label">Epoque</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->epoque; //15 ?></td></tr>
-				<tr><td class="label">Usage</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->usage; //16 ?></td></tr>
-				<tr><td class="label">Provenance</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->provenance; //17 ?></td></tr>
-				<tr><td class="label">Observations</td><td class="content" <?php print $csimg; ?>><?php print $inventaire->observations; //18 ?></td></tr>
+				<tr><td class="label">Nom du donateur, testateur ou vendeur</td><td class="content"><?php print $inventaire->donateur; //3?></td></tr>
+				<tr><td class="label">Date et références de l'acte d'acquisition et d'affectation au musée</td><td class="content"><?php print $inventaire->date_acquisition; ?></td></tr>    		
+				<tr><td class="label">Avis des instances scientifiques</td><td class="content"><?php print $inventaire->avis; //5?></td></tr>
+				<tr><td class="label">Prix d'achat - subvention publique</td><td class="content"><?php print $inventaire->prix; //6 ?></td></tr>
+				<tr><td class="label">Date d'inscription au registre d'inventaire</td><td class="content" colspan="2"><?php print $inventaire->date_inscription; //7 ?></td></tr> 
+				<tr><td class="label">Marques et inscriptions</td><td class="content" colspan="2"><?php print $inventaire->inscription; //9?></td></tr>
+				<tr><td class="label">Matériaux/Techniques</td><td class="content"  colspan="2"><?php print $inventaire->materiaux; //10?></td></tr>
+				<tr><td class="label">Mesures</td><td class="content" colspan="2"><?php print $inventaire->mesures; //12?></td></tr>
+				<tr><td class="label">Indications particulières sur l'état du bien au moment de l'acquisition</td><td class="content" colspan="2"><?php print $inventaire->etat; //13?></td></tr>
+				<tr><td class="label">Auteur, collecteur, fabricant, commanditaire...</td><td class="content" colspan="2"><?php print $inventaire->auteur; //14 ?></td></tr>
+				<tr><td class="label">Epoque, datation ou date de récolte</td><td class="content" colspan="2"><?php print $inventaire->epoque; //15 ?></td></tr>
+				<tr><td class="label">Fonction d'usage</td><td class="content" colspan="2"><?php print $inventaire->usage; //16 ?></td></tr>
+				<tr><td class="label">Provenance géographique</td><td class="content" colspan="2"><?php print $inventaire->provenance; //17 ?></td></tr>
+				<tr><td class="label">Observations</td><td class="content" colspan="2"><?php print $inventaire->observations; //18 ?></td></tr>
+				</tbody>
 				</table>
 		</div>
 	</div>
@@ -183,4 +174,9 @@ foreach ($inventaires as $inventaire) { ?>
 
 <div id="pages-libres-fin-registre">
 <?php include(__DIR__."/../../../../../public/files/editions/insertions-pdf-commun/pages-blanches-fin-registre.html"); ?>
+</div>
+<div id="footer">
+	<div id="paraphe">
+  	Paraphe du responsable scientifique
+  	</div>
 </div>

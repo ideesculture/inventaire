@@ -1,7 +1,7 @@
 <?php
 // module/Depot/view/depot/depot/validate.phtml:
 
-$title = "Inscrire à l'depot";
+$title = "Inscrire au registre des biens déposés";
 $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
@@ -32,7 +32,7 @@ $url = $this->url('depot', array(
 <form action="<?php echo $url; ?>" method="post">
 <div>
     <input type="hidden" name="id" value="<?php echo (int) $depot->id; ?>" />
-    <button class="btn btn-warning" type="submit" name="validate" value="Yes">Inscrire à l'depot</button>
+    <button class="btn btn-warning" type="submit" name="validate" value="Yes">Inscrire au registre des biens déposés</button>
     <button class="btn btn-info" type="submit" name="validate" value="No">Annuler</button>
 </div>
 </form>

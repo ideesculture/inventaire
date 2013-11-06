@@ -359,7 +359,7 @@ class InventaireTable extends AbstractTableGateway
 	 */
 	public function checkCaAllowedType($ca_id,$caDirectConfig=array())
 	{
-		$authorized_types = array("acq","acq_art","acq_other","acq_costume","acq_ethno","acq_archeo","acq_nat","acq_techno");
+		$authorized_types = array("acq","acq_art","acq_other","acq_costume","acq_ethno","acq_archeo","acq_nat","acq_techno","acq_peinture");
 	
 		if(!$caDirectConfig) {
 			throw new \Exception("Informations de connexions à CollectiveAccess manquantes");
@@ -440,11 +440,11 @@ class InventaireTable extends AbstractTableGateway
 				"mode_acquisition" => "Mode d'acquisition",     //2
 				"donateur" => "Donateur",     //3
 				"date_acquisition" => "Date d'acquisition",     //4
-				"avis" => "Avis",     //5
+				"avis" => "Avis des instances scientifiques",     //5
 				"prix" => "Prix",     //6
 				"date_inscription" => "Date d'inscription",     //7
 				"designation" => "Désignation",     //8
-				"inscription" => "Inscription",     //9
+				"inscription" => "Marques et inscriptions",     //9
 				"materiaux" => "Matériaux",     //10 et 11
 				"mesures" => "Mesures",     //12
 				"etat" => "Etat",     //13
@@ -492,7 +492,7 @@ class InventaireTable extends AbstractTableGateway
 			"id = $id");
 		$this->update(
 			// set
-			array("date_inscription" => date("Y/m/d")),
+			array("date_inscription" => "<b>".date("Y/m/d")."</b>"),
 			// where
 			"id = $id");
 		$this->update(
@@ -610,7 +610,7 @@ class InventaireTable extends AbstractTableGateway
 										break;
 										// Conversion vers une date au format JJ/MM/AAAA
 									case 'caDateToUnixTimestamp' :
-										$response = date('Y/m/d',caDateToUnixTimestamp($response));
+										$response = date('d/m/Y',caDateToUnixTimestamp($response));
 										break;
 										// Post-traitement non reconnu
 									default :

@@ -6,7 +6,7 @@
 // config/autoload/local.php:
 return array(
 
-	/* LOCAL */
+	/* LOCAL 
 	// Paramétrage de la connexion à la base de données
     'db' => array(
         'username' => 'inventaire',
@@ -17,9 +17,9 @@ return array(
 	'ca_direct' => array(
 		'path' => '/Sites/github/ideesculture_repo/musee',
 		'url' => 'http://musee.site'
-	),
+	),*/
     
-    /* DISTANT 	
+    /* DISTANT 	*/
 	// Paramétrage de la connexion à la base de données
     'db' => array(
         'username' => 'inventairemusee',
@@ -39,7 +39,7 @@ return array(
 			"numdepot" => array(
 				array(
 					"field" => 'ca_objects.idno',
-					"prefixe" => "Numéro de dépôt : <b>",
+					"prefixe" => "numéro de dépôt : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
@@ -56,7 +56,7 @@ return array(
 			"numinv" => array(
 				array(
 					"field" => 'ca_objects.otherNumber.objectNo',
-					"prefixe" => "Numéro d'inventaire dans les collections du déposant : <b>",
+					"prefixe" => "numéro d'inventaire dans les collections du déposant : <b>",
 					"suffixe" => "</b><br/>",
 					"options" => array("template" => '^objectNo')
 				)
@@ -65,12 +65,12 @@ return array(
 				array(
 					"field" => 'ca_objects.date_ref_acteDepot.date_acteDepot',
 					"post-treatment" => 'caDateToUnixTimestamp',
-					"prefixe" => "Date de l'acte de dépôt : <b>",
+					"prefixe" => "date de l'acte de dépôt : <b>",
 					"suffixe" => "</b><br/>"
 				),
 				array(
 					"field" => 'ca_objects.date_ref_acteDepot.ref_acteDepot',
-					"prefixe" => "Référence de l'acte de dépôt : <b>",
+					"prefixe" => "référence de l'acte de dépôt : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
@@ -78,7 +78,7 @@ return array(
 				array(
 					"field" => 'ca_objects.date_priseencharge_bien',
 					"post-treatment" => 'caDateToUnixTimestamp',
-					"prefixe" => "Date de prise en charge du bien : <b>",
+					"prefixe" => "date de prise en charge du bien : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
@@ -86,7 +86,7 @@ return array(
 				array(
 					"field" => 'ca_entities.displayname',
 					"relationshipTypes" => "origine_proprietaire", // propriétaire
-					"prefixe" => "Propriétaire : <b>",
+					"prefixe" => "propriétaire : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			), 
@@ -94,12 +94,12 @@ return array(
 				array(
 					"field" => 'ca_objects.date_ref_actefinDepot.date_actefinDepot',
 					"post-treatment" => 'caDateToUnixTimestamp',
-					"prefixe" => "Date de l'acte de fin de dépôt : <b>",
+					"prefixe" => "date de l'acte de fin de dépôt : <b>",
 					"suffixe" => "</b><br/>"
 				),
 				array(
 					"field" => 'ca_objects.date_ref_actefinDepot.ref_actefinDepot',
-					"prefixe" => "Référence de l'acte de fin de dépôt : <b>",
+					"prefixe" => "référence de l'acte de fin de dépôt : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
@@ -115,34 +115,34 @@ return array(
 				// COLONNE 8
 				array(
 						"field" => 'ca_objects.domaine',
-						"prefixe" => "Domaine (catégorie du bien) : <b>",
+						"prefixe" => "domaine (catégorie du bien) : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.preferred_labels',
-						"prefixe" => "Titre : <b>",
+						"prefixe" => "titre : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.element_decoratif_decor',
-						"prefixe" => "Représentation (décor porté) : <b>",
+						"prefixe" => "représentation (décor porté) : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.element_decoratif_precisions',
-						"prefixe" => "Précisions sur la représentation (décor porté) : <b>",
+						"prefixe" => "précisions sur la représentation (décor porté) : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.nonpreferred_labels',
 						"otherLabelTypeId" => "53", 
-						"prefixe" => "Appellation : <b>",
+						"prefixe" => "appellation : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.nonpreferred_labels',
 						"otherLabelTypeId" => "54", 
-						"prefixe" => "Dénomination : <b>",
+						"prefixe" => "dénomination : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),				
@@ -160,32 +160,32 @@ return array(
 			'inscription'=>array( //A TESTER
 				array(
 						"field" => 'ca_objects.inscription_c.inscription_type',
-						"prefixe" => "Type d'inscriptions ou de marque : <b>",
+						"prefixe" => "type d'inscriptions ou de marque : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.inscription_c.inscription_txt',
-						"prefixe" => "Transcription de l'inscription : <b>",
+						"prefixe" => "transcription de l'inscription : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.inscription_c.inscription_langue',
-						"prefixe" => "Langue : <b>",
+						"prefixe" => "langue : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.inscription_c.inscription_alphabet',
-						"prefixe" => "Alphabet : <b>",
+						"prefixe" => "alphabet : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.inscription_c.inscription_emplacement',
-						"prefixe" => "Emplacement de l'inscription : <b>",
+						"prefixe" => "emplacement de l'inscription : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.inscription_info_c',
-						"prefixe" => "Précisions : <b>",
+						"prefixe" => "précisions : <b>",
 						"suffixe" => "</b><br/>"
 				)				
 			),
@@ -193,7 +193,7 @@ return array(
 				// COLONNE 10
 				array(
 						"field" => 'ca_objects.materiaux_tech_c',
-						"prefixe" => "Matériaux/techniques : <b>",
+						"prefixe" => "matériaux/techniques : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -201,7 +201,7 @@ return array(
 				// COLONNE 12
 				array(
 						"field" => 'ca_objects.dimensions',
-						"prefixe" => "Dimensions : <b>",
+						"prefixe" => "dimensions : <b>",
 						"suffixe" => "</b><br/>"
 				)	
 			),
@@ -209,7 +209,13 @@ return array(
 				// COLONNE 13
 				array(
 						"field" => 'ca_objects.constatEtat.constat_etat',
-						"prefixe" => "Etat au moment de l'acquisition : <b>",
+						"prefixe" => "état au moment de l'acquisition : <b>",
+						"suffixe" => "</b><br/>"
+				),
+				array(
+						"field" => 'ca_objects.constatEtat.constat_date',
+						"post-treatment" => 'caDateToUnixTimestamp',
+						"prefixe" => "date du constat d'état : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -218,24 +224,24 @@ return array(
 				array(
 						"field" => 'ca_entities.preferred_labels',
 						"relationshipTypes" => "creation_auteur", // auteur
-						"prefixe" => "Auteur : <b>",
+						"prefixe" => "auteur : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_entities.preferred_labels',
 						"relationshipTypes" => "executant", 
-						"prefixe" => "Exécutant : <b>",
+						"prefixe" => "exécutant : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_entities.preferred_labels',
 						"relationshipTypes" => "origine_collector", 
-						"prefixe" => "Collecteur : <b>",
+						"prefixe" => "collecteur : <b>",
 						"suffixe" => "</b><br/>"
 				),				
 				array(
 						"field" => 'ca_objects.ecole',
-						"prefixe" => "Ecole : <b>",
+						"prefixe" => "école : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -249,24 +255,24 @@ return array(
 				// COLONNE 15
 				array(
 						"field" => 'ca_objects.datePeriod.datePeriod_datation',
-						"prefixe" => "Période : <b>",
+						"prefixe" => "période : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.epoque',
-						"prefixe" => "Epoque / style / mouvement : <b>",
+						"prefixe" => "époque / style / mouvement : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.dateMillesime',
 						"post-treatment" => 'caDateToUnixTimestamp',
-						"prefixe" => "Millésime : <b>",
+						"prefixe" => "millésime : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.useDate',
 						"post-treatment" => 'caDateToUnixTimestamp',
-						"prefixe" => "Date d'utilisation ou de découverte : <b>",
+						"prefixe" => "date d'utilisation ou de découverte : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -274,12 +280,12 @@ return array(
 				// COLONNE 16
 				array(
 						"field" => 'ca_objects.fonctions',
-						"prefixe" => "Fonction d'usage : <b>",
+						"prefixe" => "fonction d'usage : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.precisionFonction',
-						"prefixe" => "Précisions : <b>",
+						"prefixe" => "précisions : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -288,24 +294,24 @@ return array(
 				array(
 						"field" => 'ca_places.name',
 						"relationshipTypes" => "created",
-						"prefixe" => "Lieux de création ou d'exécution : <b>",
+						"prefixe" => "lieux de création ou d'exécution : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.geoHistorique',
-						"prefixe" => "Géographie historique : <b>",
+						"prefixe" => "géographie historique : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_places.name',
 						"relationshipTypes" => "utilisation",
-						"prefixe" => "Lieux d'utilisation ou de destination : <b>",
+						"prefixe" => "lieux d'utilisation ou de destination : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_places.name',
 						"relationshipTypes" => "decouverte",
-						"prefixe" => "Lieu de découverte, collecte, récolte : <b>",
+						"prefixe" => "lieu de découverte, collecte, récolte : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -314,34 +320,34 @@ return array(
 				array(
 						"field" => 'ca_objects.date_presence',
 						"post-treatment" => 'caDateToUnixTimestamp',
-						"prefixe" => "Première date attestée dans le musée si origine inconnue : <b>",
+						"prefixe" => "première date attestée dans le musée si origine inconnue : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.anciennes_appartenances',
-						"prefixe" => "Utilisateur illustre, premier et dernier propriétaire : <b>",
+						"prefixe" => "utilisateur illustre, premier et dernier propriétaire : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.mention_radiation',
-						"prefixe" => "Mentions apportées en cas de radiation : <b>",
+						"prefixe" => "mentions apportées en cas de radiation : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.date_vol',
 						"post-treatment" => 'caDateToUnixTimestamp',
-						"prefixe" => "Date de vol ou de disparition : <b>",
+						"prefixe" => "date de vol ou de disparition : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.date_bien_retrouve',
 						"post-treatment" => 'caDateToUnixTimestamp',
-						"prefixe" => "Date à laquelle le bien a été retrouvé : <b>",
+						"prefixe" => "date à laquelle le bien a été retrouvé : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.inv_ensemble_complexe_c',
-						"prefixe" => "Sous-inventaire dans le cas d'un ensemble complexe : <b>",
+						"prefixe" => "sous-inventaire dans le cas d'un ensemble complexe : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -351,7 +357,7 @@ return array(
 			"numinv" => array(
 				array(
 					"field" => 'ca_objects.idno',
-					"prefixe" => "Numéro de dépôt : <b>",
+					"prefixe" => "numéro d'inventaire : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
@@ -368,7 +374,7 @@ return array(
 			"mode_acquisition" => array(
 				array(
 					"field" => 'ca_objects.AcquisitionMode',
-					"prefixe" => "Mode d'acquisition : <b>",
+					"prefixe" => "mode d'acquisition : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
@@ -376,17 +382,17 @@ return array(
 				array(
 					"field" => 'ca_entities.displayname',
 					"relationshipTypes" => "origine_donateur", // donateur
-					"prefixe" => "Donateur : <b>",
+					"prefixe" => "donateur : <b>",
 					"suffixe" => "</b><br/>"
 				), array(
 					"field" => 'ca_entities.displayname',
 					"relationshipTypes" => "origine_testateur", // testateur
-					"prefixe" => "Testateur : <b>",
+					"prefixe" => "testateur : <b>",
 					"suffixe" => "</b><br/>"
 				), array(
 					"field" => 'ca_entities.displayname',
 					"relationshipTypes" => "origine_vendeur", // vendeur
-					"prefixe" => "Vendeur : <b>",
+					"prefixe" => "vendeur : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			), 
@@ -394,17 +400,17 @@ return array(
 				array(
 					"field" => 'ca_objects.date_ref_acteAcquisition.date_acteAcquisition',
 					"post-treatment" => 'caDateToUnixTimestamp',
-					"prefixe" => "Date de l'acte d'acquisition : <b>",
+					"prefixe" => "date de l'acte d'acquisition : <b>",
 					"suffixe" => "</b><br/>"
 				),
 				array(
 					"field" => 'ca_objects.date_ref_acteAcquisition.ref_acteAcquisition',
-					"prefixe" => "Référence de l'acte d'acquisition : <b>",
+					"prefixe" => "référence de l'acte d'acquisition : <b>",
 					"suffixe" => "</b><br/>"
 				),
 				array(
 					"field" => 'date_affectation',
-					"prefixe" => "Date d'affectation au musée : <b>",
+					"prefixe" => "date d'affectation au musée : <b>",
 					"post-treatment" => 'caDateToUnixTimestamp',
 					"suffixe" => "</b><br/>"
 				)
@@ -412,36 +418,35 @@ return array(
 			'avis'=>array( 
 				array(
 					"field" => 'ca_objects.avisScientifiques.instance',
-					"prefixe" => "Instance : <b>",
+					"prefixe" => "instance : <b>",
 					"suffixe" => "</b><br/>"
 				),
 				array(
 					"field" => 'ca_objects.avisScientifiques.avis_sens',
-					"prefixe" => "Sens de l'avis : <b>",
+					"prefixe" => "sens de l'avis : <b>",
 					"suffixe" => "</b><br/>"
 				),
 				array(
 					"field" => 'ca_objects.avisScientifiques.date_avis',
 					"post-treatment" => 'caDateToUnixTimestamp',
-					"prefixe" => "Date de l'avis : <b>",
+					"prefixe" => "date de l'avis : <b>",
 					"suffixe" => "</b><br/>"
 				),
 				array(
 					"field" => 'ca_objects.avisScientifiques.commentaire_avis',
-					"prefixe" => "Commentaire sur l'avis : <b>",
+					"prefixe" => "commentaire sur l'avis : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
 			'prix'=>array( 
 				array(
 					"field" => 'ca_objects.prix',
-					"post-treatment" => 'convertcurrencytoeuros',
-					"prefixe" => "Prix : <b>",
-					"suffixe" => "</b><br/>"
+					"prefixe" => "prix : <b>",
+					"suffixe" => " EUR</b><br/>"
 				), //OK
 				array(
 					"field" => 'ca_objects.mentionConcours',
-					"prefixe" => "Mention des concours publics : <b>",
+					"prefixe" => "mention des concours publics : <b>",
 					"suffixe" => "</b><br/>"
 				)
 			),
@@ -457,34 +462,34 @@ return array(
 				// COLONNE 8
 				array(
 						"field" => 'ca_objects.domaine',
-						"prefixe" => "Domaine (catégorie du bien) : <b>",
+						"prefixe" => "domaine (catégorie du bien) : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.preferred_labels',
-						"prefixe" => "Titre : <b>",
+						"prefixe" => "titre : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.element_decoratif_decor',
-						"prefixe" => "Représentation (décor porté) : <b>",
+						"prefixe" => "représentation (décor porté) : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.element_decoratif_precisions',
-						"prefixe" => "Précisions sur la représentation (décor porté) : <b>",
+						"prefixe" => "précisions sur la représentation (décor porté) : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.nonpreferred_labels',
 						"otherLabelTypeId" => "53", 
-						"prefixe" => "Appellation : <b>",
+						"prefixe" => "appellation : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.nonpreferred_labels',
 						"otherLabelTypeId" => "54", 
-						"prefixe" => "Dénomination : <b>",
+						"prefixe" => "dénomination : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),				
@@ -502,12 +507,12 @@ return array(
 			'inscription'=>array(
 				array(
 						"field" => 'ca_objects.inscription_c.inscription_type',
-						"prefixe" => "Type d'inscriptions ou de marque : <b>",
+						"prefixe" => "type d'inscriptions ou de marque : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.inscription_c.inscription_txt',
-						"prefixe" => "Transcription de l'inscription : <b>",
+						"prefixe" => "transcription de l'inscription : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
@@ -517,17 +522,17 @@ return array(
 				),
 				array(
 						"field" => 'ca_objects.inscription_c.inscription_alphabet',
-						"prefixe" => "Alphabet : <b>",
+						"prefixe" => "alphabet : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.inscription_c.inscription_emplacement',
-						"prefixe" => "Emplacement de l'inscription : <b>",
+						"prefixe" => "emplacement de l'inscription : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.inscription_info_c',
-						"prefixe" => "Précisions : <b>",
+						"prefixe" => "précisions : <b>",
 						"suffixe" => "</b><br/>"
 				)				
 			),
@@ -535,7 +540,7 @@ return array(
 				// COLONNE 10
 				array(
 						"field" => 'ca_objects.materiaux_tech_c',
-						"prefixe" => "Matériaux/techniques : <b>",
+						"prefixe" => "matériaux/techniques : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -543,7 +548,7 @@ return array(
 				// COLONNE 12
 				array(
 						"field" => 'ca_objects.dimensions',
-						"prefixe" => "Dimensions : <b>",
+						"prefixe" => "dimensions : <b>",
 						"suffixe" => "</b><br/>"
 				)	
 			),
@@ -551,7 +556,13 @@ return array(
 				// COLONNE 13
 				array(
 						"field" => 'ca_objects.constatEtat.constat_etat',
-						"prefixe" => "Etat au moment de l'acquisition : <b>",
+						"prefixe" => "etat au moment de l'acquisition : <b>",
+						"suffixe" => "</b><br/>"
+				),
+				array(
+						"field" => 'ca_objects.constatEtat.constat_date',
+						"post-treatment" => 'caDateToUnixTimestamp',
+						"prefixe" => "date du constat d'état : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -560,24 +571,24 @@ return array(
 				array(
 						"field" => 'ca_entities.preferred_labels',
 						"relationshipTypes" => "creation_auteur", // auteur
-						"prefixe" => "Auteur : <b>",
+						"prefixe" => "auteur : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_entities.preferred_labels',
 						"relationshipTypes" => "executant", 
-						"prefixe" => "Exécutant : <b>",
+						"prefixe" => "exécutant : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_entities.preferred_labels',
 						"relationshipTypes" => "origine_collector",
-						"prefixe" => "Collecteur : <b>",
+						"prefixe" => "collecteur : <b>",
 						"suffixe" => "</b><br/>"
 				),				
 				array(
 						"field" => 'ca_objects.ecole',
-						"prefixe" => "Ecole : <b>",
+						"prefixe" => "ecole : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -591,18 +602,18 @@ return array(
 				// COLONNE 15
 				array(
 						"field" => 'ca_objects.datePeriod.datePeriod_datation',
-						"prefixe" => "Période : <b>",
+						"prefixe" => "période : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.epoque',
-						"prefixe" => "Epoque / style / mouvement : <b>",
+						"prefixe" => "époque / style / mouvement : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.dateMillesime',
 						"post-treatment" => 'caDateToUnixTimestamp',
-						"prefixe" => "Millésime : <b>",
+						"prefixe" => "millésime : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
@@ -616,12 +627,12 @@ return array(
 				// COLONNE 16
 				array(
 						"field" => 'ca_objects.fonctions',
-						"prefixe" => "Fonction d'usage : <b>",
+						"prefixe" => "fonction d'usage : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.precisionFonction',
-						"prefixe" => "Précisions : <b>",
+						"prefixe" => "précisions : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -630,24 +641,24 @@ return array(
 				array(
 						"field" => 'ca_places.preferred_labels',
 						"relationshipTypes" => "created",
-						"prefixe" => "Lieux de création ou d'éxécution : <b>",
+						"prefixe" => "lieux de création ou d'éxécution : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.geoHistorique',
-						"prefixe" => "Géographie historique : <b>",
+						"prefixe" => "géographie historique : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_places.preferred_labels',
 						"relationshipTypes" => "utilisation",
-						"prefixe" => "Lieux d'utilisation ou de destination : <b>",
+						"prefixe" => "lieux d'utilisation ou de destination : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_places.preferred_labels',
 						"relationshipTypes" => "decouverte",
-						"prefixe" => "Lieu de découverte, collecte, récolte : <b>",
+						"prefixe" => "lieu de découverte, collecte, récolte : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
@@ -656,39 +667,39 @@ return array(
 				array(
 						"field" => 'ca_objects.date_presence',
 						"post-treatment" => 'caDateToUnixTimestamp',
-						"prefixe" => "Première date attestée dans le musée si origine inconnue : <b>",
+						"prefixe" => "première date attestée dans le musée si origine inconnue : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.anciennes_appartenances',
-						"prefixe" => "Utilisateur illustre, premier et dernier propriétaire : <b>",
+						"prefixe" => "utilisateur illustre, premier et dernier propriétaire : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.otherNumber',
-						"prefixe" => "Ancien ou autre numéro d'inventaire : <b>",
+						"prefixe" => "ancien ou autre numéro d'inventaire : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.mention_radiation',
-						"prefixe" => "Mentions apportées en cas de radiation : <b>",
+						"prefixe" => "mentions apportées en cas de radiation : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.date_vol',
 						"post-treatment" => 'caDateToUnixTimestamp',
-						"prefixe" => "Date de vol ou de disparition : <b>",
+						"prefixe" => "date de vol ou de disparition : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.date_bien_retrouve',
 						"post-treatment" => 'caDateToUnixTimestamp',
-						"prefixe" => "Date à laquelle le bien a été retrouvé : <b>",
+						"prefixe" => "date à laquelle le bien a été retrouvé : <b>",
 						"suffixe" => "</b><br/>"
 				),
 				array(
 						"field" => 'ca_objects.inv_ensemble_complexe_c',
-						"prefixe" => "Sous-inventaire dans le cas d'un ensemble complexe : <b>",
+						"prefixe" => "sous-inventaire dans le cas d'un ensemble complexe : <b>",
 						"suffixe" => "</b><br/>"
 				)
 			),
