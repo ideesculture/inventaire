@@ -16,7 +16,8 @@ L'impression de votre inventaire est une obligation légale qui répond à des i
 * php-intl
 * php-curl
 * extension PECL http
-* DluwTwBootstrap pour ZendFramework
+
+ATTENTION, DOCUMENTATION EN COURS DE REECRITURE. CONTACTER contact@ideesculture.com POUR PLUS D'INFOS.
 
 ## Installation
 ----------------------------
