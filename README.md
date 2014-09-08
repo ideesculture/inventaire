@@ -43,12 +43,13 @@ dans votre fichier *httpd.conf* ou équivalent.
 A titre d'exemple, vous trouverez dans le répertoire *install* un exemple de fichier de configuration pour un vhost d'Apache. Le répertoire *DocumentRoot* doit pointer vers *inventaire/public*
 
 ### PECL http
-L'extension PECL http est requise pour activer les webservices vers CollectiveAccess :
+L'extension PECL http est requise pour activer les webservices vers CollectiveAccess (infos pour Debian, à adapter à votre système) :
 
 	apt-get install make
 	apt-get install php5-dev
 	apt-get install php-pear
 	apt-get install libcurl3-openssl-dev
+	apt-get install pcreapt-get install libpcre3-dev
 	pecl install pecl_http
 
 ### Mettre à jour les bibliothèques requises à l'aide de composer
