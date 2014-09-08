@@ -45,6 +45,9 @@ A titre d'exemple, vous trouverez dans le répertoire *install* un exemple de fi
 ### PECL http
 L'extension PECL http est requise pour activer les webservices vers CollectiveAccess :
 
+	apt-get install make
+	apt-get install php5-dev
+	apt-get install php-pear
 	apt-get install libcurl3-openssl-dev
 	pecl install pecl_http
 
