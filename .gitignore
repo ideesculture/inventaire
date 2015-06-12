@@ -1,3 +1,7 @@
 .DS_Store
 .project
 .settings
+vendor/*
+.idea
+composer.phar
+composer.lock
