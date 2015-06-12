@@ -30,7 +30,7 @@ return array(
 	'ca_direct' => array(
 		'path' => '/path-to-ca-install',
 		'url' => 'http://url.domain/path'
-	),*/
+	),
 		
 		
 	'ca_import_mapping' => array(
