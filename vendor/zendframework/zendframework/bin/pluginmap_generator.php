@@ -1,22 +1,13 @@
 #!/usr/bin/env php
 <?php
 /**
- * Zend Framework
+ * Zend Framework (http://framework.zend.com/)
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * http://framework.zend.com/license/new-bsd
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@zend.com so we can send you a copy immediately.
- *
+ * @link      http://github.com/zendframework/zf2 for the canonical source repository
  * @category   Zend
  * @package    Zend_Loader
  * @subpackage Exception
- * @copyright  Copyright (c) 2005-2013 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -37,6 +28,21 @@ use Zend\Loader\StandardAutoloader;
  *                              file
  */
 
+// Setup/verify autoloading
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    // Local install
+    require __DIR__ . '/../vendor/autoload.php';
+} elseif (file_exists(getcwd() . '/vendor/autoload.php')) {
+    // Root project is current working directory
+    require getcwd() . '/vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/../../../autoload.php')) {
+    // Relative to composer install
+    require __DIR__ . '/../../../autoload.php';
+} else {
+    fwrite(STDERR, "Unable to setup autoloading; aborting\n");
+    exit(2);
+}
+
 $libPath = getenv('LIB_PATH') ? getenv('LIB_PATH') : __DIR__ . '/../library';
 if (!is_dir($libPath)) {
     // Try to load StandardAutoloader from include_path
@@ -51,10 +57,6 @@ if (!is_dir($libPath)) {
         exit(2);
     }
 }
-
-// Setup autoloading
-$loader = new StandardAutoloader(array('autoregister_zf' => true));
-$loader->register();
 
 $rules = array(
     'help|h'        => 'Get usage message',
@@ -131,22 +133,30 @@ $l = new \Zend\File\ClassFileLocator($path);
 // Iterate over each element in the path, and create a map of pluginname => classname
 $map    = new \stdClass;
 foreach ($l as $file) {
+    $namespaces = $file->getNamespaces();
     $namespace = empty($file->namespace) ? '' : $file->namespace . '\\';
-    $plugin    = strtolower($file->classname);
-    $class     = $namespace . $file->classname;
 
-    $map->{$plugin} = $class;
+    foreach ($file->getClasses() as $classname) {
+        $plugin = $classname;
+        foreach ($namespaces as $namespace) {
+            $namespace .= '\\';
+            if (0 === strpos($plugin, $namespace)) {
+                $plugin = str_replace($namespace, '', $plugin);
+            }
+        }
+        $plugin = strtolower($plugin);
+        $map->{$plugin} = $classname;
+    }
 }
 
 if ($appending) {
-
     $content = var_export((array) $map, true) . ';';
 
     // Fix \' strings from injected DIRECTORY_SEPARATOR usage in iterator_apply op
     $content = str_replace("\\'", "'", $content);
 
     // Convert to an array and remove the first "array ("
-    $content = explode(PHP_EOL, $content);
+    $content = explode("\n", $content);
     array_shift($content);
 
     // Load existing class map file and remove the closing "bracket ");" from it
@@ -154,7 +164,7 @@ if ($appending) {
     array_pop($existing);
 
     // Merge
-    $content = implode(PHP_EOL, $existing + $content);
+    $content = implode("\n", $existing + $content);
 } else {
     // Create a file with the class/file map.
     // Stupid syntax highlighters make separating < from PHP declaration necessary
@@ -167,6 +177,9 @@ if ($appending) {
     // Fix \' strings from injected DIRECTORY_SEPARATOR usage in iterator_apply op
     $content = str_replace("\\'", "'", $content);
 }
+
+// Make the file end by EOL
+$content = rtrim($content, "\n") . "\n";
 
 // Write the contents to disk
 file_put_contents($output, $content);

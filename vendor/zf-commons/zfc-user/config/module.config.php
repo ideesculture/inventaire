@@ -1,13 +1,9 @@
 <?php
+
 return array(
     'view_manager' => array(
         'template_path_stack' => array(
             'zfcuser' => __DIR__ . '/../view',
-        ),
-    ),
-    'controllers' => array(
-        'invokables' => array(
-            'zfcuser' => 'ZfcUser\Controller\UserController',
         ),
     ),
     'service_manager' => array(
@@ -78,12 +74,6 @@ return array(
                                 'action'     => 'changepassword',
                             ),
                         ),
-                        'may_terminate' => true,
-                        'child_routes' => array(
-                            'query' => array(
-                                'type' => 'Query',
-                            ),
-                        ),
                     ),
                     'changeemail' => array(
                         'type' => 'Literal',
@@ -92,12 +82,6 @@ return array(
                             'defaults' => array(
                                 'controller' => 'zfcuser',
                                 'action' => 'changeemail',
-                            ),
-                        ),
-                        'may_terminate' => true,
-                        'child_routes' => array(
-                            'query' => array(
-                                'type' => 'Query',
                             ),
                         ),
                     ),

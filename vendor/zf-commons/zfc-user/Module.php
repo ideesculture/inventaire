@@ -2,11 +2,11 @@
 
 namespace ZfcUser;
 
-use Zend\ModuleManager\ModuleManager;
 use Zend\ModuleManager\Feature\AutoloaderProviderInterface;
 use Zend\ModuleManager\Feature\ConfigProviderInterface;
 use Zend\ModuleManager\Feature\ServiceProviderInterface;
-use Zend\Stdlib\Hydrator\ClassMethods;
+use ZfcUser\Controller\RedirectCallback;
+use ZfcUser\Controller\UserController;
 
 class Module implements
     AutoloaderProviderInterface,
@@ -45,6 +45,26 @@ class Module implements
                     $controllerPlugin->setAuthAdapter($authAdapter);
                     return $controllerPlugin;
                 },
+            ),
+        );
+    }
+
+    public function getControllerConfig()
+    {
+        return array(
+            'factories' => array(
+                'zfcuser' => function($controllerManager) {
+                        /* @var ControllerManager $controllerManager*/
+                        $serviceManager = $controllerManager->getServiceLocator();
+
+                        /* @var RedirectCallback $redirectCallback */
+                        $redirectCallback = $serviceManager->get('zfcuser_redirect_callback');
+
+                        /* @var UserController $controller */
+                        $controller = new UserController($redirectCallback);
+
+                        return $controller;
+                    },
             ),
         );
     }
@@ -88,7 +108,18 @@ class Module implements
                 'zfcuser_register_form_hydrator'    => 'Zend\Stdlib\Hydrator\ClassMethods',
             ),
             'factories' => array(
+                'zfcuser_redirect_callback' => function ($sm) {
+                        /* @var RouteInterface $router */
+                        $router = $sm->get('Router');
 
+                        /* @var Application $application */
+                        $application = $sm->get('Application');
+
+                        /* @var ModuleOptions $options */
+                        $options = $sm->get('zfcuser_module_options');
+
+                        return new RedirectCallback($application, $router, $options);
+                    },
                 'zfcuser_module_options' => function ($sm) {
                     $config = $sm->get('Config');
                     return new Options\ModuleOptions(isset($config['zfcuser']) ? $config['zfcuser'] : array());
@@ -105,7 +136,7 @@ class Module implements
 
                 'ZfcUser\Authentication\Adapter\AdapterChain' => 'ZfcUser\Authentication\Adapter\AdapterChainServiceFactory',
 
-                'zfcuser_login_form' => function($sm) {
+                'zfcuser_login_form' => function ($sm) {
                     $options = $sm->get('zfcuser_module_options');
                     $form = new Form\Login(null, $options);
                     $form->setInputFilter(new Form\LoginFilter($options));
@@ -130,16 +161,16 @@ class Module implements
                     return $form;
                 },
 
-                'zfcuser_change_password_form' => function($sm) {
+                'zfcuser_change_password_form' => function ($sm) {
                     $options = $sm->get('zfcuser_module_options');
                     $form = new Form\ChangePassword(null, $sm->get('zfcuser_module_options'));
                     $form->setInputFilter(new Form\ChangePasswordFilter($options));
                     return $form;
                 },
 
-                'zfcuser_change_email_form' => function($sm) {
+                'zfcuser_change_email_form' => function ($sm) {
                     $options = $sm->get('zfcuser_module_options');
-                    $form = new Form\ChangeEmail(null, $sm->get('zfcuser_module_options'));
+                    $form = new Form\ChangeEmail(null, $options);
                     $form->setInputFilter(new Form\ChangeEmailFilter(
                         $options,
                         new Validator\NoRecordExists(array(

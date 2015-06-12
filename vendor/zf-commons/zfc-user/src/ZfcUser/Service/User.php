@@ -7,6 +7,7 @@ use Zend\Form\Form;
 use Zend\ServiceManager\ServiceManagerAwareInterface;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Crypt\Password\Bcrypt;
+use Zend\Stdlib\Hydrator;
 use ZfcBase\EventManager\EventProvider;
 use ZfcUser\Mapper\UserInterface as UserMapperInterface;
 use ZfcUser\Options\UserServiceOptionsInterface;
@@ -50,6 +51,11 @@ class User extends EventProvider implements ServiceManagerAwareInterface
     protected $options;
 
     /**
+     * @var Hydrator\ClassMethods
+     */
+    protected $formHydrator;
+
+    /**
      * createFromForm
      *
      * @param array $data
@@ -61,7 +67,7 @@ class User extends EventProvider implements ServiceManagerAwareInterface
         $class = $this->getOptions()->getUserEntityClass();
         $user  = new $class;
         $form  = $this->getRegisterForm();
-        $form->setHydrator($this->getServiceManager()->get('zfcuser_register_form_hydrator'));
+        $form->setHydrator($this->getFormHydrator());
         $form->bind($user);
         $form->setData($data);
         if (!$form->isValid()) {
@@ -84,9 +90,7 @@ class User extends EventProvider implements ServiceManagerAwareInterface
 
         // If user state is enabled, set the default state value
         if ($this->getOptions()->getEnableUserState()) {
-            if ($this->getOptions()->getDefaultUserState()) {
-                $user->setState($this->getOptions()->getDefaultUserState());
-            }
+            $user->setState($this->getOptions()->getDefaultUserState());
         }
         $this->getEventManager()->trigger(__FUNCTION__, $this, array('user' => $user, 'form' => $form));
         $this->getUserMapper()->insert($user);
@@ -117,9 +121,9 @@ class User extends EventProvider implements ServiceManagerAwareInterface
         $pass = $bcrypt->create($newPass);
         $currentUser->setPassword($pass);
 
-        $this->getEventManager()->trigger(__FUNCTION__, $this, array('user' => $currentUser));
+        $this->getEventManager()->trigger(__FUNCTION__, $this, array('user' => $currentUser, 'data' => $data));
         $this->getUserMapper()->update($currentUser);
-        $this->getEventManager()->trigger(__FUNCTION__.'.post', $this, array('user' => $currentUser));
+        $this->getEventManager()->trigger(__FUNCTION__.'.post', $this, array('user' => $currentUser, 'data' => $data));
 
         return true;
     }
@@ -137,9 +141,9 @@ class User extends EventProvider implements ServiceManagerAwareInterface
 
         $currentUser->setEmail($data['newIdentity']);
 
-        $this->getEventManager()->trigger(__FUNCTION__, $this, array('user' => $currentUser));
+        $this->getEventManager()->trigger(__FUNCTION__, $this, array('user' => $currentUser, 'data' => $data));
         $this->getUserMapper()->update($currentUser);
-        $this->getEventManager()->trigger(__FUNCTION__.'.post', $this, array('user' => $currentUser));
+        $this->getEventManager()->trigger(__FUNCTION__.'.post', $this, array('user' => $currentUser, 'data' => $data));
 
         return true;
     }
@@ -278,6 +282,32 @@ class User extends EventProvider implements ServiceManagerAwareInterface
     public function setServiceManager(ServiceManager $serviceManager)
     {
         $this->serviceManager = $serviceManager;
+        return $this;
+    }
+
+    /**
+     * Return the Form Hydrator
+     *
+     * @return \Zend\Stdlib\Hydrator\ClassMethods
+     */
+    public function getFormHydrator()
+    {
+        if (!$this->formHydrator instanceof Hydrator\HydratorInterface) {
+            $this->setFormHydrator($this->getServiceManager()->get('zfcuser_register_form_hydrator'));
+        }
+
+        return $this->formHydrator;
+    }
+
+    /**
+     * Set the Form Hydrator to use
+     *
+     * @param Hydrator\HydratorInterface $formHydrator
+     * @return User
+     */
+    public function setFormHydrator(Hydrator\HydratorInterface $formHydrator)
+    {
+        $this->formHydrator = $formHydrator;
         return $this;
     }
 }

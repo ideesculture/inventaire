@@ -1,6 +1,11 @@
 ZfcUser
 =======
-Version 0.0.1 Created by Evan Coury and the ZF-Commons team
+[![Build Status](https://travis-ci.org/ZF-Commons/ZfcUser.png)](https://travis-ci.org/ZF-Commons/ZfcUser)
+[![Code Coverage](https://scrutinizer-ci.com/g/ZF-Commons/ZfcUser/badges/coverage.png?s=7d5932c77bea64a417ac8e3da51dca6da1fcb22e)](https://scrutinizer-ci.com/g/ZF-Commons/ZfcUser/)
+[![Latest Stable Version](https://poser.pugx.org/zf-commons/zfc-user/v/stable.png)](https://packagist.org/packages/zf-commons/zfc-user)
+[![Latest Unstable Version](https://poser.pugx.org/zf-commons/zfc-user/v/unstable.png)](https://packagist.org/packages/zf-commons/zfc-user)
+
+Created by Evan Coury and the ZF-Commons team
 
 Introduction
 ------------
@@ -62,7 +67,6 @@ Installation
 
     ```json
     "require": {
-        "zf-commons/zfc-base": "dev-master",
         "zf-commons/zfc-user": "dev-master"
     }
     ```
@@ -89,7 +93,7 @@ Installation
     );
     ```
 
-2. Then Import the SQL schema located in `./vendor/ZfcUser/data/schema.sql`.
+2. Then Import the SQL schema located in `./vendor/zf-commons/zfc-user/data/schema.sql` (if you installed using the Composer) or in `./vendor/ZfcUser/data/schema.sql`.
 
 ### Post-Install: Doctrine2 ORM
 
@@ -104,31 +108,24 @@ Coming soon...
 1. If you do not already have a valid Zend\Db\Adapter\Adapter in your service
    manager configuration, put the following in `./config/autoload/database.local.php`:
 
-        <?php
+```php
+<?php
+return array(
+    'db' => array(
+        'driver'    => 'PdoMysql',
+        'hostname'  => 'changeme',
+        'database'  => 'changeme',
+        'username'  => 'changeme',
+        'password'  => 'changeme',
+    ),
+    'service_manager' => array(
+        'factories' => array(
+            'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
+        ),
+    ),
+);
 
-        $dbParams = array(
-            'database'  => 'changeme',
-            'username'  => 'changeme',
-            'password'  => 'changeme',
-            'hostname'  => 'changeme',
-        );
-
-        return array(
-            'service_manager' => array(
-                'factories' => array(
-                    'Zend\Db\Adapter\Adapter' => function ($sm) use ($dbParams) {
-                        return new Zend\Db\Adapter\Adapter(array(
-                            'driver'    => 'pdo',
-                            'dsn'       => 'mysql:dbname='.$dbParams['database'].';host='.$dbParams['hostname'],
-                            'database'  => $dbParams['database'],
-                            'username'  => $dbParams['username'],
-                            'password'  => $dbParams['password'],
-                            'hostname'  => $dbParams['hostname'],
-                        ));
-                    },
-                ),
-            ),
-        );
+```
 
 Navigate to http://yourproject/user and you should land on a login page.
 
@@ -152,10 +149,10 @@ successful login.
 
 **WARNING:** Changing the default password hash settings can cause serious
 problems such as making your hashed passwords more vulnerable to brute force
-attacks or making hashing so expesnive that login and registration is
+attacks or making hashing so expensive that login and registration is
 unacceptably slow for users and produces a large burden on your server(s). The
 default settings provided are a very reasonable balance between the two,
-suitable for computing power in 2011.
+suitable for computing power in 2013.
 
 Options
 -------
@@ -210,7 +207,7 @@ The following options are available:
 Changing Registration Captcha Element
 -------------------------------------
 
-**NOTICE** These instrutions are currently out of date.
+**NOTICE** These instructions are currently out of date.
 
 By default, the user registration uses the Figlet captcha engine.  This is
 because it's the only one that doesn't require API keys.  It's possible to change
